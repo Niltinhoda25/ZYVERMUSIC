@@ -14,129 +14,116 @@ import {
     orderBy 
 } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-// Seleção de elementos da página
+// Elementos da Interface
 const loginForm = document.getElementById('login-form');
 const adminPanel = document.getElementById('admin-panel');
 const adminList = document.getElementById('admin-list');
-const loginBtn = document.getElementById('login-btn');
-const logoutBtn = document.getElementById('logout-btn');
-const addBtn = document.getElementById('add-btn');
 
-// --- 1. SISTEMA DE AUTENTICAÇÃO ---
+// --- CONTROLE DE ACESSO ---
 
-// Função de Login
-loginBtn.onclick = async () => {
+document.getElementById('login-btn').onclick = async () => {
     const email = document.getElementById('email').value;
     const pass = document.getElementById('pass').value;
-
     try {
         await signInWithEmailAndPassword(auth, email, pass);
-        alert("Bem-vindo, Administrador!");
-    } catch (error) {
-        console.error(error);
-        alert("Erro ao entrar: Verifique seu e-mail e senha.");
+    } catch (e) {
+        alert("Erro no login! Verifique suas credenciais.");
     }
 };
 
-// Monitor de estado do usuário (Logado ou não)
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        // Usuário logado: mostra painel, esconde login
         loginForm.classList.add('hidden');
         adminPanel.classList.remove('hidden');
-        carregarMusicasAdmin();
+        ouvirMusicas();
     } else {
-        // Usuário deslogado: mostra login, esconde painel
         loginForm.classList.remove('hidden');
         adminPanel.classList.add('hidden');
     }
 });
 
-// Função de Sair
-logoutBtn.onclick = () => {
-    signOut(auth);
-};
+document.getElementById('logout-btn').onclick = () => signOut(auth);
 
-// --- 2. GERENCIAMENTO DE MÚSICAS ---
+// --- FUNÇÕES DE ADICIONAR ---
 
-// Função para Adicionar Música
-addBtn.onclick = async () => {
+// 1. Adicionar Única
+document.getElementById('add-btn').onclick = async () => {
     const title = document.getElementById('m-title').value;
     const cover = document.getElementById('m-cover').value;
-    let url = document.getElementById('m-url').value;
+    const url = document.getElementById('m-url').value;
 
-    if (!title || !cover || !url) {
-        alert("Por favor, preencha todos os campos!");
-        return;
+    if(title && cover && url) {
+        await salvarNoFirebase(title, cover, url);
+        alert("Música adicionada!");
+        document.getElementById('m-title').value = "";
+        document.getElementById('m-cover').value = "";
+        document.getElementById('m-url').value = "";
     }
+};
 
+// 2. Adicionar em Massa
+document.getElementById('mass-btn').onclick = async () => {
+    const text = document.getElementById('mass-upload').value;
+    const lines = text.split('\n');
+    let count = 0;
+
+    for (let line of lines) {
+        const partes = line.split('|');
+        if (partes.length >= 3) {
+            await salvarNoFirebase(partes[0].trim(), partes[1].trim(), partes[2].trim());
+            count++;
+        }
+    }
+    alert(`${count} músicas adicionadas com sucesso!`);
+    document.getElementById('mass-upload').value = "";
+};
+
+// Função Principal para Salvar (Já corrigindo o link do Dropbox)
+async function salvarNoFirebase(titulo, capa, link) {
+    const linkDireto = link.replace("dl=0", "raw=1").replace("www.dropbox.com", "dl.dropboxusercontent.com");
     try {
-        // CORREÇÃO AUTOMÁTICA DO LINK DROPBOX
-        // Troca dl=0 por raw=1 para o áudio funcionar direto no site
-        const urlCorrigida = url.replace("dl=0", "raw=1");
-
         await addDoc(collection(db, "musics"), {
-            title: title,
-            cover: cover,
-            url: urlCorrigida,
+            title: titulo,
+            cover: capa,
+            url: linkDireto,
             plays: 0,
             likes: 0,
             createdAt: new Date()
         });
-
-        alert("Música publicada com sucesso!");
-
-        // Limpar campos após sucesso
-        document.getElementById('m-title').value = "";
-        document.getElementById('m-cover').value = "";
-        document.getElementById('m-url').value = "";
-
-    } catch (error) {
-        console.error("Erro ao salvar:", error);
-        alert("Erro ao publicar música.");
+    } catch (e) {
+        console.error("Erro ao salvar música: ", e);
     }
-};
+}
 
-// Função para listar as músicas no painel admin com botão de excluir
-function carregarMusicasAdmin() {
-    // Busca as músicas ordenadas pelas mais novas primeiro
+// --- GERENCIAMENTO DA LISTA ---
+
+function ouvirMusicas() {
     const q = query(collection(db, "musics"), orderBy("createdAt", "desc"));
-
     onSnapshot(q, (snapshot) => {
-        adminList.innerHTML = ''; // Limpa a lista antes de reconstruir
-
+        adminList.innerHTML = '';
         snapshot.forEach((docSnap) => {
-            const music = docSnap.data();
-            const id = docSnap.id;
-
-            const item = document.createElement('div');
-            item.className = "bg-zinc-900 p-4 rounded-xl border border-zinc-800 flex justify-between items-center hover:bg-zinc-800/50 transition";
-            item.innerHTML = `
-                <div class="flex items-center gap-4 overflow-hidden">
-                    <img src="${music.cover}" class="w-12 h-12 rounded object-cover">
-                    <div class="truncate">
-                        <p class="font-bold truncate">${music.title}</p>
-                        <p class="text-xs text-zinc-500">${music.plays || 0} plays • ${music.likes || 0} curtidas</p>
+            const m = docSnap.data();
+            const card = document.createElement('div');
+            card.className = "bg-black p-3 rounded-2xl border border-zinc-800 flex justify-between items-center group";
+            card.innerHTML = `
+                <div class="flex items-center gap-3">
+                    <img src="${m.cover}" class="w-10 h-10 rounded-lg object-cover">
+                    <div class="overflow-hidden">
+                        <p class="text-sm font-bold truncate w-32 md:w-64">${m.title}</p>
+                        <p class="text-[10px] text-zinc-500">${m.plays || 0} plays</p>
                     </div>
                 </div>
-                <button onclick="deletarMusica('${id}')" class="bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white p-3 rounded-lg transition">
+                <button onclick="deletar('${docSnap.id}')" class="text-zinc-600 hover:text-red-500 p-2 transition">
                     <i class="fas fa-trash"></i>
                 </button>
             `;
-            adminList.appendChild(item);
+            adminList.appendChild(card);
         });
     });
 }
 
-// Função para Deletar Música (Exposta para o HTML)
-window.deletarMusica = async (id) => {
-    if (confirm("Tem certeza que deseja excluir esta música do ZyverMusic?")) {
-        try {
-            await deleteDoc(doc(db, "musics", id));
-            alert("Música removida!");
-        } catch (error) {
-            console.error("Erro ao deletar:", error);
-            alert("Erro ao excluir música.");
-        }
+window.deletar = async (id) => {
+    if(confirm("Deseja mesmo excluir?")) {
+        await deleteDoc(doc(db, "musics", id));
     }
 };
