@@ -2,108 +2,170 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>ZyverAdmin - Painel Profissional</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZyverAdmin | Painel de Controle</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { background: #0b0b0b; color: white; font-family: sans-serif; padding: 20px; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: #181818; padding: 20px; border-radius: 12px; border: 1px solid #333; }
-        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; }
-        input, select { background: #000; color: white; border: 1px solid #444; }
-        button { background: #8a2be2; color: white; font-weight: bold; cursor: pointer; }
-        button:hover { background: #a04ef6; }
-        .lista { margin-top: 15px; max-height: 200px; overflow-y: auto; font-size: 13px; }
-        .item-lista { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #222; }
+        :root { --purple: #8a2be2; --bg: #0b0b0b; --card: #181818; --red: #ff4444; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px; }
+        .logo { font-size: 24px; font-weight: 900; }
+        .logo span { color: var(--purple); }
+
+        /* Grid de Cadastro */
+        .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .admin-card { background: var(--card); padding: 25px; border-radius: 15px; border: 1px solid #333; }
+        .admin-card h2 { font-size: 18px; margin-bottom: 20px; color: var(--purple); display: flex; align-items: center; gap: 10px; }
+        
+        input, select { width: 100%; background: #000; border: 1px solid #333; padding: 12px; border-radius: 8px; color: white; margin-bottom: 15px; outline: none; }
+        input:focus, select:focus { border-color: var(--purple); }
+        
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-add { background: var(--purple); color: white; }
+        .btn-add:hover { background: #a04ef6; transform: scale(1.02); }
+
+        /* Seção de Gerenciamento */
+        .manage-section { background: var(--card); border-radius: 15px; padding: 25px; border: 1px solid #333; }
+        .manage-header { display: flex; gap: 20px; border-bottom: 1px solid #222; margin-bottom: 20px; }
+        .tab-btn { background: none; color: #888; border: none; padding: 10px 0; cursor: pointer; font-size: 16px; border-bottom: 2px solid transparent; width: auto; }
+        .tab-btn.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+        .list-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; background: #000; border-radius: 10px; margin-bottom: 10px; border: 1px solid #222; }
+        .list-item img { width: 40px; height: 40px; border-radius: 5px; object-fit: cover; }
+        .list-info { flex: 1; margin-left: 15px; }
+        .list-info h4 { font-size: 14px; }
+        .btn-del { background: rgba(255, 68, 68, 0.1); color: var(--red); width: 35px; height: 35px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+        .btn-del:hover { background: var(--red); color: white; }
     </style>
 </head>
 <body>
-    <h1 style="color: #8a2be2;">ZYVER<span>ADMIN</span></h1>
 
-    <div class="grid">
-        <div class="card">
-            <h3>🎵 Nova Música</h3>
-            <input type="text" id="m-titulo" placeholder="Título da Música">
-            <input type="text" id="m-capa" placeholder="URL da Capa">
-            <input type="text" id="m-url" placeholder="URL Dropbox (.mp3)">
-            <button onclick="salvarMusica()">Publicar Música</button>
+    <div class="header">
+        <div class="logo">ZYVER<span>ADMIN</span></div>
+        <a href="index.html" style="color:#888; text-decoration:none;"><i class="fa fa-eye"></i> Ver Site</a>
+    </div>
+
+    <div class="admin-grid">
+        <div class="admin-card">
+            <h2><i class="fa fa-music"></i> Nova Música</h2>
+            <input type="text" id="m-title" placeholder="Título da Música">
+            <input type="text" id="m-cover" placeholder="URL da Capa (Dropbox)">
+            <input type="text" id="m-url" placeholder="URL do Áudio (Dropbox + &raw=1)">
+            <input type="number" id="m-plays" placeholder="Número inicial de Plays (ex: 21)">
+            <button class="btn-add" onclick="salvarMusica()">Cadastrar Música</button>
         </div>
 
-        <div class="card">
-            <h3>🎥 Novo Clipe (TikTok Style)</h3>
-            <input type="text" id="c-titulo" placeholder="Título do Clipe">
-            <input type="text" id="c-video" placeholder="URL do Vídeo (.mp4)">
-            
-            <label style="font-size: 12px; color: #8a2be2;">Vincular à Música:</label>
-            <select id="c-musica-select">
-                <option value="">Carregando músicas...</option>
+        <div class="admin-card">
+            <h2><i class="fa fa-video"></i> Novo Clipe</h2>
+            <input type="text" id="c-title" placeholder="Título do Clipe">
+            <input type="text" id="c-url" placeholder="URL do Vídeo (Dropbox + &raw=1)">
+            <select id="c-music-id">
+                <option value="">Vincular a qual música?</option>
             </select>
-            
-            <button onclick="salvarClipe()" style="background: #4b0082;">Publicar Clipe</button>
+            <button class="btn-add" style="background:#4b0082" onclick="salvarClipe()">Publicar Clipe</button>
         </div>
     </div>
 
-    <div class="card" style="margin-top: 20px;">
-        <h3>Gerenciar Conteúdo</h3>
-        <div id="gerenciar-lista" class="lista"></div>
+    <div class="manage-section">
+        <div class="manage-header">
+            <button class="tab-btn active" onclick="switchTab('musics', this)">Músicas</button>
+            <button class="tab-btn" onclick="switchTab('clips', this)">Clipes</button>
+        </div>
+        <div id="lista-gerenciamento">
+            </div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Carrega músicas no Select e na Lista de Gerenciamento
+        let currentTab = 'musics';
+
+        // Carrega dados iniciais
         async function carregarDados() {
-            const mSelect = document.getElementById('c-musica-select');
-            const gLista = document.getElementById('gerenciar-lista');
-            const snap = await getDocs(collection(db, "musics"));
+            const mSelect = document.getElementById('c-music-id');
+            const lista = document.getElementById('lista-gerenciamento');
             
-            mSelect.innerHTML = '<option value="">Selecione a música do clipe</option>';
-            gLista.innerHTML = "";
+            // Limpa tudo
+            mSelect.innerHTML = '<option value="">Vincular a qual música?</option>';
+            lista.innerHTML = '<p style="color:#666">Carregando...</p>';
 
-            snap.forEach(docSnap => {
-                const m = docSnap.data();
-                // Preenche o Select com as músicas que você já tem
-                mSelect.innerHTML += `<option value="${docSnap.id}">${m.title}</option>`;
-                
-                // Lista de exclusão
-                gLista.innerHTML += `
-                    <div class="item-lista">
-                        <span>${m.title}</span>
-                        <span style="color:red; cursor:pointer;" onclick="excluirMusica('${docSnap.id}')">X</span>
-                    </div>`;
+            // Busca Músicas
+            const snapMusicas = await getDocs(collection(db, "musics"));
+            const musicas = snapMusicas.docs.map(d => ({id: d.id, ...d.data()}));
+
+            // Preenche o Select de Clipes
+            musicas.forEach(m => {
+                mSelect.innerHTML += `<option value="${m.id}">${m.title}</option>`;
             });
+
+            // Busca Clipes
+            const snapClipes = await getDocs(collection(db, "clips"));
+            const clipes = snapClipes.docs.map(d => ({id: d.id, ...d.data()}));
+
+            // Renderiza a aba atual
+            renderLista(currentTab === 'musics' ? musicas : clipes);
+        }
+
+        function renderLista(itens) {
+            const lista = document.getElementById('lista-gerenciamento');
+            lista.innerHTML = itens.length ? "" : "<p>Nenhum item encontrado.</p>";
+            
+            itens.forEach(item => {
+                lista.innerHTML += `
+                    <div class="list-item">
+                        <img src="${item.cover || 'https://cdn-icons-png.flaticon.com/512/3214/3214744.png'}">
+                        <div class="list-info">
+                            <h4>${item.title}</h4>
+                            <p style="font-size:10px; color:#555">ID: ${item.id}</p>
+                        </div>
+                        <button class="btn-del" onclick="apagarItem('${currentTab}', '${item.id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        window.switchTab = (tab, btn) => {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            carregarDados();
         }
 
         window.salvarMusica = async () => {
             const data = {
-                title: document.getElementById('m-titulo').value,
-                cover: document.getElementById('m-capa').value,
+                title: document.getElementById('m-title').value,
+                cover: document.getElementById('m-cover').value,
                 url: document.getElementById('m-url').value,
-                createdAt: new Date().toISOString()
+                plays: parseInt(document.getElementById('m-plays').value) || 0
             };
             await addDoc(collection(db, "musics"), data);
-            alert("Música salva!");
+            alert("Música adicionada!");
             carregarDados();
-        };
+        }
 
         window.salvarClipe = async () => {
-            const musicId = document.getElementById('c-musica-select').value;
-            if(!musicId) return alert("Selecione uma música primeiro!");
-
             const data = {
-                title: document.getElementById('c-titulo').value,
-                url: document.getElementById('c-video').value,
-                musicId: musicId // Usa o ID da música existente
+                title: document.getElementById('c-title').value,
+                url: document.getElementById('c-url').value,
+                musicId: document.getElementById('c-music-id').value
             };
+            if(!data.musicId) return alert("Selecione uma música!");
             await addDoc(collection(db, "clips"), data);
-            alert("Clipe publicado!");
-        };
+            alert("Clipe adicionado!");
+            carregarDados();
+        }
 
-        window.excluirMusica = async (id) => {
-            if(confirm("Deseja apagar?")) {
-                await deleteDoc(doc(db, "musics", id));
+        window.apagarItem = async (colecao, id) => {
+            if(confirm("Tem certeza que deseja apagar? Isso não pode ser desfeito.")) {
+                await deleteDoc(doc(db, colecao, id));
                 carregarDados();
             }
-        };
+        }
 
         carregarDados();
     </script>

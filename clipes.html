@@ -2,46 +2,47 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZyverClips | Explore</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZyverClips | Sincronizado</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #000; overflow: hidden; font-family: sans-serif; }
         
-        /* Container de Rolagem TikTok */
         #feed { 
             height: 100vh; overflow-y: scroll; 
-            scroll-snap-type: y mandatory; /* Faz o vídeo "grudar" na tela */
-            scrollbar-width: none; 
+            scroll-snap-type: y mandatory; scrollbar-width: none; 
         }
         #feed::-webkit-scrollbar { display: none; }
 
         .clip-container { 
             position: relative; width: 100%; height: 100vh; 
             scroll-snap-align: start; scroll-snap-stop: always;
-            background: #000; display: flex; align-items: center; justify-content: center;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        video { width: 100%; height: 100%; object-fit: cover; }
+        video { width: 100%; height: 100%; object-fit: cover; background: #000; }
 
-        /* Interface Sobreposta */
+        /* Overlay de Carregamento */
+        .loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border: 4px solid #333; border-top: 4px solid #8a2be2;
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
+            z-index: 5; display: block;
+        }
+        @keyframes spin { 0% { transform: translate(-50%, -50%) rotate(0deg); } 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+
         .overlay { 
             position: absolute; bottom: 0; left: 0; width: 100%; 
-            padding: 40px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            pointer-events: none; z-index: 10;
+            padding: 60px 20px 40px; background: linear-gradient(transparent, rgba(0,0,0,0.9));
+            pointer-events: none; z-index: 10; opacity: 0; transition: 0.5s;
         }
-        .music-info { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
-        .disco-track { 
-            width: 45px; height: 45px; border-radius: 50%; border: 3px solid #333;
-            animation: girar 4s linear infinite;
-        }
-        @keyframes girar { 100% { transform: rotate(360deg); } }
+        .visible { opacity: 1; }
 
-        /* Botão Voltar */
-        .back { 
-            position: absolute; top: 20px; left: 20px; z-index: 100; color: white; 
-            text-decoration: none; background: rgba(0,0,0,0.4); padding: 10px 15px; border-radius: 50%;
-        }
+        .music-info { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .disco { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #fff; animation: gira 4s linear infinite; }
+        @keyframes gira { 100% { transform: rotate(360deg); } }
+
+        .back { position: absolute; top: 20px; left: 20px; z-index: 100; color: white; text-decoration: none; font-size: 20px; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -66,39 +67,56 @@
                 const item = document.createElement('div');
                 item.className = 'clip-container';
                 item.innerHTML = `
-                    <video src="${clip.url}" loop muted playsinline></video>
+                    <div class="loader"></div>
+                    <video src="${clip.url}" loop muted playsinline preload="auto"></video>
                     <div class="overlay">
-                        <h2 style="font-size: 18px; text-shadow: 2px 2px 4px #000;">${clip.title}</h2>
+                        <h2 style="font-size: 18px;">${clip.title}</h2>
                         <div class="music-info">
-                            <img src="${music.cover}" class="disco-track">
+                            <img src="${music.cover}" class="disco">
                             <div>
                                 <p style="font-weight:bold; font-size:14px;">${music.title}</p>
-                                <p style="font-size:11px; opacity:0.8;">Tocando agora...</p>
+                                <p style="font-size:11px; opacity:0.7;">Sincronizado</p>
                             </div>
                         </div>
                     </div>
-                    <audio src="${music.url}" loop></audio>
+                    <audio src="${music.url}" loop preload="auto"></audio>
                 `;
                 feed.appendChild(item);
             }
         }
 
-        // Lógica de Swipe e Som Automático
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 const video = entry.target.querySelector('video');
                 const audio = entry.target.querySelector('audio');
-                
+                const loader = entry.target.querySelector('.loader');
+                const overlay = entry.target.querySelector('.overlay');
+
                 if (entry.isIntersecting) {
-                    video.play();
-                    audio.play();
+                    // LÓGICA DE SINCRONIZAÇÃO:
+                    // Só começa quando AMBOS estiverem prontos para tocar sem travar
+                    const checkReady = () => {
+                        if (video.readyState >= 3 && audio.readyState >= 3) {
+                            video.play();
+                            audio.play();
+                            loader.style.display = 'none';
+                            overlay.classList.add('visible');
+                        } else {
+                            // Se não estiver pronto, tenta de novo em 100ms
+                            setTimeout(checkReady, 100);
+                        }
+                    };
+                    checkReady();
                 } else {
                     video.pause();
                     audio.pause();
-                    video.currentTime = 0; // Reinicia o vídeo ao sair
+                    video.currentTime = 0;
+                    audio.currentTime = 0;
+                    overlay.classList.remove('visible');
+                    loader.style.display = 'block';
                 }
             });
-        }, { threshold: 0.8 }); // 80% do vídeo precisa estar visível
+        }, { threshold: 0.7 });
 
         document.querySelectorAll('.clip-container').forEach(c => observer.observe(c));
     }
