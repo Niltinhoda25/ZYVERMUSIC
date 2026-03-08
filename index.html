@@ -3,127 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | v7.0 Elite</title>
+    <title>ZyverMusic | v8.0 Ultra Elite</title>
     
+    <meta name="theme-color" content="#0a0118">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0a0118%22,%22theme_color%22:%22#bc47fb%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3844/3844724.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+
     <script src="https://alwingulla.com/88/prm/atama.js" async></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
     <style>
         :root { 
-            --accent: #bc47fb; --bg: #0a0118; 
-            --glass: rgba(255, 255, 255, 0.08);
-            --glass-border: rgba(255, 255, 255, 0.12);
+            --accent: #bc47fb; 
+            --bg: #0a0118; 
+            --glass: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
             --success: #00f2fe;
+            --danger: #ff4b5c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body { 
-            background: linear-gradient(135deg, #0a0118 0%, #1a083d 100%); 
+            background: radial-gradient(circle at top right, #1a083d, #0a0118);
             color: white; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden;
         }
 
-        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 220px; scrollbar-width: none; }
+        /* Container Principal */
+        #main-content { 
+            height: 100vh; overflow-y: auto; padding-bottom: 250px; 
+            scrollbar-width: none; scroll-behavior: smooth;
+        }
         #main-content::-webkit-scrollbar { display: none; }
 
-        header { padding: 35px 20px; text-align: center; }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 20px var(--accent); }
+        header { padding: 40px 20px 20px; text-align: center; }
+        .logo { font-size: 32px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 25px var(--accent); }
         .logo span { color: var(--accent); }
 
-        .search-box { margin: 0 20px 25px; position: relative; }
+        /* Busca */
+        .search-box { margin: 0 20px 30px; position: relative; }
         .search-box input { 
             width: 100%; background: var(--glass); border: 1px solid var(--glass-border); 
-            padding: 16px 45px; border-radius: 20px; color: white; backdrop-filter: blur(15px); outline: none;
+            padding: 18px 50px; border-radius: 25px; color: white; backdrop-filter: blur(20px); 
+            outline: none; font-size: 16px; transition: 0.3s;
         }
-        .search-box i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: var(--accent); }
+        .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(188, 71, 251, 0.3); }
+        .search-box i { position: absolute; left: 20px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 18px; }
 
-        .section-title { padding: 15px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; color: #a1a1a1; display: flex; align-items: center; gap: 8px; }
+        .section-title { 
+            padding: 10px 25px; font-size: 12px; font-weight: 900; 
+            text-transform: uppercase; color: rgba(255,255,255,0.5); 
+            display: flex; align-items: center; gap: 10px; letter-spacing: 1.5px;
+        }
 
-        /* --- CORREÇÃO DAS IMAGENS (7000% FIX) --- */
+        /* --- GRID DE CARDS (MAIS TOCADAS) --- */
+        #top-list { display: flex; overflow-x: auto; padding: 15px 20px; gap: 20px; scrollbar-width: none; }
+        .top-card { min-width: 150px; cursor: pointer; transition: transform 0.2s; }
+        .top-card:active { transform: scale(0.95); }
         
-        /* Capas do Top 10 / Mais Tocadas */
-        .top-card { min-width: 145px; text-align: center; }
-        .top-img-wrapper {
-            width: 145px; 
-            height: 145px; /* Altura forçada */
-            border-radius: 25px;
-            overflow: hidden; /* Corta o que sobrar */
-            border: 1.5px solid var(--glass-border);
-            background: #111;
+        /* FIX DAS IMAGENS: Quadrado Perfeito 1:1 */
+        .top-img-box {
+            width: 150px; height: 150px; border-radius: 28px;
+            overflow: hidden; border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
         }
-        .top-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* A mágica que preenche tudo sem barras pretas */
-            display: block;
-        }
+        .top-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .top-card b { display: block; margin-top: 12px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Capas da Lista Geral e Playlists */
+        /* --- LISTA GERAL --- */
         .track-card { 
-            display: flex; align-items: center; padding: 12px 18px; margin: 8px 15px;
-            background: var(--glass); border-radius: 20px; border: 1px solid var(--glass-border);
+            display: flex; align-items: center; padding: 15px; margin: 10px 20px;
+            background: var(--glass); border-radius: 22px; border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px); transition: 0.2s;
         }
-        .track-img-box {
-            width: 55px; height: 55px; 
-            border-radius: 12px; margin-right: 15px; 
-            overflow: hidden; flex-shrink: 0;
-            background: #111;
-        }
-        .track-img-box img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
+        .track-card:active { background: rgba(255,255,255,0.12); }
+        
+        .track-img { width: 60px; height: 60px; border-radius: 14px; overflow: hidden; margin-right: 15px; flex-shrink: 0; }
+        .track-img img { width: 100%; height: 100%; object-fit: cover; }
 
         .track-info { flex: 1; overflow: hidden; }
-        .track-info b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
-        .track-info span { font-size: 11px; color: #888; }
+        .track-info b { font-size: 15px; display: block; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-info span { font-size: 11px; color: #aaa; font-weight: 700; text-transform: uppercase; }
         
-        .btn-add-quick { font-size: 22px; color: var(--accent); padding: 5px; cursor: pointer; }
+        .btn-add { font-size: 24px; color: var(--accent); margin-left: 10px; padding: 5px; }
 
-        /* PLAYER E NAV */
+        /* --- PLAYER FIXO --- */
         #player { 
-            position: fixed; bottom: 95px; left: 12px; right: 12px; 
-            background: rgba(20, 10, 45, 0.98); border: 1.5px solid var(--accent);
-            padding: 12px; border-radius: 25px; display: none; align-items: center; gap: 12px; z-index: 5000;
+            position: fixed; bottom: 100px; left: 15px; right: 15px; 
+            background: rgba(15, 5, 35, 0.95); border: 1.5px solid var(--accent);
+            padding: 15px; border-radius: 30px; display: none; align-items: center; 
+            gap: 15px; z-index: 5000; backdrop-filter: blur(25px);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
-        .p-img-box { width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid var(--accent); overflow: hidden; flex-shrink: 0; }
+        .p-img-box { width: 55px; height: 55px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; flex-shrink: 0; }
         .p-img-box img { width: 100%; height: 100%; object-fit: cover; }
         
-        .spinning { animation: rotate 5s linear infinite; }
+        .spinning { animation: rotate 6s linear infinite; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
+        /* --- NAVEGAÇÃO --- */
         .bottom-nav { 
-            position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(25px); display: flex; justify-content: space-around;
-            padding: 12px 0 30px; border-top: 1px solid var(--glass-border); z-index: 4000;
+            position: fixed; bottom: 0; width: 100%; background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(30px); display: flex; justify-content: space-around;
+            padding: 15px 0 35px; border-top: 1px solid var(--glass-border); z-index: 4000;
         }
-        .nav-item { color: #555; font-size: 22px; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .nav-item { color: #666; font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
-        .nav-item span { font-size: 10px; font-weight: 800; }
+        .nav-item span { font-size: 10px; font-weight: 900; text-transform: uppercase; }
 
-        /* MODAIS */
+        /* --- MODAIS --- */
         .modal { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(20px);
-            z-index: 6000; display: none; flex-direction: column; padding: 25px;
+            background: rgba(0,0,0,0.98); z-index: 9999; display: none; 
+            flex-direction: column; padding: 30px 20px;
+        }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .modal-header h2 { font-weight: 900; letter-spacing: 1px; }
+
+        .pl-item { 
+            background: var(--glass); padding: 20px; border-radius: 20px; 
+            margin-bottom: 15px; border: 1px solid var(--glass-border); 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .btn-create { 
+            background: var(--accent); color: white; width: 100%; padding: 20px; 
+            border: none; border-radius: 20px; font-weight: 900; font-size: 16px; margin-top: auto;
         }
     </style>
 </head>
 <body>
 
-    <div id="add-to-pl-modal" class="modal">
-        <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;"><h3>Salvar em...</h3><i class="fa fa-times" onclick="fecharModalAdd()"></i></div>
-        <div id="pl-options-list" style="overflow-y: auto; flex:1;"></div>
+    <div id="add-modal" class="modal">
+        <div class="modal-header"><h2>Salvar em...</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('add-modal')"></i></div>
+        <div id="pl-choices" style="overflow-y:auto; flex:1;"></div>
     </div>
 
-    <div id="playlists-modal" class="modal">
-        <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;"><h3>Minha Biblioteca</h3> <i class="fa fa-times" onclick="fecharPlaylists()"></i></div>
-        <div id="library-content" style="overflow-y: auto; flex:1;"></div>
+    <div id="lib-modal" class="modal">
+        <div class="modal-header"><h2>Minhas Listas</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('lib-modal')"></i></div>
+        <div id="lib-list" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="create-modal" class="modal">
-        <div class="modal-header" style="display:flex; justify-content:space-between; margin-bottom:20px;"><h3>Nova Playlist</h3> <i class="fa fa-times" onclick="fecharCriador()"></i></div>
-        <input type="text" id="new-pl-name" style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:16px; border-radius:15px; color:white; margin-bottom:15px; outline:none;" placeholder="Nome da pasta...">
-        <div id="create-selection-list" style="flex:1; overflow-y: auto;"></div>
-        <button onclick="salvarNovaPlaylist()" style="background:var(--accent); color:white; padding:18px; border-radius:18px; border:none; font-weight:900; margin-top:15px;">CRIAR PLAYLIST</button>
+        <div class="modal-header"><h2>Nova Playlist</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('create-modal')"></i></div>
+        <input type="text" id="pl-name-input" placeholder="Nome da Playlist..." style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:20px; border-radius:20px; color:white; font-size:18px; outline:none; margin-bottom:20px;">
+        <div id="selection-list" style="flex:1; overflow-y:auto;"></div>
+        <button class="btn-create" onclick="confirmarCriacao()">CRIAR AGORA</button>
     </div>
 
     <div id="main-content">
@@ -131,77 +157,82 @@
 
         <div class="search-box">
             <i class="fa fa-search"></i>
-            <input type="text" id="search-input" placeholder="O que vamos ouvir?" oninput="filtrarMusicas()">
+            <input type="text" id="search-input" placeholder="Buscar no v8.0 Ultra..." oninput="filtrar()">
         </div>
 
-        <div class="section-title"><i class="fa fa-bolt"></i> Mais Tocadas</div>
-        <div id="top-list" style="display:flex; overflow-x:auto; padding: 0 15px 15px; gap: 15px; scrollbar-width: none;"></div>
+        <div class="section-title"><i class="fa fa-fire"></i> Em Alta (Rádio)</div>
+        <div id="top-list"></div>
 
-        <div class="section-title"><i class="fa fa-compact-disc"></i> Biblioteca Geral</div>
+        <div class="section-title"><i class="fa fa-list"></i> Todas as Músicas</div>
         <div id="full-list"></div>
     </div>
 
     <div id="player">
         <div class="p-img-box"><img id="p-img" src=""></div>
         <div class="track-info">
-            <b id="p-title">Música</b>
-            <span style="color:var(--accent);">Zyver v7.0 Full</span>
+            <b id="p-title">Carregando...</b>
+            <span id="p-status">AUTOPLAY: ON</span>
         </div>
-        <i class="fa fa-pause" id="play-btn" onclick="togglePlay()" style="font-size:28px; margin-right:10px;"></i>
+        <div style="display:flex; align-items:center; gap:20px;">
+            <i class="fa fa-step-forward" onclick="proximaMusica()" style="font-size:20px; color:#aaa;"></i>
+            <i class="fa fa-pause" id="play-btn" onclick="togglePlay()" style="font-size:32px; color:white;"></i>
+        </div>
         <audio id="audio-engine"></audio>
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()"><i class="fa fa-home"></i><span>Home</span></div>
-        <div class="nav-item" onclick="abrirCriador()"><i class="fa fa-plus-circle" style="font-size:32px; color:var(--accent);"></i><span>Criar</span></div>
-        <div class="nav-item" onclick="abrirPlaylists()"><i class="fa fa-layer-group"></i><span>Library</span></div>
+        <div class="nav-item active" onclick="location.reload()"><i class="fa fa-house"></i><span>Home</span></div>
+        <div class="nav-item" onclick="abrirModal('create-modal')"><i class="fa fa-circle-plus" style="font-size:35px; color:var(--accent);"></i><span>Criar</span></div>
+        <div class="nav-item" onclick="abrirLibrary()"><i class="fa fa-compact-disc"></i><span>Library</span></div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        let allMusics = [];
-        let myPlaylists = JSON.parse(localStorage.getItem('z_v6_pl')) || [];
+        let allTracks = [];
+        let myPlaylists = JSON.parse(localStorage.getItem('zyver_v8_db')) || [];
+        let currentId = null;
+        let selectedForPL = [];
 
         const audio = document.getElementById('audio-engine');
         const pImg = document.getElementById('p-img');
 
-        async function init() {
+        // SERVICE WORKER PARA PWA
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", (e) => {});'); }
+
+        async function startApp() {
             const snap = await getDocs(collection(db, "musics"));
-            allMusics = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
-            renderAll(allMusics);
-            renderTop();
+            allTracks = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
+            renderizarTudo(allTracks);
+            renderizarTop();
         }
 
-        // --- RENDERIZAÇÃO COM CORREÇÃO DE IMAGEM ---
-        function renderAll(data) {
-            document.getElementById('full-list').innerHTML = data.map(m => `
+        function renderizarTudo(lista) {
+            document.getElementById('full-list').innerHTML = lista.map(m => `
                 <div class="track-card">
-                    <div class="track-img-box" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                        <img src="${m.cover}">
-                    </div>
-                    <div class="track-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                    <div class="track-img" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')"><img src="${m.cover}"></div>
+                    <div class="track-info" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
                         <b>${m.title}</b>
-                        <span>Zyver Original</span>
+                        <span>Zyver Digital</span>
                     </div>
-                    <i class="fa fa-plus-circle btn-add-quick" onclick="abrirModalAdd('${m.id}')"></i>
+                    <i class="fa fa-plus-circle btn-add" onclick="prepararAdd('${m.id}')"></i>
                 </div>
             `).join('');
         }
 
-        function renderTop() {
-            const top = [...allMusics].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
+        function renderizarTop() {
+            const top = [...allTracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
             document.getElementById('top-list').innerHTML = top.map(m => `
-                <div class="top-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="top-img-wrapper"><img src="${m.cover}"></div>
-                    <b style="font-size:12px; display:block; margin-top:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.title}</b>
+                <div class="top-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                    <div class="top-img-box"><img src="${m.cover}"></div>
+                    <b>${m.title}</b>
                 </div>
             `).join('');
         }
 
-        // --- LÓGICA DO PLAYER ---
-        window.play = (id, url, title, img) => {
+        window.tocar = (id, url, title, img) => {
+            currentId = id;
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-title').innerText = title;
             pImg.src = img;
@@ -211,64 +242,91 @@
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
         };
 
+        // LÓGICA DE RÁDIO (AUTOPLAY)
+        audio.onended = () => proximaMusica();
+        window.proximaMusica = () => {
+            const index = Math.floor(Math.random() * allTracks.length);
+            const m = allTracks[index];
+            tocar(m.id, m.url, m.title, m.cover);
+        };
+
         window.togglePlay = () => {
             if(audio.paused) { audio.play(); pImg.parentElement.classList.add('spinning'); document.getElementById('play-btn').className = 'fa fa-pause'; }
             else { audio.pause(); pImg.parentElement.classList.remove('spinning'); document.getElementById('play-btn').className = 'fa fa-play'; }
         };
 
-        // --- FUNÇÕES DE PLAYLIST (MANTIDAS DO V6) ---
-        let trackToAdd = null;
-        window.abrirModalAdd = (id) => {
-            trackToAdd = allMusics.find(m => m.id === id);
-            document.getElementById('add-to-pl-modal').style.display = 'flex';
-            const list = document.getElementById('pl-options-list');
-            if(myPlaylists.length === 0) { list.innerHTML = "<p style='text-align:center; padding:20px;'>Crie uma playlist primeiro!</p>"; return; }
-            list.innerHTML = myPlaylists.map(pl => `<div style="background:var(--glass); padding:18px; border-radius:15px; margin-bottom:10px; text-align:center; font-weight:800;" onclick="adicionarAqui('${pl.id}')">${pl.nome}</div>`).join('');
+        // GESTÃO DE PLAYLISTS
+        let trackTemporaria = null;
+        window.prepararAdd = (id) => {
+            trackTemporaria = allTracks.find(m => m.id === id);
+            abrirModal('add-modal');
+            const area = document.getElementById('pl-choices');
+            if(myPlaylists.length === 0) area.innerHTML = "<p style='text-align:center; color:#666;'>Crie uma playlist primeiro!</p>";
+            else area.innerHTML = myPlaylists.map(p => `<div class="pl-item" onclick="finalizarAdd('${p.id}')"><b>${p.nome}</b> <i class="fa fa-chevron-right"></i></div>`).join('');
         };
 
-        window.adicionarAqui = (plId) => {
-            const idx = myPlaylists.findIndex(p => p.id == plId);
-            if(myPlaylists[idx].musicas.some(m => m.id === trackToAdd.id)) alert("Já está na playlist!");
-            else {
-                myPlaylists[idx].musicas.push(trackToAdd);
-                localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists));
-                alert("Música salva!");
-                document.getElementById('add-to-pl-modal').style.display = 'none';
+        window.finalizarAdd = (plId) => {
+            const i = myPlaylists.findIndex(p => p.id == plId);
+            if(!myPlaylists[i].musicas.some(m => m.id == trackTemporaria.id)) {
+                myPlaylists[i].musicas.push(trackTemporaria);
+                localStorage.setItem('zyver_v8_db', JSON.stringify(myPlaylists));
+                alert("Salvo!");
             }
+            fecharModal('add-modal');
         };
 
-        window.fecharModalAdd = () => document.getElementById('add-to-pl-modal').style.display = 'none';
-        window.abrirPlaylists = () => {
-            document.getElementById('playlists-modal').style.display = 'flex';
-            const area = document.getElementById('library-content');
-            area.innerHTML = myPlaylists.map(pl => `
-                <div style="background:var(--glass); border-radius:20px; padding:15px; margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>${pl.nome}</b> <i class="fa fa-trash" style="color:red;" onclick="deletePL('${pl.id}')"></i></div>
-                    <div style="display:flex; gap:10px; overflow-x:auto;">
-                        ${pl.musicas.map(m => `<div class="track-img-box"><img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')"></div>`).join('')}
+        window.abrirLibrary = () => {
+            abrirModal('lib-modal');
+            const area = document.getElementById('lib-list');
+            if(myPlaylists.length === 0) area.innerHTML = "<p style='text-align:center;'>Vazio...</p>";
+            else area.innerHTML = myPlaylists.map(p => `
+                <div style="background:var(--glass); border-radius:25px; padding:20px; margin-bottom:20px; border:1px solid var(--glass-border);">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:15px;"><b>${p.nome}</b> <i class="fa fa-trash" style="color:var(--danger);" onclick="removerPL('${p.id}')"></i></div>
+                    <div style="display:flex; gap:12px; overflow-x:auto;">
+                        ${p.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:80px; height:80px; border-radius:15px; object-fit:cover;">`).join('')}
                     </div>
                 </div>
             `).join('');
         };
-        window.deletePL = (id) => { if(confirm("Apagar?")) { myPlaylists = myPlaylists.filter(p => p.id != id); localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists)); abrirPlaylists(); } };
-        window.fecharPlaylists = () => document.getElementById('playlists-modal').style.display = 'none';
-        window.abrirCriador = () => { document.getElementById('create-modal').style.display = 'flex'; document.getElementById('create-selection-list').innerHTML = allMusics.map(m => `<div class="track-card" id="sel-${m.id}" onclick="toggleSelect('${m.id}')"><div class="track-img-box"><img src="${m.cover}"></div><b>${m.title}</b></div>`).join(''); };
-        let selecionadas = [];
-        window.toggleSelect = (id) => { const el = document.getElementById(`sel-${id}`); if(selecionadas.includes(id)) { selecionadas = selecionadas.filter(x => x !== id); el.style.border = "1px solid var(--glass-border)"; } else { selecionadas.push(id); el.style.border = "1px solid var(--accent)"; } };
-        window.salvarNovaPlaylist = async () => {
-            const nome = document.getElementById('new-pl-name').value;
-            if(!nome || selecionadas.length === 0) return alert("Preencha!");
-            const data = allMusics.filter(m => selecionadas.includes(m.id));
-            const cloud = await addDoc(collection(db, "playlists"), { nome, musicas: data });
-            myPlaylists.push({id: Date.now(), cloudId: cloud.id, nome, musicas: data});
-            localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists));
-            document.getElementById('create-modal').style.display = 'none';
-            abrirPlaylists();
-        };
-        window.fecharCriador = () => document.getElementById('create-modal').style.display = 'none';
-        window.filtrarMusicas = () => { const val = document.getElementById('search-input').value.toLowerCase(); renderAll(allMusics.filter(m => m.title.toLowerCase().includes(val))); };
 
-        init();
+        window.removerPL = (id) => { if(confirm("Apagar?")) { myPlaylists = myPlaylists.filter(p => p.id != id); localStorage.setItem('zyver_v8_db', JSON.stringify(myPlaylists)); abrirLibrary(); } };
+
+        // MODAIS GENÉRICOS
+        window.abrirModal = (id) => { 
+            document.getElementById(id).style.display = 'flex'; 
+            if(id === 'create-modal') {
+                document.getElementById('selection-list').innerHTML = allTracks.map(m => `
+                    <div class="track-card" id="sel-${m.id}" onclick="toggleSelecao('${m.id}')">
+                        <div class="track-img"><img src="${m.cover}"></div>
+                        <b>${m.title}</b>
+                    </div>
+                `).join('');
+            }
+        };
+        window.fecharModal = (id) => { document.getElementById(id).style.display = 'none'; selectedForPL = []; };
+
+        window.toggleSelecao = (id) => {
+            const el = document.getElementById(`sel-${id}`);
+            if(selectedForPL.includes(id)) { selectedForPL = selectedForPL.filter(x => x !== id); el.style.border = "1px solid var(--glass-border)"; }
+            else { selectedForPL.push(id); el.style.border = "2px solid var(--accent)"; }
+        };
+
+        window.confirmarCriacao = async () => {
+            const nome = document.getElementById('pl-name-input').value;
+            if(!nome || selectedForPL.length === 0) return alert("Dê um nome e escolha músicas!");
+            const tracks = allTracks.filter(m => selectedForPL.includes(m.id));
+            myPlaylists.push({ id: Date.now(), nome, musicas: tracks });
+            localStorage.setItem('zyver_v8_db', JSON.stringify(myPlaylists));
+            fecharModal('create-modal');
+            abrirLibrary();
+        };
+
+        window.filtrar = () => {
+            const v = document.getElementById('search-input').value.toLowerCase();
+            renderizarTudo(allTracks.filter(m => m.title.toLowerCase().includes(v)));
+        };
+
+        startApp();
     </script>
 </body>
 </html>
