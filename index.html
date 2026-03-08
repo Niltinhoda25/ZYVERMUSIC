@@ -6,12 +6,10 @@
     <title>ZyverMusic | Oficial</title>
 
     <script>
-        // Função para carregar o anúncio apenas se não apareceu nos últimos 30 segundos
         function carregarAnuncioSutil() {
             const agora = Date.now();
             const ultimoAnuncio = localStorage.getItem('last_ad_time') || 0;
-            
-            if (agora - ultimoAnuncio > 30000) { // 30 segundos de intervalo
+            if (agora - ultimoAnuncio > 35000) { 
                 (function(s){
                     s.dataset.zone='10697810';
                     s.src='https://nap5k.com/tag.min.js';
@@ -25,7 +23,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --success: #2ecc71; --danger: #e74c3c; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --success: #2ecc71; --danger: #e74c3c; --share: #3498db; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
@@ -40,14 +38,18 @@
 
         .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
 
-        /* CARDS E LISTAS */
+        /* CARDS E RANKING */
         .ranking-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 25px; scrollbar-width: none; }
         .rank-card { min-width: 260px; background: var(--surface); border-radius: 18px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; position: relative; }
         .rank-badge { position: absolute; top: 10px; left: 10px; background: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; border: 2px solid #000; }
         .rank-card img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
 
-        .playlist-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-top: 20px; }
-        .btn-del-pl { color: var(--danger); font-size: 18px; padding: 5px; cursor: pointer; }
+        /* HEADER DA PLAYLIST COM AÇÕES */
+        .playlist-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-top: 25px; }
+        .pl-actions { display: flex; gap: 15px; align-items: center; }
+        .btn-action-icon { font-size: 18px; cursor: pointer; transition: 0.2s; }
+        .btn-action-icon.share { color: var(--share); }
+        .btn-action-icon.delete { color: var(--danger); }
 
         /* MODAL */
         #creator-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
@@ -59,14 +61,14 @@
         .fa-check-circle { margin-left: auto; color: #222; font-size: 20px; }
         .selected .fa-check-circle { color: var(--success); }
 
-        /* PLAYER E DISCO */
+        /* PLAYER E DISCO GIRANDO */
         #player { position: fixed; bottom: 20px; left: 12px; right: 12px; background: rgba(15,15,15,0.98); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 4000; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        .p-img { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); transition: transform 0.3s; object-fit: cover; }
+        .p-img { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; }
         
         @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spinning { animation: rotating 5s linear infinite; }
 
-        .btn-confirm { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-confirm { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -76,9 +78,9 @@
             <i class="fa fa-chevron-left" onclick="fecharCriador()" style="font-size:20px;"></i>
             <h3 style="font-weight:900;">Nova Playlist</h3>
         </div>
-        <input type="text" id="pl-name-field" class="pl-input" placeholder="Dê um nome irado...">
+        <input type="text" id="pl-name-field" class="pl-input" placeholder="Nome da Playlist...">
         <div style="flex:1; overflow-y: auto;" id="selection-list"></div>
-        <button class="btn-confirm" onclick="finalizarPlaylist()">SALVAR E COMPARTILHAR</button>
+        <button class="btn-confirm" onclick="finalizarPlaylist()">CRIAR AGORA</button>
     </div>
 
     <div id="main-content">
@@ -88,9 +90,9 @@
         </header>
 
         <div id="shared-area" style="display:none;">
-            <div class="section-title">✨ Playlist Recebida</div>
+            <div class="section-title">🔗 Playlist Recebida</div>
             <div id="shared-scroll" class="ranking-scroll"></div>
-            <button class="btn-confirm" id="btn-import" style="width:calc(100% - 30px); background:var(--accent);">SALVAR NA MINHA CONTA</button>
+            <button class="btn-confirm" id="btn-import" style="width:calc(100% - 30px); background:var(--accent);">SALVAR NA MINHA LISTA</button>
         </div>
 
         <div class="section-title"><i class="fa fa-fire"></i> Top 10 Hits</div>
@@ -114,7 +116,7 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let musics = [];
         let selectedIds = [];
@@ -125,14 +127,12 @@
         async function startup() {
             const snap = await getDocs(collection(db, "musics"));
             musics = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
-            
             renderRanking();
             renderGeral();
             renderUserPlaylists();
             verificarURL();
         }
 
-        // --- SISTEMA DE COMPARTILHAMENTO E IMPORTAÇÃO ---
         async function verificarURL() {
             const urlId = new URLSearchParams(window.location.search).get('pl');
             if(urlId) {
@@ -145,9 +145,9 @@
                             <img src="${m.cover}"> <b>${m.title}</b>
                         </div>`).join('');
                     document.getElementById('btn-import').onclick = () => {
-                        myPlaylists.push({id: Date.now(), nome: data.nome, musicas: data.musicas});
+                        myPlaylists.push({id: Date.now(), cloudId: urlId, nome: data.nome, musicas: data.musicas});
                         localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
-                        alert("Playlist importada com sucesso!");
+                        alert("Playlist salva!");
                         renderUserPlaylists();
                     };
                 }
@@ -156,35 +156,40 @@
 
         window.finalizarPlaylist = async () => {
             const nome = document.getElementById('pl-name-field').value;
-            if(!nome || selectedIds.length === 0) return alert("Dê um nome e escolha as músicas!");
-            
+            if(!nome || selectedIds.length === 0) return alert("Escolha as músicas!");
             const musicasData = musics.filter(m => selectedIds.includes(m.id));
             const cloudRef = await addDoc(collection(db, "playlists"), { nome, musicas: musicasData });
             
-            const shareLink = window.location.origin + window.location.pathname + "?pl=" + cloudRef.id;
-            navigator.share({ title: 'ZyverMusic', text: 'Minha Playlist: ' + nome, url: shareLink });
-            
-            myPlaylists.push({id: Date.now(), nome, musicas: musicasData});
+            myPlaylists.push({id: Date.now(), cloudId: cloudRef.id, nome, musicas: musicasData});
             localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
             fecharCriador();
             renderUserPlaylists();
+            alert("Playlist criada! Use o botão azul para compartilhar.");
         };
 
-        // --- BOTÃO EXCLUIR PLAYLIST ---
+        // --- COMPARTILHAR PLAYLIST EXISTENTE ---
+        window.compartilharExistente = (cloudId, nome) => {
+            const shareLink = window.location.origin + window.location.pathname + "?pl=" + cloudId;
+            if (navigator.share) {
+                navigator.share({ title: 'ZyverMusic', text: 'Curte minha playlist: ' + nome, url: shareLink });
+            } else {
+                alert("Link de compartilhamento: " + shareLink);
+            }
+        };
+
         window.excluirPL = (id) => {
-            if(confirm("Deseja mesmo excluir esta playlist?")) {
+            if(confirm("Excluir esta playlist?")) {
                 myPlaylists = myPlaylists.filter(p => p.id !== id);
                 localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
                 renderUserPlaylists();
             }
         };
 
-        // --- PLAYER E DISCO ---
         window.tocar = (id, url, title, cover) => {
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-name').innerText = title;
             pImg.src = cover;
-            pImg.classList.add('spinning'); // DISCO GIRANDO
+            pImg.classList.add('spinning');
             audio.src = url;
             audio.play();
             updateDoc(doc(db, "musics", id), { plays: increment(1) }).catch(()=>{});
@@ -195,7 +200,6 @@
             else { audio.pause(); pImg.classList.remove('spinning'); document.getElementById('play-btn').className = 'fa fa-play'; }
         };
 
-        // --- RENDERIZAÇÃO ---
         window.abrirCriador = () => {
             document.getElementById('creator-modal').style.display = 'flex';
             document.getElementById('selection-list').innerHTML = musics.map(m => `
@@ -217,7 +221,10 @@
             box.innerHTML = myPlaylists.map(pl => `
                 <div class="playlist-header">
                     <h3 style="font-weight:900;">${pl.nome}</h3>
-                    <i class="fa fa-trash-can btn-del-pl" onclick="excluirPL(${pl.id})"></i>
+                    <div class="pl-actions">
+                        <i class="fa fa-paper-plane btn-action-icon share" onclick="compartilharExistente('${pl.cloudId}', '${pl.nome}')"></i>
+                        <i class="fa fa-trash-can btn-action-icon delete" onclick="excluirPL(${pl.id})"></i>
+                    </div>
                 </div>
                 <div class="ranking-scroll">${pl.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:110px; height:110px; border-radius:18px; margin-right:10px; border:1px solid #222;">`).join('')}</div>
             `).join('');
