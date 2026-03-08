@@ -3,157 +3,257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Oficial</title>
+    <title>ZyverMusic | Premium</title>
+
+    <script>(function(s){s.dataset.zone='10697810',s.src='https://nap5k.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --danger: #ff4444; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --success: #2ecc71; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 150px; scrollbar-width: none; }
+        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 180px; scrollbar-width: none; }
         #main-content::-webkit-scrollbar { display: none; }
 
         header { padding: 25px 15px; background: linear-gradient(to bottom, #151515, var(--bg)); display: flex; align-items: center; justify-content: space-between; }
         .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
 
-        .top-buttons { display: flex; gap: 10px; padding: 0 15px 15px; }
-        .btn-header { flex: 1; padding: 15px; border-radius: 20px; background: #1a1a1a; border: 1px solid #333; font-weight: 800; font-size: 12px; text-transform: uppercase; cursor: pointer; text-align: center; }
-        .btn-header.active { background: var(--accent); border: none; }
+        .top-nav { display: flex; gap: 10px; padding: 0 15px 15px; }
+        .nav-btn { flex: 1; padding: 15px; border-radius: 20px; background: #1a1a1a; border: 1px solid #333; color: white; font-weight: 800; font-size: 11px; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .nav-btn.active { background: var(--accent); border: none; }
 
         .section-title { padding: 15px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
-        
-        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 25px; scrollbar-width: none; }
-        .rank-card { min-width: 280px; background: var(--surface); border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
-        .rank-card img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
-        
-        .lista-geral { display: flex; flex-direction: column; padding: 0 12px; }
-        .item-card { display: flex; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
-        .item-card img { width: 55px; height: 55px; border-radius: 10px; margin-right: 15px; object-fit: cover; }
+
+        /* LISTA DE MÚSICAS PARA SELEÇÃO */
+        .select-list { display: flex; flex-direction: column; padding: 0 15px; gap: 8px; margin-top: 10px; }
+        .select-item { display: flex; align-items: center; padding: 12px; background: #181818; border-radius: 12px; border: 1px solid #333; transition: 0.3s; }
+        .select-item.selected { border-color: var(--success); background: rgba(46, 204, 113, 0.1); }
+        .select-item img { width: 45px; height: 45px; border-radius: 8px; margin-right: 12px; }
+        .check-icon { margin-left: auto; color: #333; font-size: 20px; }
+        .selected .check-icon { color: var(--success); }
+
+        /* MODAL DE CRIAÇÃO */
+        #playlist-creator { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 7000; display: none; flex-direction: column; }
+        .creator-header { padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; }
+        .playlist-input { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 12px; color: white; width: 100%; margin: 15px; font-size: 16px; outline: none; }
+        .btn-create { background: var(--accent); color: white; padding: 15px; border-radius: 12px; border: none; font-weight: bold; margin: 15px; }
 
         /* MODO TIKTOK CLIPES */
         #tiktok-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; overflow-y: scroll; snap-type: y mandatory; }
         .clip-section { width: 100%; height: 100%; position: relative; snap-align: start; flex-shrink: 0; }
         video { width: 100%; height: 100%; object-fit: cover; }
-        .clip-ui { position: absolute; bottom: 40px; left: 20px; right: 80px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
-        .clip-btns { position: absolute; bottom: 60px; right: 15px; display: flex; flex-direction: column; gap: 20px; }
-        .c-btn { width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.4); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center; font-size: 20px; }
-        .close-clips { position: fixed; top: 30px; left: 20px; z-index: 6000; font-size: 24px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; cursor: pointer; }
+        .close-clips { position: fixed; top: 30px; left: 20px; z-index: 6000; font-size: 24px; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 50%; }
+        
+        /* INTERFACE DOS CLIPES */
+        .clip-actions { position: absolute; right: 15px; bottom: 120px; display: flex; flex-direction: column; gap: 25px; align-items: center; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; font-size: 24px; text-shadow: 0 2px 5px #000; }
+        .action-btn span { font-size: 12px; font-weight: bold; }
 
-        #player { position: fixed; bottom: 15px; left: 12px; right: 12px; background: rgba(20,20,20,0.95); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 3000; border: 1px solid #333; }
-        .p-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; }
+        /* COMENTÁRIOS CLIPES */
+        #comment-panel { position: fixed; bottom: 0; left: 0; width: 100%; height: 60%; background: #121212; border-radius: 20px 20px 0 0; z-index: 8000; display: none; flex-direction: column; padding: 20px; }
+        .comment-list { flex: 1; overflow-y: auto; margin-bottom: 15px; }
+        .comment-item { margin-bottom: 12px; border-bottom: 1px solid #222; padding-bottom: 8px; }
+        .comment-item b { color: var(--accent); display: block; font-size: 12px; }
+
+        /* PLAYER */
+        #player { position: fixed; bottom: 20px; left: 12px; right: 12px; background: rgba(20,20,20,0.98); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 4000; border: 1px solid #333; }
+        .p-img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
     </style>
 </head>
 <body>
+
+    <div id="playlist-creator">
+        <div class="creator-header">
+            <i class="fa fa-arrow-left" onclick="fecharCriador()"></i>
+            <h3>Nova Playlist</h3>
+        </div>
+        <input type="text" id="pl-name" class="playlist-input" placeholder="Dê um nome para sua playlist...">
+        <div class="section-title">Selecione as Músicas</div>
+        <div id="selection-area" class="select-list" style="flex:1; overflow-y: auto;"></div>
+        <button class="btn-create" onclick="salvarPlaylist()">CRIAR AGORA</button>
+    </div>
 
     <div id="tiktok-container">
         <i class="fa fa-arrow-left close-clips" onclick="fecharClipes()"></i>
         <div id="clips-feed"></div>
     </div>
 
+    <div id="comment-panel">
+        <div style="display:flex; justify-content:space-between; margin-bottom: 15px;">
+            <h4>Comentários</h4>
+            <i class="fa fa-times" onclick="fecharComentarios()"></i>
+        </div>
+        <div id="list-comments" class="comment-list"></div>
+        <div style="display:flex; gap: 10px;">
+            <input type="text" id="com-input" class="playlist-input" placeholder="Escreva algo..." style="margin:0;">
+            <button class="btn-create" style="margin:0;" onclick="postarComentario()">ENVIAR</button>
+        </div>
+    </div>
+
     <div id="main-content">
         <header><div class="logo">ZYVER<span>MUSIC</span></div></header>
-
-        <div class="top-buttons">
-            <div class="btn-header" onclick="abrirMinhaPlaylist()"><i class="fa fa-heart"></i> Playlist</div>
-            <div class="btn-header active" onclick="abrirClipes()"><i class="fa fa-video"></i> Clipes</div>
+        <div class="top-nav">
+            <div class="nav-btn" onclick="abrirCriador()"><i class="fa fa-plus"></i> Criar Playlist</div>
+            <div class="nav-btn active" onclick="abrirClipes()"><i class="fa fa-video"></i> Clipes</div>
         </div>
 
-        <div class="section-title">🔥 Mais Tocadas</div>
-        <div id="top-10" class="ranking-wrapper"></div>
-        
-        <div class="section-title" id="lib-name" style="color:white">Biblioteca</div>
-        <div id="grid-geral" class="lista-geral"></div>
+        <div id="home-view">
+            <div class="section-title">Suas Playlists</div>
+            <div id="my-playlists" class="select-list"></div>
+            
+            <div class="section-title">Músicas Recomendadas</div>
+            <div id="grid-geral" class="select-list"></div>
+        </div>
     </div>
 
     <div id="player">
         <img id="p-img" class="p-img" src="">
-        <div style="flex:1; overflow:hidden;">
-            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
-        </div>
-        <div onclick="togglePlay()" style="cursor:pointer; padding: 10px;">
-            <i class="fa fa-pause" id="play-icon" style="font-size:28px;"></i>
-        </div>
+        <div style="flex:1; overflow:hidden;"><h5 id="p-name">Música</h5></div>
+        <i class="fa fa-pause" id="play-icon" onclick="togglePlay()" style="font-size:24px;"></i>
         <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, query, where, onSnapshot, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let allMusics = [];
         let allClips = [];
-        let userPlaylist = JSON.parse(localStorage.getItem('zyver_playlist')) || [];
-
+        let selectedSongs = [];
+        let currentClipId = null;
         const audio = document.getElementById('audio-engine');
-        const pImg = document.getElementById('p-img');
 
         async function init() {
             const [mSnap, cSnap] = await Promise.all([getDocs(collection(db, "musics")), getDocs(collection(db, "clips"))]);
-            allMusics = mSnap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
+            allMusics = mSnap.docs.map(d => ({id: d.id, ...d.data()}));
             allClips = cSnap.docs.map(d => ({id: d.id, ...d.data()}));
-
-            renderTop(allMusics);
-            renderList(allMusics);
+            
+            renderHome();
+            ouvirPlaylists();
         }
 
+        // --- SISTEMA DE PLAYLIST CUSTOM ---
+        window.abrirCriador = () => {
+            document.getElementById('playlist-creator').style.display = 'flex';
+            const area = document.getElementById('selection-area');
+            area.innerHTML = allMusics.map(m => `
+                <div class="select-item" id="sel-${m.id}" onclick="toggleSelect('${m.id}')">
+                    <img src="${m.cover}">
+                    <b>${m.title}</b>
+                    <i class="fa fa-check-circle check-icon"></i>
+                </div>`).join('');
+        };
+
+        window.toggleSelect = (id) => {
+            const el = document.getElementById(`sel-${id}`);
+            if(selectedSongs.includes(id)) {
+                selectedSongs = selectedSongs.filter(s => s !== id);
+                el.classList.remove('selected');
+            } else {
+                selectedSongs.push(id);
+                el.classList.add('selected');
+            }
+        };
+
+        window.salvarPlaylist = async () => {
+            const name = document.getElementById('pl-name').value;
+            if(!name || selectedSongs.length === 0) return alert("Dê um nome e escolha músicas!");
+            
+            const songsData = allMusics.filter(m => selectedSongs.includes(m.id));
+            await addDoc(collection(db, "playlists"), {
+                name: name,
+                songs: songsData,
+                creator: "Usuario",
+                created: Date.now()
+            });
+            alert("Playlist criada com sucesso!");
+            fecharCriador();
+        };
+
+        window.fecharCriador = () => {
+            document.getElementById('playlist-creator').style.display = 'none';
+            selectedSongs = [];
+        };
+
+        function ouvirPlaylists() {
+            onSnapshot(collection(db, "playlists"), (snap) => {
+                const area = document.getElementById('my-playlists');
+                area.innerHTML = snap.docs.map(d => {
+                    const pl = d.data();
+                    return `
+                        <div class="select-item" style="border-color:#444">
+                            <div style="flex:1" onclick="tocarPlaylist('${d.id}')">
+                                <b>${pl.name}</b>
+                                <small style="display:block; color:#777">${pl.songs.length} músicas</small>
+                            </div>
+                            <i class="fa fa-share" onclick="compartilharPL('${pl.name}', '${d.id}')"></i>
+                        </div>`;
+                }).join('');
+            });
+        }
+
+        window.tocarPlaylist = (id) => {
+            // Lógica para tocar a primeira música da playlist e entrar em fila
+            alert("Iniciando sua Playlist!");
+        };
+
+        window.compartilharPL = (nome, id) => {
+            const url = window.location.href + "?pl=" + id;
+            navigator.share({title: 'Ouça minha playlist: ' + nome, url: url});
+        };
+
+        // --- SISTEMA DE CLIPES + COMENTÁRIOS ---
         window.abrirClipes = () => {
             const feed = document.getElementById('clips-feed');
             feed.innerHTML = allClips.map(c => `
-                <div class="clip-section">
+                <div class="clip-section" id="clip-sec-${c.id}">
                     <video src="${c.url}" loop playsinline onclick="this.paused ? this.play() : this.pause()"></video>
-                    <div class="clip-ui"><h3>${c.title}</h3></div>
-                    <div class="clip-btns">
-                        <div class="c-btn" onclick="this.style.color='#ff4444'"><i class="fa fa-heart"></i></div>
-                        <div class="c-btn" onclick="compartilhar('Assista esse clipe na Zyver!')"><i class="fa fa-share"></i></div>
+                    <div class="clip-actions">
+                        <div class="action-btn" onclick="curtir('${c.id}')"><i class="fa fa-heart"></i><span>1.2k</span></div>
+                        <div class="action-btn" onclick="abrirComentarios('${c.id}')"><i class="fa fa-comment"></i><span>Ver</span></div>
+                        <div class="action-btn" onclick="compartilharPL('Clipe Top', '${c.id}')"><i class="fa fa-share"></i><span>Mandar</span></div>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
             document.getElementById('tiktok-container').style.display = 'block';
             if(!audio.paused) audio.pause();
-            setTimeout(() => { document.querySelector('video')?.play(); }, 300);
         };
 
-        window.fecharClipes = () => {
-            document.getElementById('tiktok-container').style.display = 'none';
-            document.querySelectorAll('video').forEach(v => v.pause());
+        window.abrirComentarios = (id) => {
+            currentClipId = id;
+            document.getElementById('comment-panel').style.display = 'flex';
+            const q = query(collection(db, "comments"), where("clipId", "==", id), orderBy("time", "desc"));
+            onSnapshot(q, (snap) => {
+                document.getElementById('list-comments').innerHTML = snap.docs.map(d => `
+                    <div class="comment-item">
+                        <b>@anônimo</b>
+                        <p>${d.data().text}</p>
+                    </div>`).join('');
+            });
         };
 
-        window.toggleFav = (id) => {
-            const music = allMusics.find(m => m.id === id);
-            const index = userPlaylist.findIndex(p => p.id === id);
-            if(index > -1) {
-                userPlaylist.splice(index, 1);
-            } else {
-                userPlaylist.push(music);
-            }
-            localStorage.setItem('zyver_playlist', JSON.stringify(userPlaylist));
-            alert("Favoritos atualizados!");
+        window.postarComentario = async () => {
+            const txt = document.getElementById('com-input').value;
+            if(!txt) return;
+            await addDoc(collection(db, "comments"), {
+                clipId: currentClipId,
+                text: txt,
+                time: Date.now()
+            });
+            document.getElementById('com-input').value = "";
         };
 
-        window.abrirMinhaPlaylist = () => {
-            if(userPlaylist.length === 0) return alert("Sua playlist está vazia!");
-            document.getElementById('lib-name').innerText = "Favoritos ❤️";
-            renderList(userPlaylist);
-        };
+        window.fecharComentarios = () => document.getElementById('comment-panel').style.display = 'none';
+        window.fecharClipes = () => document.getElementById('tiktok-container').style.display = 'none';
 
-        window.compartilhar = (txt) => {
-            if (navigator.share) {
-                navigator.share({ title: 'ZyverMusic', text: txt, url: window.location.href });
-            } else {
-                alert("Link pronto para compartilhar!");
-            }
-        };
-
-        window.play = async (id, url, n, i) => {
+        window.play = (url, n, i) => {
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-name').innerText = n;
-            pImg.src = i;
+            document.getElementById('p-img').src = i;
             audio.src = url;
             audio.play();
-            updateDoc(doc(db, "musics", id), { plays: increment(1) }).catch(e => {});
         };
 
         window.togglePlay = () => {
@@ -161,24 +261,11 @@
             else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
         };
 
-        function renderTop(data) {
-            const top = [...data].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
-            document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
+        function renderHome() {
+            document.getElementById('grid-geral').innerHTML = allMusics.map(m => `
+                <div class="select-item" onclick="play('${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}">
-                    <div style="overflow:hidden"><h3 style="font-size:14px;">#${i+1} ${m.title}</h3></div>
-                </div>`).join('');
-        }
-
-        function renderList(data) {
-            document.getElementById('grid-geral').innerHTML = data.map(m => `
-                <div class="item-card">
-                    <img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div style="flex:1" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                        <h4 style="font-size:15px;">${m.title}</h4>
-                    </div>
-                    <i class="fa fa-heart" style="margin-right:15px; color:#444" onclick="toggleFav('${m.id}'); this.style.color='#9d4edd'"></i>
-                    <i class="fa fa-share" onclick="compartilhar('Ouça: ${m.title}')"></i>
+                    <b>${m.title}</b>
                 </div>`).join('');
         }
 
