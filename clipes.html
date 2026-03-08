@@ -8,8 +8,9 @@
     <style>
         :root { --accent: #ff7a00; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: #000; color: white; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; overflow: hidden; }
+        body { background: #000; color: white; font-family: sans-serif; overflow: hidden; }
 
+        /* Container TikTok */
         .clips-container {
             height: 100vh;
             overflow-y: scroll;
@@ -24,56 +25,51 @@
             snap-align: start;
             position: relative;
             background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
         }
 
         video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            pointer-events: none; /* Deixa o clique passar para o card */
         }
 
-        .ui-overlay {
+        /* BOTÕES LATERAIS (CURTIR E COMENTAR) */
+        .side-actions {
             position: absolute;
-            inset: 0;
+            right: 15px;
+            bottom: 100px;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
-            padding: 40px 20px;
-            background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 40%);
-            z-index: 10;
-            pointer-events: none;
+            gap: 20px;
+            z-index: 20;
+            align-items: center;
         }
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+        .action-btn i { font-size: 32px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .action-btn span { font-size: 12px; font-weight: 900; }
+        .fa-heart.active { color: #ff2d55; }
 
-        .clip-info h2 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-        .clip-info p { color: var(--accent); font-weight: 700; font-size: 14px; }
+        /* INFO DO CLIPE */
+        .clip-info {
+            position: absolute;
+            bottom: 30px;
+            left: 15px;
+            z-index: 20;
+            max-width: 70%;
+        }
+        .clip-info h2 { font-size: 16px; font-weight: 800; margin-bottom: 5px; }
+        .clip-info p { color: var(--accent); font-weight: 700; font-size: 13px; }
 
         .btn-back {
             position: absolute;
             top: 40px; left: 20px;
-            z-index: 100;
-            color: white; font-size: 24px;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Aviso de "Toque para Som" */
-        .mute-notice {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.6);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: bold;
-            display: flex; align-items: center; gap: 8px;
-            z-index: 20;
-            pointer-events: none;
-            opacity: 1; transition: 0.5s;
+            z-index: 100; color: white; font-size: 24px;
         }
     </style>
 </head>
@@ -85,7 +81,7 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         async function init() {
             const snap = await getDocs(collection(db, "clips"));
@@ -94,78 +90,62 @@
             feed.innerHTML = snap.docs.map((d, index) => {
                 const c = d.data();
                 return `
-                    <div class="clip-card" onclick="handleInteraction(this)">
+                    <div class="clip-card" id="card-${d.id}">
                         <video 
-                            id="vid-${index}"
                             src="${c.url}" 
                             loop 
-                            muted
                             playsinline 
                             webkit-playsinline
-                            preload="metadata">
+                            onclick="this.paused ? this.play() : this.pause()">
                         </video>
-                        <div class="mute-notice" id="mute-${index}">
-                            <i class="fa fa-volume-xmark"></i> TOQUE PARA O SOM
-                        </div>
-                        <div class="ui-overlay">
-                            <div class="clip-info">
-                                <p>@ZyverMusic</p>
-                                <h2>${c.title}</h2>
+                        
+                        <div class="side-actions">
+                            <div class="action-btn" onclick="curtir('${d.id}')">
+                                <i class="fa fa-heart" id="heart-${d.id}"></i>
+                                <span>${c.likes || 0}</span>
                             </div>
+                            <div class="action-btn" onclick="alert('Comentários em breve!')">
+                                <i class="fa fa-comment-dots"></i>
+                                <span>0</span>
+                            </div>
+                        </div>
+
+                        <div class="clip-info">
+                            <p>@ZyverMusic</p>
+                            <h2>${c.title}</h2>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            // Tenta rodar o primeiro mudo (iPhone aceita autoplay mudo)
-            setTimeout(() => {
-                const first = document.querySelector('video');
-                if(first) first.play();
-            }, 500);
+            // Inicia o primeiro vídeo
+            startVideos();
         }
 
-        // FUNÇÃO PARA INTERAÇÃO (IPHONE LIBERA SOM AQUI)
-        window.handleInteraction = (card) => {
-            const v = card.querySelector('video');
-            const notice = card.querySelector('.mute-notice');
-
-            if (v.muted) {
-                v.muted = false; // Libera o som
-                notice.style.opacity = '0';
-                v.play();
-            } else {
-                if (v.paused) {
-                    v.play();
-                    notice.style.opacity = '0';
-                } else {
-                    v.pause();
-                    notice.style.opacity = '1';
-                    notice.innerHTML = '<i class="fa fa-play"></i> PAUSADO';
-                }
-            }
+        window.curtir = async (id) => {
+            const heart = document.getElementById(`heart-${id}`);
+            heart.classList.toggle('active');
+            // Opcional: Atualizar no Firebase se quiser salvar os likes
+            // await updateDoc(doc(db, "clips", id), { likes: increment(1) });
         };
 
-        // Scroll Detector para Play/Pause automático
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                const v = entry.target.querySelector('video');
-                if (entry.isIntersecting) {
-                    v.play().catch(() => {});
-                } else {
-                    v.pause();
-                    v.muted = true; // Volta a ser mudo ao sair da tela
-                    const notice = entry.target.querySelector('.mute-notice');
-                    if(notice) {
-                        notice.style.opacity = '1';
-                        notice.innerHTML = '<i class="fa fa-volume-xmark"></i> TOQUE PARA O SOM';
+        function startVideos() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const v = entry.target.querySelector('video');
+                    if (entry.isIntersecting) {
+                        v.play().catch(() => {
+                            // Se o iPhone bloquear, ele toca no primeiro clique na tela
+                            document.addEventListener('click', () => v.play(), {once: true});
+                        });
+                    } else {
+                        v.pause();
                     }
-                }
-            });
-        }, { threshold: 0.6 });
+                });
+            }, { threshold: 0.7 });
 
-        setTimeout(() => {
             document.querySelectorAll('.clip-card').forEach(c => observer.observe(c));
-        }, 1500);
+        }
 
         init();
     </script>
