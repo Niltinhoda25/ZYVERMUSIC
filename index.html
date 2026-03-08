@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Oficial</title>
+    <title>ZyverMusic | Full Library</title>
 
     <script src="https://quge5.com/88/tag.min.js" data-zone="217542" async data-cfasync="false"></script>
 
@@ -11,46 +11,38 @@
     <style>
         :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 130px; overflow-x: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 140px; overflow-x: hidden; }
 
-        /* HEADER */
-        header { padding: 20px 15px; background: linear-gradient(to bottom, #151515, var(--bg)); }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
+        header { padding: 25px 15px; background: linear-gradient(to bottom, #151515, var(--bg)); }
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
 
-        /* LANÇAMENTO */
-        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 18px; padding: 20px; display: none; position: relative; box-shadow: 0 10px 20px rgba(157, 78, 221, 0.2); }
-        .launch-tag { position: absolute; top: 12px; right: 12px; background: #fff; color: #000; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 900; }
-
-        /* BUSCA */
-        .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 15px; border: 1px solid #222; }
+        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 18px; padding: 25px; display: none; position: relative; }
+        
+        .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 14px 20px; border-radius: 30px; margin: 15px; border: 1px solid #252525; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
 
-        /* LISTAS */
-        .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; letter-spacing: 1px; }
-        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
-        .rank-card { min-width: 260px; background: var(--surface); border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
+        .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
+        
+        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 25px; scrollbar-width: none; }
+        .rank-card { min-width: 280px; background: var(--surface); border-radius: 15px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
         .rank-n { font-size: 38px; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--accent); opacity: 0.4; }
-        .rank-card img { width: 55px; height: 55px; border-radius: 10px; object-fit: cover; }
+        .rank-card img { width: 60px; height: 60px; border-radius: 10px; object-fit: cover; }
         
-        .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 6px; background: rgba(255,255,255,0.03); border: 1px solid transparent; transition: 0.3s; }
-        .m-card:active { background: rgba(157, 78, 221, 0.1); border-color: var(--accent); }
-        .m-card img { width: 52px; height: 52px; border-radius: 8px; margin-right: 15px; object-fit: cover; }
-
-        /* PLAYER FLUTUANTE DINÂMICO */
-        #player { position: fixed; bottom: 15px; left: 12px; right: 12px; background: rgba(25,25,25,0.98); backdrop-filter: blur(15px); padding: 12px; border-radius: 22px; display: none; align-items: center; gap: 15px; z-index: 2000; border: 1px solid #444; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .lista-geral { display: flex; flex-direction: column; padding: 0 12px; }
+        .item-card { display: flex; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+        .item-card img { width: 55px; height: 55px; border-radius: 10px; margin-right: 15px; object-fit: cover; }
         
-        .disc-box { position: relative; width: 52px; height: 52px; flex-shrink: 0; }
-        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #555; }
-        .disc-hole { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 10px; height: 10px; background: #191919; border-radius: 50%; border: 1px solid #333; }
+        /* TAGS DE IDENTIFICAÇÃO */
+        .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 8px; text-transform: uppercase; }
+        .tag-clip { background: #ff0055; color: white; }
+        .tag-playlist { background: #00d4ff; color: #000; }
 
-        /* ANIMAÇÃO DO DISCO */
-        @keyframes rotateDisc { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .playing { animation: rotateDisc 5s linear infinite; }
+        #player { position: fixed; bottom: 15px; left: 12px; right: 12px; background: rgba(20,20,20,0.95); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 3000; border: 1px solid #333; }
+        .p-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #444; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .playing { animation: rotate 6s linear infinite; }
         .paused { animation-play-state: paused; }
-
-        #play-icon { font-size: 26px; color: white; width: 30px; text-align: center; }
     </style>
 </head>
 <body>
@@ -58,89 +50,92 @@
     <header><div class="logo">ZYVER<span>MUSIC</span></div></header>
 
     <div id="launch-area" class="launch-banner">
-        <div class="launch-tag">NOVIDADE</div>
-        <h3 id="l-title">...</h3>
-        <p style="font-size: 12px; opacity: 0.8; margin-bottom: 12px;">Dê o play no hit do momento!</p>
-        <button onclick="triggerLaunch()" style="background: white; color: black; border: none; padding: 10px 22px; border-radius: 12px; font-weight: 800; cursor: pointer;">OUVIR AGORA</button>
+        <h3 id="l-title">Lançamento</h3>
+        <button onclick="triggerLaunch()" style="background: white; color: black; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 900; margin-top:15px;">OUVIR AGORA</button>
     </div>
 
     <div class="search-box">
-        <i class="fa fa-search" style="color: #666;"></i>
-        <input type="text" id="busca" placeholder="O que você quer ouvir hoje?" onkeyup="filtrar()">
+        <i class="fa fa-search" style="color:#555"></i>
+        <input type="text" id="busca" placeholder="Músicas, Clipes ou Playlists..." onkeyup="filtrar()">
     </div>
 
     <div class="section-title">🔥 Mais Tocadas</div>
     <div id="top-10" class="ranking-wrapper"></div>
     
-    <div class="section-title" style="color:white">Sua Biblioteca</div>
-    <div id="grid-geral" class="lista-musicas"></div>
+    <div class="section-title" style="color:white">Biblioteca Completa</div>
+    <div id="grid-geral" class="lista-geral"></div>
 
     <div id="player">
-        <div class="disc-box">
-            <img id="p-img" class="p-img" src="">
-            <div class="disc-hole"></div>
-        </div>
+        <img id="p-img" class="p-img" src="">
         <div style="flex:1; overflow:hidden;">
-            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size: 15px;">Música</h5>
-            <small id="p-status" style="color:var(--accent); font-weight:900; font-size:10px; text-transform: uppercase;">Tocando Agora</small>
+            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
+            <small style="color:var(--accent); font-weight:bold; font-size:10px;">ZYVER PREMIUM</small>
         </div>
-        <div onclick="togglePlay()" style="padding-right: 10px; cursor: pointer;">
-            <i class="fa fa-pause" id="play-icon"></i>
+        <div onclick="togglePlay()" style="cursor:pointer; padding: 10px;">
+            <i class="fa fa-pause" id="play-icon" style="font-size:28px;"></i>
         </div>
         <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, doc, updateDoc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        let allTracks = [];
-        let clickCounter = 0;
-        let launchData = null;
+        let allItems = [];
         const audio = document.getElementById('audio-engine');
         const pImg = document.getElementById('p-img');
 
-        async function carregarBanco() {
-            // Puxa TUDO do Firebase sem limites
-            const q = query(collection(db, "musics"), orderBy("date", "desc"));
-            const snap = await getDocs(q);
-            allTracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            // Procura o lançamento
-            launchData = allTracks.find(m => m.isLaunch);
-            if(launchData) {
-                document.getElementById('launch-area').style.display = 'block';
-                document.getElementById('l-title').innerText = launchData.title;
-            }
+        async function init() {
+            try {
+                // PUXA AS TRÊS COLEÇÕES: MÚSICAS, CLIPES E PLAYLISTS
+                const [musicsSnap, clipsSnap, playlistsSnap] = await Promise.all([
+                    getDocs(collection(db, "musics")),
+                    getDocs(collection(db, "clips")),
+                    getDocs(collection(db, "playlists"))
+                ]);
 
-            renderTop(allTracks);
-            renderList(allTracks);
+                const musics = musicsSnap.docs.map(d => ({id: d.id, type: 'music', ...d.data()}));
+                const clips = clipsSnap.docs.map(d => ({id: d.id, type: 'clip', ...d.data()}));
+                const playlists = playlistsSnap.docs.map(d => ({id: d.id, type: 'playlist', ...d.data()}));
+
+                // JUNTA TUDO E ORGANIZA PELA DATA DE POSTAGEM
+                allItems = [...musics, ...clips, ...playlists].sort((a, b) => (b.date || 0) - (a.date || 0));
+
+                const launch = allItems.find(m => m.isLaunch);
+                if(launch) {
+                    document.getElementById('launch-area').style.display = 'block';
+                    document.getElementById('l-title').innerText = launch.title;
+                    window.currentLaunch = launch;
+                }
+
+                renderTop(allItems);
+                renderList(allItems);
+            } catch (e) { console.error("Erro ao carregar banco:", e); }
         }
 
         window.triggerLaunch = () => { 
-            if(launchData) play(launchData.id, launchData.url, launchData.title, launchData.cover); 
+            const m = window.currentLaunch;
+            if(m) play(m.id, m.url, m.title, m.cover, m.type); 
         };
 
-        window.checkAd = (id, url, n, i) => {
-            clickCounter++;
-            // A cada 3 cliques, você pode disparar algo do Monetag aqui se quiser
-            play(id, url, n, i);
-        };
+        window.play = async (id, url, n, i, type) => {
+            // Se for Clipe ou Playlist externa, abre o link
+            if(type === 'clip' || type === 'playlist') {
+                window.location.href = url;
+                return;
+            }
 
-        window.play = async (id, url, n, i) => {
+            // Se for música, ativa o player
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-name').innerText = n;
-            pImg.src = i;
+            pImg.src = i || 'https://via.placeholder.com/150';
             audio.src = url;
+            audio.play();
+            pImg.classList.add('playing');
+            pImg.classList.remove('paused');
+            document.getElementById('play-icon').className = 'fa fa-pause';
             
-            audio.play().then(() => {
-                pImg.classList.add('playing');
-                pImg.classList.remove('paused');
-                document.getElementById('play-icon').className = 'fa fa-pause';
-            });
-
-            // Sobe o contador de plays no Firebase
-            await updateDoc(doc(db, "musics", id), { plays: increment(1) });
+            try { await updateDoc(doc(db, "musics", id), { plays: increment(1) }); } catch(e){}
         };
 
         window.togglePlay = () => {
@@ -156,12 +151,12 @@
         };
 
         function renderTop(data) {
-            const top = [...data].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
+            const top = data.filter(x => x.type === 'music').sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                <div class="rank-card" onclick="checkAd('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}','${m.type}')">
                     <div class="rank-n">#${i+1}</div>
                     <img src="${m.cover}">
-                    <div style="overflow:hidden;">
+                    <div style="overflow:hidden">
                         <h3 style="font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.title}</h3>
                         <p style="font-size:11px;opacity:0.5;">${m.plays || 0} plays</p>
                     </div>
@@ -170,23 +165,26 @@
 
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
-                <div class="m-card" onclick="checkAd('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                <div class="item-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}','${m.type}')">
                     <img src="${m.cover}">
-                    <div style="flex:1; overflow:hidden;">
-                        <h4 style="font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.title}</h4>
-                        <p style="font-size:12px;opacity:0.5;">Zyver Music • Premium</p>
+                    <div style="flex:1; overflow:hidden">
+                        <h4 style="font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                            ${m.title} 
+                            ${m.type === 'clip' ? '<span class="tag tag-clip">CLIPE</span>' : ''}
+                            ${m.type === 'playlist' ? '<span class="tag tag-playlist">PLAYLIST</span>' : ''}
+                        </h4>
+                        <p style="font-size:12px;opacity:0.5;">Zyver Music</p>
                     </div>
-                    <i class="fa-regular fa-circle-play" style="color:var(--accent); font-size:20px;"></i>
+                    <i class="fa ${m.type === 'clip' ? 'fa-video' : (m.type === 'playlist' ? 'fa-list-ul' : 'fa-play-circle')}" style="color:var(--accent); font-size:22px;"></i>
                 </div>`).join('');
         }
 
         window.filtrar = () => {
-            const termo = document.getElementById('busca').value.toLowerCase();
-            const filtrados = allTracks.filter(m => m.title.toLowerCase().includes(termo));
-            renderList(filtrados);
+            const t = document.getElementById('busca').value.toLowerCase();
+            renderList(allItems.filter(m => m.title.toLowerCase().includes(t)));
         };
 
-        carregarBanco();
+        init();
     </script>
 </body>
 </html>

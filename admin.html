@@ -3,144 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZyverMusic | Painel de Controle</title>
+    <title>ADM | ZyverMusic</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; --danger: #ff4444; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
-        .container { max-width: 600px; margin: auto; }
-        
-        h2 { text-align: center; margin-bottom: 25px; font-weight: 900; letter-spacing: -1px; }
-        h2 span { color: var(--accent); }
-
-        .card { background: var(--surface); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
-        h3 { margin-bottom: 15px; font-size: 16px; text-transform: uppercase; color: var(--accent); }
-
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 10px; outline: none; }
-        
-        .check-box { display: flex; align-items: center; gap: 10px; background: #222; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
-        .check-box input { width: auto; margin: 0; }
-
-        .btn-action { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-        .btn-action:hover { opacity: 0.8; }
-
-        /* LISTA DE MÚSICAS */
-        .list-container { margin-top: 10px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
-        .item-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #222; }
-        .btn-del { color: var(--danger); cursor: pointer; font-size: 18px; padding: 5px; }
-        
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
+        .card { background: var(--surface); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #333; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 8px; }
+        .btn { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .item { display: flex; justify-content: space-between; background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 14px; }
+        .del { color: #ff4444; cursor: pointer; padding: 5px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h2>ZYVER<span>ADM</span></h2>
+    <h2 style="margin-bottom:20px;">Painel <span>Zyver</span></h2>
 
-        <div class="card">
-            <h3>🎵 Adicionar Nova Música</h3>
-            <input type="text" id="m-title" placeholder="Nome da Música (Ex: Fall Out Boy - Centuries)">
-            <input type="text" id="m-cover" placeholder="Link da Capa (URL da Imagem)">
-            <input type="text" id="m-url" placeholder="Link do MP3 (Direto)">
-            
-            <label class="check-box">
-                <input type="checkbox" id="m-launch">
-                <span>Marcar como LANÇAMENTO (Banner Topo)</span>
-            </label>
+    <div class="card">
+        <input type="text" id="t" placeholder="Título">
+        <input type="text" id="c" placeholder="Link da Capa">
+        <input type="text" id="u" placeholder="Link do MP3">
+        <label><input type="checkbox" id="l"> MARCAR LANÇAMENTO</label><br><br>
+        <button class="btn" onclick="postar()">POSTAR MÚSICA</button>
+    </div>
 
-            <button class="btn-action" onclick="postarMusica()">PUBLICAR NO SITE</button>
-        </div>
-
-        <div class="card">
-            <h3>📊 Editar Enquete da Home</h3>
-            <input type="text" id="p-question" placeholder="Pergunta da Enquete">
-            <input type="text" id="p-opt1" placeholder="Opção 1">
-            <input type="text" id="p-opt2" placeholder="Opção 2">
-            <button class="btn-action" style="background:#444;" onclick="atualizarEnquete()">ATUALIZAR ENQUETE</button>
-        </div>
-
-        <div class="card">
-            <h3>📂 Gerenciar Biblioteca (<span id="count">0</span>)</h3>
-            <div id="lista-musicas" class="list-container">
-                <p style="text-align:center; opacity:0.5;">Carregando músicas...</p>
-            </div>
-        </div>
+    <div class="card">
+        <h3>Músicas no Ar (<span id="total">0</span>)</h3><br>
+        <div id="lista">Carregando...</div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FUNÇÃO PARA POSTAR MÚSICA
-        window.postarMusica = async () => {
-            const title = document.getElementById('m-title').value;
-            const cover = document.getElementById('m-cover').value;
-            const url = document.getElementById('m-url').value;
-            const isLaunch = document.getElementById('m-launch').checked;
+        window.postar = async () => {
+            const title = document.getElementById('t').value;
+            const cover = document.getElementById('c').value;
+            const url = document.getElementById('u').value;
+            const isLaunch = document.getElementById('l').checked;
 
-            if(!title || !url) return alert("Título e URL são obrigatórios!");
+            if(!title || !url) return alert("Preencha tudo!");
 
-            try {
-                await addDoc(collection(db, "musics"), {
-                    title, cover, url, isLaunch,
-                    date: Date.now(),
-                    plays: 0
-                });
-                alert("Música postada com sucesso!");
-                location.reload(); 
-            } catch (e) { alert("Erro ao postar: " + e); }
+            await addDoc(collection(db, "musics"), {
+                title, cover, url, isLaunch, date: Date.now(), plays: 0
+            });
+            alert("Postado!");
+            location.reload();
         };
 
-        // LISTAR MÚSICAS EM TEMPO REAL
-        const q = query(collection(db, "musics"), orderBy("date", "desc"));
-        onSnapshot(q, (snap) => {
-            const lista = document.getElementById('lista-musicas');
-            document.getElementById('count').innerText = snap.size;
-            
-            if(snap.empty) {
-                lista.innerHTML = "<p style='text-align:center; opacity:0.5;'>Nenhuma música cadastrada.</p>";
-                return;
-            }
+        // Escuta o banco em tempo real
+        onSnapshot(collection(db, "musics"), (snap) => {
+            const lista = document.getElementById('lista');
+            document.getElementById('total').innerText = snap.size;
+            let tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            tracks.sort((a,b) => (b.date || 0) - (a.date || 0));
 
-            lista.innerHTML = snap.docs.map(d => `
-                <div class="item-row">
-                    <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; padding-right:10px;">
-                        <small style="color:var(--accent)">${d.data().isLaunch ? '[L] ' : ''}</small>
-                        <b>${d.data().title}</b>
-                    </div>
-                    <i class="fa fa-trash-can btn-del" onclick="apagarMusica('${d.id}')"></i>
+            lista.innerHTML = tracks.map(m => `
+                <div class="item">
+                    <span>${m.title}</span>
+                    <i class="fa fa-trash del" onclick="apagar('${m.id}')"></i>
                 </div>
             `).join('');
         });
 
-        // APAGAR MÚSICA
-        window.apagarMusica = async (id) => {
-            if(confirm("Tem certeza que deseja apagar esta música?")) {
-                await deleteDoc(doc(db, "musics", id));
-            }
-        };
-
-        // ATUALIZAR ENQUETE
-        window.atualizarEnquete = async () => {
-            const pergunta = document.getElementById('p-question').value;
-            const opt1 = document.getElementById('p-opt1').value;
-            const opt2 = document.getElementById('p-opt2').value;
-
-            if(!pergunta || !opt1 || !opt2) return alert("Preencha todos os campos da enquete!");
-
-            try {
-                await setDoc(doc(db, "configuracoes", "enquete_ativa"), {
-                    pergunta: pergunta,
-                    opcoes: [
-                        { texto: opt1, votos: 0 },
-                        { texto: opt2, votos: 0 }
-                    ]
-                });
-                alert("Enquete atualizada!");
-            } catch (e) { alert("Erro na enquete: " + e); }
+        window.apagar = async (id) => {
+            if(confirm("Apagar?")) await deleteDoc(doc(db, "musics", id));
         };
     </script>
 </body>
