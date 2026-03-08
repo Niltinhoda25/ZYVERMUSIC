@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | v6 Elite</title>
+    <title>ZyverMusic | v6.1 Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
@@ -36,12 +36,21 @@
 
         .section-title { padding: 15px 20px; font-size: 13px; font-weight: 800; text-transform: uppercase; color: #a1a1a1; display: flex; align-items: center; gap: 8px; }
 
-        /* TRACKS */
+        /* TRACKS - AJUSTE AUTOMÁTICO DE IMAGEM */
         .track-card { 
             display: flex; align-items: center; padding: 12px 18px; margin: 8px 15px;
             background: var(--glass); border-radius: 18px; border: 1px solid var(--glass-border);
         }
-        .track-card img { width: 50px; height: 50px; border-radius: 12px; margin-right: 15px; object-fit: cover; }
+        /* A MÁGICA TÁ AQUI: object-fit cover garante que não estica */
+        .track-card img { 
+            width: 55px; 
+            height: 55px; 
+            border-radius: 12px; 
+            margin-right: 15px; 
+            object-fit: cover; 
+            flex-shrink: 0;
+            background: #222; 
+        }
         .track-info { flex: 1; overflow: hidden; }
         .track-info b { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
         .track-info span { font-size: 11px; color: #888; }
@@ -61,9 +70,8 @@
             position: fixed; bottom: 85px; left: 12px; right: 12px; 
             background: rgba(20, 10, 45, 0.98); border: 1.5px solid var(--accent);
             padding: 12px; border-radius: 25px; display: none; align-items: center; gap: 12px; z-index: 5000;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
         }
-        .p-img { width: 48px; height: 48px; border-radius: 50%; border: 2.5px solid var(--accent); object-fit: cover; }
+        .p-img { width: 50px; height: 50px; border-radius: 50%; border: 2.5px solid var(--accent); object-fit: cover; flex-shrink: 0; }
         .spinning { animation: rotate 5s linear infinite; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -77,7 +85,16 @@
         .nav-item.active { color: var(--accent); }
         .nav-item span { font-size: 10px; font-weight: 800; }
 
-        /* PL OPTIONS */
+        /* TOP 10 IMAGENS CERTINHAS */
+        .top-img { 
+            width: 135px; 
+            height: 135px; 
+            border-radius: 24px; 
+            border: 1.5px solid var(--glass-border); 
+            object-fit: cover; 
+            background: #222;
+        }
+
         .pl-picker-card { 
             background: var(--glass); padding: 18px; border-radius: 15px; 
             margin-bottom: 12px; border: 1px solid var(--glass-border); font-weight: 800; text-align: center;
@@ -88,27 +105,18 @@
 <body>
 
     <div id="add-to-pl-modal" class="modal">
-        <div class="modal-header">
-            <h3>Salvar em...</h3>
-            <i class="fa fa-times" onclick="fecharModalAdd()" style="font-size:24px;"></i>
-        </div>
+        <div class="modal-header"><h3>Salvar em...</h3><i class="fa fa-times" onclick="fecharModalAdd()"></i></div>
         <div id="pl-options-list" style="overflow-y: auto; flex:1;"></div>
     </div>
 
     <div id="playlists-modal" class="modal">
-        <div class="modal-header">
-            <h3>Minha Biblioteca</h3> 
-            <i class="fa fa-times" onclick="fecharPlaylists()" style="font-size:24px;"></i>
-        </div>
+        <div class="modal-header"><h3>Minha Biblioteca</h3> <i class="fa fa-times" onclick="fecharPlaylists()"></i></div>
         <div id="library-content" style="overflow-y: auto; flex:1;"></div>
     </div>
 
     <div id="create-modal" class="modal">
-        <div class="modal-header">
-            <h3>Nova Playlist</h3> 
-            <i class="fa fa-times" onclick="fecharCriador()" style="font-size:24px;"></i>
-        </div>
-        <input type="text" id="new-pl-name" style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:16px; border-radius:15px; color:white; margin-bottom:15px; outline:none;" placeholder="Dê um nome...">
+        <div class="modal-header"><h3>Nova Playlist</h3> <i class="fa fa-times" onclick="fecharCriador()"></i></div>
+        <input type="text" id="new-pl-name" style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:16px; border-radius:15px; color:white; margin-bottom:15px; outline:none;" placeholder="Nome da pasta...">
         <div id="create-selection-list" style="flex:1; overflow-y: auto;"></div>
         <button class="btn-action" onclick="salvarNovaPlaylist()">CRIAR AGORA</button>
     </div>
@@ -118,7 +126,7 @@
 
         <div class="search-box">
             <i class="fa fa-search"></i>
-            <input type="text" id="search-input" placeholder="O que vamos ouvir hoje?" oninput="filtrarMusicas()">
+            <input type="text" id="search-input" placeholder="Pesquisar músicas..." oninput="filtrarMusicas()">
         </div>
 
         <div id="shared-section" style="display:none; padding: 0 20px 20px;">
@@ -136,7 +144,7 @@
         <img id="p-img" class="p-img" src="">
         <div class="track-info">
             <b id="p-title">Música</b>
-            <span style="color:var(--accent);">Zyver Player v6</span>
+            <span style="color:var(--accent);">Zyver Pro v6.1</span>
         </div>
         <i class="fa fa-pause" id="play-btn" onclick="togglePlay()" style="font-size:28px; margin-right:10px;"></i>
         <audio id="audio-engine"></audio>
@@ -153,9 +161,7 @@
         import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let allMusics = [];
-        // MIGRAÇÃO AUTOMÁTICA: Pega do antigo ou do novo
-        let myPlaylists = JSON.parse(localStorage.getItem('z_v6_pl')) || JSON.parse(localStorage.getItem('z_v5_pl')) || JSON.parse(localStorage.getItem('z_user_pl')) || [];
-        // Salva no formato oficial v6
+        let myPlaylists = JSON.parse(localStorage.getItem('z_v6_pl')) || JSON.parse(localStorage.getItem('z_user_pl')) || [];
         localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists));
 
         let trackToAdd = null;
@@ -170,37 +176,34 @@
             checkShared();
         }
 
-        // --- QUICK ADD (+) ---
         window.abrirModalAdd = (id) => {
             trackToAdd = allMusics.find(m => m.id === id);
             document.getElementById('add-to-pl-modal').style.display = 'flex';
             const list = document.getElementById('pl-options-list');
-            if(myPlaylists.length === 0) { list.innerHTML = "<p style='color:#666; text-align:center;'>Crie uma playlist primeiro!</p>"; return; }
+            if(myPlaylists.length === 0) { list.innerHTML = "<p style='color:#666; text-align:center;'>Crie uma playlist!</p>"; return; }
             list.innerHTML = myPlaylists.map(pl => `<div class="pl-picker-card" onclick="adicionarAqui('${pl.id}')">${pl.nome}</div>`).join('');
         };
 
         window.adicionarAqui = (plId) => {
             const idx = myPlaylists.findIndex(p => p.id == plId);
-            if(myPlaylists[idx].musicas.some(m => m.id === trackToAdd.id)) {
-                alert("Essa já está na playlist!");
-            } else {
+            if(myPlaylists[idx].musicas.some(m => m.id === trackToAdd.id)) { alert("Já está na lista!"); }
+            else {
                 myPlaylists[idx].musicas.push(trackToAdd);
                 localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists));
-                alert("Música adicionada!");
+                alert("Adicionado!");
                 fecharModalAdd();
             }
         };
 
         window.fecharModalAdd = () => document.getElementById('add-to-pl-modal').style.display = 'none';
 
-        // --- LIBRARY (SUAS PLAYLISTS) ---
         window.abrirPlaylists = () => {
             document.getElementById('playlists-modal').style.display = 'flex';
             const area = document.getElementById('library-content');
-            if(myPlaylists.length === 0) { area.innerHTML = "<p style='color:#666;'>Vazio por enquanto...</p>"; return; }
+            if(myPlaylists.length === 0) { area.innerHTML = "<p style='color:#666;'>Nada por aqui...</p>"; return; }
             area.innerHTML = myPlaylists.map(pl => `
                 <div style="background:var(--glass); border-radius:20px; padding:15px; margin-bottom:15px;">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
                         <b>${pl.nome}</b>
                         <div>
                             <i class="fa fa-share" style="color:var(--success); margin-right:15px;" onclick="sharePL('${pl.cloudId}','${pl.nome}')"></i>
@@ -208,14 +211,14 @@
                         </div>
                     </div>
                     <div style="display:flex; gap:10px; overflow-x:auto;">
-                        ${pl.musicas.map(m => `<img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:70px; height:70px; border-radius:12px;">`).join('')}
+                        ${pl.musicas.map(m => `<img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:75px; height:75px; border-radius:12px; object-fit:cover;">`).join('')}
                     </div>
                 </div>
             `).join('');
         };
 
         window.deletePL = (id) => {
-            if(confirm("Excluir playlist?")) {
+            if(confirm("Excluir?")) {
                 myPlaylists = myPlaylists.filter(p => p.id != id);
                 localStorage.setItem('z_v6_pl', JSON.stringify(myPlaylists));
                 abrirPlaylists();
@@ -224,12 +227,11 @@
 
         window.sharePL = (cid, nome) => {
             const link = window.location.origin + window.location.pathname + "?pl=" + cid;
-            navigator.share({ title: 'Minha Playlist: ' + nome, url: link });
+            navigator.share({ title: 'Playlist: ' + nome, url: link });
         };
 
         window.fecharPlaylists = () => document.getElementById('playlists-modal').style.display = 'none';
 
-        // --- BUSCA E RENDER ---
         window.filtrarMusicas = () => {
             const val = document.getElementById('search-input').value.toLowerCase();
             renderAll(allMusics.filter(m => m.title.toLowerCase().includes(val)));
@@ -241,14 +243,13 @@
                     <img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="track-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
                         <b>${m.title}</b>
-                        <span>Track • Oficial</span>
+                        <span>Zyver Originals</span>
                     </div>
                     <i class="fa fa-plus-circle btn-add-quick" onclick="abrirModalAdd('${m.id}')"></i>
                 </div>
             `).join('');
         }
 
-        // --- PLAYER ---
         window.play = (id, url, title, img) => {
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-title').innerText = title;
@@ -264,7 +265,6 @@
             else { audio.pause(); pImg.classList.remove('spinning'); document.getElementById('play-btn').className = 'fa fa-play'; }
         };
 
-        // --- CRIADOR ---
         window.abrirCriador = () => {
             document.getElementById('create-modal').style.display = 'flex';
             document.getElementById('create-selection-list').innerHTML = allMusics.map(m => `
@@ -283,7 +283,7 @@
 
         window.salvarNovaPlaylist = async () => {
             const nome = document.getElementById('new-pl-name').value;
-            if(!nome || selecionadas.length === 0) return alert("Dê um nome e selecione músicas!");
+            if(!nome || selecionadas.length === 0) return alert("Preencha tudo!");
             const data = allMusics.filter(m => selecionadas.includes(m.id));
             const cloud = await addDoc(collection(db, "playlists"), { nome, musicas: data });
             myPlaylists.push({id: Date.now(), cloudId: cloud.id, nome, musicas: data});
@@ -297,9 +297,9 @@
         function renderTop() {
             const top = [...allMusics].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
             document.getElementById('top-list').innerHTML = top.map(m => `
-                <div onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')" style="min-width:130px; text-align:center;">
-                    <img src="${m.cover}" style="width:130px; height:130px; border-radius:22px; border:1.5px solid var(--glass-border);">
-                    <b style="font-size:12px; display:block; margin-top:8px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.title}</b>
+                <div onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')" style="min-width:135px; text-align:center;">
+                    <img src="${m.cover}" class="top-img">
+                    <b style="font-size:12px; display:block; margin-top:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${m.title}</b>
                 </div>
             `).join('');
         }
