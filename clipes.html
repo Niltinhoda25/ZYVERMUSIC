@@ -3,29 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverClips | RealTime</title>
+    <title>ZyverClips | Reels</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* (Mantenha o mesmo CSS do código anterior para o visual TikTok) */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#000; color:#fff; font-family:sans-serif; overflow:hidden; }
         .clips-container { height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; }
         .clips-container::-webkit-scrollbar { display:none; }
         .clip-section { height:100vh; width:100vw; scroll-snap-align:start; position:relative; }
         video { width:100%; height:100%; object-fit:cover; }
-        .side-actions { position:absolute; right:15px; bottom:100px; display:flex; flex-direction:column; gap:20px; align-items:center; z-index:20; }
+
+        /* ÍCONES LATERAIS */
+        .side-actions { position:absolute; right:15px; bottom:120px; display:flex; flex-direction:column; gap:25px; align-items:center; z-index:20; }
         .action-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
-        .action-item i { font-size:30px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .action-item span { font-size:12px; font-weight:bold; }
+        .action-item i { font-size:32px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .like-btn.active { color: #ff0050; }
-        .overlay { position:absolute; bottom:0; left:0; width:100%; padding:30px 20px 100px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events:none; }
-        #comment-modal { position:fixed; bottom:-100%; left:0; width:100%; height:60%; background:#1a1a1a; border-radius:20px 20px 0 0; z-index:1000; transition: 0.3s; padding:20px; display:flex; flex-direction:column; }
+
+        /* CORREÇÃO DO NOME DA MÚSICA NOS CLIPES */
+        .overlay { 
+            position:absolute; bottom:0; left:0; width:100%; 
+            padding:30px 90px 100px 20px; /* Padding direito de 90px para não bater nos ícones */
+            background:linear-gradient(transparent, rgba(0,0,0,0.8)); 
+            pointer-events:none; 
+        }
+        .overlay h2 { 
+            font-size:18px; white-space:nowrap; 
+            overflow:hidden; text-overflow:ellipsis; 
+            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+        }
+        .overlay p { font-size:14px; opacity:0.8; }
+
+        /* MODAL COMENTÁRIOS */
+        #comment-modal { position:fixed; bottom:-100%; left:0; width:100%; height:60%; background:#1a1a1a; border-radius:20px 20px 0 0; z-index:1000; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
         #comment-modal.open { bottom:0; }
-        .comment-list { flex:1; overflow-y:auto; margin: 15px 0; }
-        .c-item { margin-bottom:10px; font-size:14px; border-bottom:1px solid #333; padding-bottom:5px; }
-        .comment-input { display:flex; gap:10px; }
-        .comment-input input { flex:1; background:#333; border:none; border-radius:20px; padding:10px; color:white; }
-        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:20px; }
+        .comment-list { flex:1; overflow-y:auto; margin:15px 0; font-size:14px; }
+        .comment-input { display:flex; gap:10px; padding-bottom:10px; }
+        .comment-input input { flex:1; background:#333; border:none; border-radius:20px; padding:12px; color:white; outline:none; }
+        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:22px; }
     </style>
 </head>
 <body>
@@ -37,8 +51,8 @@
         <div style="display:flex; justify-content:space-between"><strong>Comentários</strong><i class="fa fa-times" onclick="closeComments()"></i></div>
         <div class="comment-list" id="modal-list"></div>
         <div class="comment-input">
-            <input type="text" id="user-comment" placeholder="Escreva algo...">
-            <button id="send-btn" style="background:none; border:none; color:#9d4edd;"><i class="fa fa-paper-plane"></i></button>
+            <input type="text" id="user-comment" placeholder="Escreva um comentário...">
+            <button id="send-btn" style="background:none; border:none; color:#9d4edd; font-size:20px;"><i class="fa fa-paper-plane"></i></button>
         </div>
     </div>
 
@@ -50,9 +64,7 @@
 
         async function loadClips() {
             const snap = await getDocs(collection(db, "clips"));
-            const feed = document.getElementById('clips-feed');
-            
-            feed.innerHTML = snap.docs.map(doc => {
+            document.getElementById('clips-feed').innerHTML = snap.docs.map(doc => {
                 const data = doc.data();
                 return `
                 <div class="clip-section" data-id="${doc.id}">
@@ -67,48 +79,35 @@
                             <span>Comentar</span>
                         </div>
                     </div>
-                    <div class="overlay"><h2>${data.title}</h2><p>@zyvermusic</p></div>
+                    <div class="overlay"><h2>${data.title}</h2><p>@zyvermusic • Som Original</p></div>
                 </div>`;
             }).join('');
             setupAutoPlay();
         }
 
-        // CURTIR DE VERDADE (Sobe de 0 para 1 no banco)
         window.likeClip = async (id, el) => {
             const icon = el.querySelector('i');
             const span = el.querySelector('.like-count');
-            
             if(!icon.classList.contains('active')) {
                 icon.classList.add('active');
                 span.innerText = parseInt(span.innerText) + 1;
-                
-                // Atualiza no Firebase usando increment
-                await updateDoc(doc(db, "clips", id), {
-                    likes: increment(1)
-                });
+                await updateDoc(doc(db, "clips", id), { likes: increment(1) });
             }
         };
 
-        // COMENTAR DE VERDADE (Salva e mostra em tempo real)
         window.openComments = (id) => {
             currentClipId = id;
             document.getElementById('comment-modal').classList.add('open');
-            
-            // Escuta os comentários desse clipe específico no banco
             const q = query(collection(db, "clips", id, "comments"), orderBy("createdAt", "asc"));
-            onSnapshot(q, (snapshot) => {
-                const list = document.getElementById('modal-list');
-                list.innerHTML = snapshot.docs.map(d => `<div class="c-item">${d.data().text}</div>`).join('');
+            onSnapshot(q, (snap) => {
+                document.getElementById('modal-list').innerHTML = snap.docs.map(d => `<div style="margin-bottom:10px;">${d.data().text}</div>`).join('');
             });
         };
 
         document.getElementById('send-btn').onclick = async () => {
             const input = document.getElementById('user-comment');
-            if(input.value.trim() && currentClipId) {
-                await addDoc(collection(db, "clips", currentClipId, "comments"), {
-                    text: input.value,
-                    createdAt: new Date()
-                });
+            if(input.value.trim()) {
+                await addDoc(collection(db, "clips", currentClipId, "comments"), { text: input.value, createdAt: new Date() });
                 input.value = "";
             }
         };

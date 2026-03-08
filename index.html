@@ -14,37 +14,35 @@
         .logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
         .header-btns { display: flex; gap: 12px; align-items: center; }
-        .btn-fav-top { color: white; font-size: 20px; text-decoration: none; }
+        .btn-fav-top { color: #1DB954; font-size: 20px; text-decoration: none; }
         .btn-clipes { background: var(--accent); padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
 
-        .search-container { padding: 0 15px 15px; }
-        .search-box { background: #242424; display: flex; align-items: center; padding: 10px 15px; border-radius: 8px; }
+        .search-box { background: #242424; display: flex; align-items: center; padding: 10px 15px; border-radius: 8px; margin: 0 15px 15px; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
 
         .section-title { padding: 20px 15px 10px; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #ff7a00; display: flex; align-items: center; gap: 8px; }
         .section-title.white { color: white; font-size: 18px; margin-top: 10px; }
 
-        /* AJUSTE TOP 10 (LETRAS NÃO PASSAM MAIS) */
+        /* CORREÇÃO DO TEXTO VAZANDO NO TOP 10 */
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
         .ranking-wrapper::-webkit-scrollbar { display: none; }
         .rank-card { min-width: 280px; max-width: 280px; background: var(--surface); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
         .rank-n { font-size: 45px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); opacity: 0.8; }
         .rank-card img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-        .rank-info { flex: 1; overflow: hidden; }
+        .rank-info { flex: 1; overflow: hidden; } /* Trava o conteúdo */
         .rank-info h3 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-        .rank-info p { font-size: 12px; color: var(--text-dim); font-weight: bold; }
+        .rank-info p { font-size: 12px; color: var(--text-dim); font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* LISTA BIBLIOTECA */
         .lista-musicas { display: flex; flex-direction: column; gap: 5px; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 8px; transition: 0.2s; }
-        .m-card img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; margin-right: 15px; }
+        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 8px; }
+        .m-card img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; margin-right: 15px; flex-shrink: 0; }
         .m-info { flex: 1; overflow: hidden; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .m-info p { font-size: 12px; color: var(--text-dim); }
         .m-actions { display: flex; align-items: center; gap: 20px; }
-        .btn-heart { font-size: 20px; color: var(--text-dim); transition: 0.2s; cursor: pointer; }
+        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
         .btn-heart.active { color: #1DB954; }
-        .fa-ellipsis-v { color: var(--text-dim); padding: 5px; cursor: pointer; }
 
         /* PLAYER */
         #player { position: fixed; bottom: 12px; left: 10px; right: 10px; background: #282828; padding: 10px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #333; }
@@ -56,16 +54,14 @@
     <header>
         <div class="logo">ZYVER<span>MUSIC</span></div>
         <div class="header-btns">
-            <a href="favoritos.html" class="btn-fav-top"><i class="fa-solid fa-heart" style="color:#1DB954"></i></a>
+            <a href="favoritos.html" class="btn-fav-top"><i class="fa-solid fa-heart"></i></a>
             <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
         </div>
     </header>
 
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fa fa-search" style="color:#b3b3b3"></i>
-            <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
-        </div>
+    <div class="search-box">
+        <i class="fa fa-search" style="color:#b3b3b3"></i>
+        <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
     </div>
 
     <div class="section-title"><i class="fa fa-fire"></i> As Mais Tocadas</div>
@@ -95,7 +91,6 @@
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Renderiza Top 10
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
@@ -131,7 +126,7 @@
 
         window.compartilhar = (t, u) => {
             if(navigator.share) navigator.share({title: t, url: u});
-            else alert("Link copiado: " + u);
+            else alert("Link: " + u);
         }
 
         window.play = (url, n, i) => {
