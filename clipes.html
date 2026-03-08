@@ -10,67 +10,31 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: #000; color: white; font-family: sans-serif; overflow: hidden; }
 
-        /* Container TikTok */
-        .clips-container {
-            height: 100vh;
-            overflow-y: scroll;
-            snap-type: y mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
+        .clips-container { height: 100vh; overflow-y: scroll; snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .clip-card { height: 100vh; width: 100vw; snap-align: start; position: relative; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
 
-        .clip-card {
-            height: 100vh;
-            width: 100vw;
-            snap-align: start;
-            position: relative;
-            background: #000;
-        }
+        /* AÇÕES LATERAIS */
+        .side-actions { position: absolute; right: 15px; bottom: 120px; display: flex; flex-direction: column; gap: 20px; z-index: 20; align-items: center; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+        .action-btn i { font-size: 35px; text-shadow: 0 0 10px rgba(0,0,0,0.8); transition: 0.2s; }
+        .action-btn span { font-size: 13px; font-weight: 900; }
+        .fa-heart.active { color: #ff2d55; transform: scale(1.2); }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .clip-info { position: absolute; bottom: 40px; left: 15px; z-index: 20; max-width: 75%; }
+        .clip-info h2 { font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+        .clip-info p { color: var(--accent); font-weight: 700; font-size: 14px; }
 
-        /* BOTÕES LATERAIS (CURTIR E COMENTAR) */
-        .side-actions {
-            position: absolute;
-            right: 15px;
-            bottom: 100px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            z-index: 20;
-            align-items: center;
-        }
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .action-btn i { font-size: 32px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .action-btn span { font-size: 12px; font-weight: 900; }
-        .fa-heart.active { color: #ff2d55; }
+        /* MODAL DE COMENTÁRIOS */
+        #modal-coment { position: fixed; bottom: -100%; left: 0; width: 100%; height: 60%; background: #121212; z-index: 1000; border-radius: 20px 20px 0 0; transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
+        #modal-coment.open { bottom: 0; }
+        .coment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        #lista-coments { flex: 1; overflow-y: auto; font-size: 14px; margin-bottom: 10px; }
+        .input-coment { display: flex; gap: 10px; }
+        .input-coment input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; outline: none; }
+        .btn-enviar { background: var(--accent); border: none; padding: 10px 15px; border-radius: 10px; color: white; font-weight: bold; }
 
-        /* INFO DO CLIPE */
-        .clip-info {
-            position: absolute;
-            bottom: 30px;
-            left: 15px;
-            z-index: 20;
-            max-width: 70%;
-        }
-        .clip-info h2 { font-size: 16px; font-weight: 800; margin-bottom: 5px; }
-        .clip-info p { color: var(--accent); font-weight: 700; font-size: 13px; }
-
-        .btn-back {
-            position: absolute;
-            top: 40px; left: 20px;
-            z-index: 100; color: white; font-size: 24px;
-        }
+        .btn-back { position: absolute; top: 40px; left: 20px; z-index: 100; color: white; font-size: 24px; }
     </style>
 </head>
 <body>
@@ -79,70 +43,107 @@
 
     <div id="clips-feed" class="clips-container"></div>
 
+    <div id="modal-coment">
+        <div class="coment-header">
+            <h3>Comentários</h3>
+            <i class="fa fa-times" onclick="fecharComents()" style="font-size: 20px;"></i>
+        </div>
+        <div id="lista-coments">Nenhum comentário ainda.</div>
+        <div class="input-coment">
+            <input type="text" id="coment-input" placeholder="Adicione um comentário...">
+            <button class="btn-enviar" id="send-btn">Postar</button>
+        </div>
+    </div>
+
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, updateDoc, doc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, updateDoc, doc, increment, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let currentClipId = "";
 
         async function init() {
             const snap = await getDocs(collection(db, "clips"));
             const feed = document.getElementById('clips-feed');
             
-            feed.innerHTML = snap.docs.map((d, index) => {
+            feed.innerHTML = snap.docs.map(d => {
                 const c = d.data();
                 return `
-                    <div class="clip-card" id="card-${d.id}">
-                        <video 
-                            src="${c.url}" 
-                            loop 
-                            playsinline 
-                            webkit-playsinline
-                            onclick="this.paused ? this.play() : this.pause()">
-                        </video>
-                        
+                    <div class="clip-card">
+                        <video src="${c.url}" loop playsinline webkit-playsinline onclick="this.paused ? this.play() : this.pause()"></video>
                         <div class="side-actions">
                             <div class="action-btn" onclick="curtir('${d.id}')">
                                 <i class="fa fa-heart" id="heart-${d.id}"></i>
-                                <span>${c.likes || 0}</span>
+                                <span id="likes-${d.id}">${c.likes || 0}</span>
                             </div>
-                            <div class="action-btn" onclick="alert('Comentários em breve!')">
+                            <div class="action-btn" onclick="abrirComents('${d.id}')">
                                 <i class="fa fa-comment-dots"></i>
-                                <span>0</span>
+                                <span>${c.comments ? c.comments.length : 0}</span>
                             </div>
                         </div>
-
                         <div class="clip-info">
                             <p>@ZyverMusic</p>
                             <h2>${c.title}</h2>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
 
-            // Inicia o primeiro vídeo
-            startVideos();
+            configurarVideos();
         }
 
+        // CURTIR DE VERDADE NO FIREBASE
         window.curtir = async (id) => {
             const heart = document.getElementById(`heart-${id}`);
-            heart.classList.toggle('active');
-            // Opcional: Atualizar no Firebase se quiser salvar os likes
-            // await updateDoc(doc(db, "clips", id), { likes: increment(1) });
+            const likesTxt = document.getElementById(`likes-${id}`);
+            
+            if(!heart.classList.contains('active')) {
+                heart.classList.add('active');
+                await updateDoc(doc(db, "clips", id), { likes: increment(1) });
+                likesTxt.innerText = parseInt(likesTxt.innerText) + 1;
+            }
         };
 
-        function startVideos() {
+        // COMENTÁRIOS REAIS
+        window.abrirComents = (id) => {
+            currentClipId = id;
+            document.getElementById('modal-coment').classList.add('open');
+            
+            // Escuta os comentários em tempo real
+            onSnapshot(doc(db, "clips", id), (doc) => {
+                const data = doc.data();
+                const lista = document.getElementById('lista-coments');
+                if(data.comments && data.comments.length > 0) {
+                    lista.innerHTML = data.comments.map(c => `<p style="margin-bottom:10px;"><b>Anônimo:</b> ${c}</p>`).join('');
+                } else {
+                    lista.innerHTML = "Seja o primeiro a comentar!";
+                }
+            });
+        };
+
+        window.fecharComents = () => {
+            document.getElementById('modal-coment').classList.remove('open');
+        };
+
+        document.getElementById('send-btn').onclick = async () => {
+            const input = document.getElementById('coment-input');
+            if(!input.value || !currentClipId) return;
+
+            await updateDoc(doc(db, "clips", currentClipId), {
+                comments: arrayUnion(input.value)
+            });
+            input.value = "";
+        };
+
+        function configurarVideos() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     const v = entry.target.querySelector('video');
                     if (entry.isIntersecting) {
                         v.play().catch(() => {
-                            // Se o iPhone bloquear, ele toca no primeiro clique na tela
                             document.addEventListener('click', () => v.play(), {once: true});
                         });
-                    } else {
-                        v.pause();
-                    }
+                    } else { v.pause(); }
                 });
-            }, { threshold: 0.7 });
+            }, { threshold: 0.8 });
 
             document.querySelectorAll('.clip-card').forEach(c => observer.observe(c));
         }
