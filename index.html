@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZyverMusic | v10.4 Master Index</title>
+    <title>ZyverMusic | v10.6 Master Final</title>
     
     <script>
         (function(s){
@@ -25,115 +25,109 @@
             --glass: rgba(255, 255, 255, 0.05);
         }
 
+        /* RESET TOTAL */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Figtree', sans-serif; }
-        
-        html, body { 
-            width: 100%; height: 100%; overflow: hidden; 
-            background: #000; position: fixed; color: white; 
-        }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; position: fixed; color: white; }
 
-        /* SCROLLER PRINCIPAL */
+        /* SCROLLER COM GRADIENTE ANIMADO */
         #scroller {
             height: 100vh; width: 100%; overflow-y: auto; overflow-x: hidden;
             padding-bottom: 280px; scrollbar-width: none;
-            background: linear-gradient(to bottom, #252525 0%, #121212 40%, #000 100%);
+            background: linear-gradient(to bottom, #222 0%, #121212 35%, #000 100%);
         }
         #scroller::-webkit-scrollbar { display: none; }
 
-        /* HEADER & LOGO */
-        header { padding: 60px 20px 15px; display: flex; justify-content: space-between; align-items: center; }
+        /* HEADER PREMIUM */
+        header { padding: 60px 20px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 100; }
         .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--sp-green); }
+        .fs-btn { font-size: 20px; color: var(--sp-gray); cursor: pointer; transition: 0.3s; padding: 10px; }
+        .fs-btn:hover { color: white; transform: scale(1.1); }
 
-        /* BUSCA PREMIUM */
-        .search-wrap { margin: 10px 20px 25px; position: relative; }
+        /* BUSCA */
+        .search-wrap { margin: 15px 20px 25px; position: relative; }
         .search-wrap input {
-            width: 100%; background: #fff; border: none; padding: 16px 45px;
-            border-radius: 6px; font-size: 15px; font-weight: 700; color: #000;
+            width: 100%; background: #fff; border: none; padding: 18px 50px;
+            border-radius: 8px; font-size: 16px; font-weight: 700; color: #000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .search-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #555; }
+        .search-wrap i { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #555; font-size: 20px; }
 
         /* SEÇÕES */
-        .section-h { padding: 20px 20px 10px; font-size: 22px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
-        .section-h span { font-size: 12px; color: var(--sp-gray); font-weight: 600; }
-
-        /* TOP 10 HORIZONTAL */
-        .h-list { display: flex; overflow-x: auto; padding: 10px 20px; gap: 16px; scrollbar-width: none; }
-        .card-p { min-width: 160px; background: var(--sp-light); padding: 12px; border-radius: 8px; transition: 0.3s; }
-        .card-p img { width: 136px; height: 136px; border-radius: 4px; object-fit: cover; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .section-h { padding: 20px 20px 10px; font-size: 24px; font-weight: 800; }
+        .h-list { display: flex; overflow-x: auto; padding: 10px 20px; gap: 18px; scrollbar-width: none; }
+        .card-p { min-width: 165px; background: var(--sp-light); padding: 14px; border-radius: 10px; transition: 0.3s; }
+        .card-p:active { transform: scale(0.95); }
+        .card-p img { width: 137px; height: 137px; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .card-p b { display: block; margin-top: 12px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* LISTA DE MÚSICAS */
-        .track-item { display: flex; align-items: center; padding: 12px 20px; margin: 0 10px; border-radius: 8px; }
+        .track-item { display: flex; align-items: center; padding: 14px 20px; border-radius: 8px; margin: 0 10px; transition: 0.2s; }
         .track-item:active { background: rgba(255,255,255,0.1); }
-        .track-img { width: 54px; height: 54px; border-radius: 4px; margin-right: 15px; object-fit: cover; }
+        .track-img { width: 56px; height: 56px; border-radius: 5px; margin-right: 18px; object-fit: cover; }
         .track-meta { flex: 1; overflow: hidden; }
-        .track-meta b { font-size: 16px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .track-meta span { font-size: 12px; color: var(--sp-gray); }
+        .track-meta b { font-size: 17px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-meta span { font-size: 13px; color: var(--sp-gray); }
 
-        /* PLAYER FLUTUANTE */
+        /* PLAYER OMEGA */
         #player-ui {
-            position: fixed; bottom: 100px; left: 10px; right: 10px;
-            background: #282828; border-radius: 10px; padding: 12px;
-            display: none; align-items: center; gap: 12px; z-index: 6000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            position: fixed; bottom: 100px; left: 12px; right: 12px;
+            background: #282828; border-radius: 12px; padding: 15px;
+            display: none; flex-direction: column; gap: 10px; z-index: 6000;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .p-thumb { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
+        .p-main { display: flex; align-items: center; gap: 15px; }
+        .p-thumb { width: 52px; height: 52px; border-radius: 6px; object-fit: cover; }
         .p-info { flex: 1; overflow: hidden; }
-        .p-info b { font-size: 14px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-info span { font-size: 11px; color: var(--sp-green); font-weight: 700; }
+        .p-info b { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-info span { font-size: 11px; color: var(--sp-green); font-weight: 800; text-transform: uppercase; }
+        
+        /* BARRA DE PROGRESSO */
+        .p-bar-bg { width: 100%; height: 4px; background: #444; border-radius: 2px; position: relative; }
+        #p-bar-fill { width: 0%; height: 100%; background: var(--sp-green); border-radius: 2px; }
 
         /* NAVBAR */
         nav {
-            position: fixed; bottom: 0; width: 100%; height: 90px;
-            background: linear-gradient(to top, #000 70%, transparent); 
+            position: fixed; bottom: 0; width: 100%; height: 95px;
+            background: linear-gradient(to top, #000 80%, transparent); 
             display: flex; justify-content: space-around; padding-top: 15px; z-index: 5000;
         }
-        .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; }
-        .nav-link i { font-size: 22px; margin-bottom: 5px; display: block; }
-        .nav-link span { font-size: 10px; font-weight: 700; }
+        .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; transition: 0.3s; }
+        .nav-link i { font-size: 24px; margin-bottom: 6px; display: block; }
+        .nav-link span { font-size: 11px; font-weight: 700; }
         .nav-link.active { color: white; }
 
         /* MODAIS */
         .modal-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #121212; z-index: 9999; display: none; flex-direction: column;
-            padding: 65px 20px 100px;
+            padding: 70px 25px 120px;
         }
-        .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .modal-top h2 { font-size: 26px; font-weight: 900; }
+        .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
+        .modal-top h2 { font-size: 28px; font-weight: 900; }
 
-        /* BIBLIOTECA CARDS */
+        /* LIB CARDS */
         .lib-card {
             background: #1c1c1c; margin-bottom: 15px; border-radius: 12px;
-            display: flex; align-items: center; padding: 18px; gap: 15px;
+            display: flex; align-items: center; padding: 20px; gap: 18px;
             border: 1px solid rgba(255,255,255,0.03);
         }
         .lib-info { flex: 1; }
-        .lib-info b { font-size: 18px; display: block; margin-bottom: 2px; }
-        .lib-info span { font-size: 13px; color: var(--sp-gray); }
-        .lib-btns { display: flex; gap: 20px; align-items: center; }
-        .lib-btns i { font-size: 22px; }
-        .btn-play-pl { color: var(--sp-green) !important; font-size: 32px !important; }
+        .lib-info b { font-size: 19px; display: block; }
+        .lib-btns { display: flex; gap: 25px; align-items: center; }
+        .btn-play-pl { color: var(--sp-green) !important; font-size: 38px !important; }
         .btn-del-pl { color: var(--sp-red) !important; opacity: 0.7; }
 
-        /* FORMULÁRIOS */
-        .input-dark {
-            width: 100%; background: #252525; border: 1px solid #333; padding: 18px;
-            border-radius: 8px; color: white; margin-bottom: 20px; font-size: 16px;
-        }
-        .btn-confirm {
-            background: var(--sp-green); color: black; border: none;
-            padding: 20px; border-radius: 50px; font-weight: 900; font-size: 16px; width: 100%;
-        }
-
+        /* LOADING */
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:flex; align-items:center; justify-content:center; }
+        .spinner { width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--sp-green); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="loader"><i class="fa fa-circle-notch fa-spin fa-3x" style="color:var(--sp-green);"></i></div>
+    <div id="loader"><div class="spinner"></div></div>
 
     <div id="m-lib" class="modal-ui">
         <div class="modal-top"><h2>Sua Biblioteca</h2><i class="fa fa-times fa-2x" onclick="closeU('m-lib')"></i></div>
@@ -142,9 +136,9 @@
 
     <div id="m-create" class="modal-ui">
         <div class="modal-top"><h2>Nova Playlist</h2><i class="fa fa-times fa-2x" onclick="closeU('m-create')"></i></div>
-        <input type="text" id="new-name" class="input-dark" placeholder="Nome da playlist...">
-        <div id="select-tracks-ui" style="overflow-y:auto; flex:1; border-top: 1px solid #333; padding-top: 10px;"></div>
-        <button class="btn-confirm" onclick="saveNewPL()">CRIAR PLAYLIST</button>
+        <input type="text" id="new-name" style="width:100%; background:#2a2a2a; border:1px solid #333; padding:20px; border-radius:12px; color:white; margin-bottom:25px; font-size:17px;" placeholder="Nome da playlist...">
+        <div id="select-tracks-ui" style="overflow-y:auto; flex:1; border-top: 1px solid #222; padding-top: 15px;"></div>
+        <button onclick="saveNewPL()" style="background:var(--sp-green); color:black; border:none; padding:22px; border-radius:50px; font-weight: 900; font-size: 17px; width:100%; margin-top:20px;">CRIAR PLAYLIST</button>
     </div>
 
     <div id="m-add-to" class="modal-ui">
@@ -153,7 +147,10 @@
     </div>
 
     <div id="scroller">
-        <header><div class="logo">Zyver<span>Music</span></div></header>
+        <header>
+            <div class="logo">Zyver<span>Music</span></div>
+            <i class="fa fa-expand fs-btn" onclick="toggleFS()"></i>
+        </header>
         
         <div class="search-wrap">
             <i class="fa fa-search"></i>
@@ -163,17 +160,20 @@
         <div class="section-h">Top Cloud 10</div>
         <div id="top-row-ui" class="h-list"></div>
 
-        <div class="section-h" style="margin-top:20px;">Explorar Tudo</div>
+        <div class="section-h" style="margin-top:25px;">Músicas</div>
         <div id="main-list-ui"></div>
     </div>
 
     <div id="player-ui">
-        <img id="p-img" class="p-thumb" src="">
-        <div class="p-info">
-            <b id="p-title">...</b>
-            <span>ZYVER CLOUD AUDIO</span>
+        <div class="p-main">
+            <img id="p-img" class="p-thumb" src="">
+            <div class="p-info">
+                <b id="p-title">...</b>
+                <span>ZYVER CLOUD HI-FI</span>
+            </div>
+            <i class="fa fa-play-circle" id="p-icon" onclick="doPlay()" style="font-size:45px;"></i>
         </div>
-        <i class="fa fa-play-circle" id="p-icon" onclick="doPlay()" style="font-size:38px;"></i>
+        <div class="p-bar-bg"><div id="p-bar-fill"></div></div>
         <audio id="core-engine"></audio>
     </div>
 
@@ -185,16 +185,22 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, increment, query, where, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, increment, query, where, arrayUnion, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        let allSongs = [], selNew = [], targetSong = null, currentPL = [];
+        let allSongs = [], selNew = [], targetSong = null;
         let deviceID = localStorage.getItem('zyver_device_id');
         const engine = document.getElementById('core-engine');
 
         if(!deviceID) {
-            deviceID = 'zy_' + Math.random().toString(36).substr(2, 10);
+            deviceID = 'zy_' + Math.random().toString(36).substr(2, 12);
             localStorage.setItem('zyver_device_id', deviceID);
         }
+
+        // FULLSCREEN
+        window.toggleFS = () => {
+            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
+            else { if (document.exitFullscreen) document.exitFullscreen(); }
+        };
 
         async function startApp() {
             try {
@@ -203,15 +209,15 @@
                 
                 const urlParams = new URLSearchParams(window.location.search);
                 const plId = urlParams.get('pl');
-                const playNowPL = urlParams.get('play');
+                const shouldPlay = urlParams.get('play');
 
                 if(plId) {
                     const plSnap = await getDoc(doc(db, "playlists", plId));
                     if(plSnap.exists()) {
-                        currentPL = plSnap.data().musicas || [];
-                        renderMain(currentPL);
-                        if(playNowPL && currentPL.length > 0) {
-                            playNow(currentPL[0].id, currentPL[0].url, currentPL[0].title, currentPL[0].cover);
+                        const data = plSnap.data().musicas || [];
+                        renderMain(data);
+                        if(shouldPlay === "true" && data.length > 0) {
+                            playNow(data[0].id, data[0].url, data[0].title, data[0].cover);
                         }
                     }
                 } else {
@@ -219,8 +225,6 @@
                 }
                 renderTop();
                 document.getElementById('loader').style.display = 'none';
-                
-                // Scanner de resgate
                 resgate();
             } catch(e) { console.error(e); }
         }
@@ -231,9 +235,9 @@
                     <img class="track-img" src="${m.cover}" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="track-meta" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
                         <b>${m.title}</b>
-                        <span>Zyver Cloud</span>
+                        <span>Zyver Artist</span>
                     </div>
-                    <i class="fa fa-plus-circle" style="color:#555; font-size:22px; padding:10px;" onclick="preAdd('${m.id}')"></i>
+                    <i class="fa fa-plus-circle" style="color:#555; font-size:24px; padding:10px;" onclick="preAdd('${m.id}')"></i>
                 </div>
             `).join('');
         }
@@ -269,20 +273,26 @@
             else { engine.pause(); document.getElementById('p-icon').className = 'fa fa-play-circle'; }
         };
 
+        // BARRA DE PROGRESSO REAL-TIME
+        engine.ontimeupdate = () => {
+            const perc = (engine.currentTime / engine.duration) * 100;
+            document.getElementById('p-bar-fill').style.width = perc + "%";
+        };
+
         window.loadLib = async () => {
             openU('m-lib');
             const render = document.getElementById('my-lib-render');
-            render.innerHTML = '<div style="text-align:center; padding:20px;"><i class="fa fa-spinner fa-spin"></i></div>';
+            render.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
             
             const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
             const snap = await getDocs(q);
             
             if(snap.empty) {
-                render.innerHTML = '<p style="text-align:center; color:#555;">Sua biblioteca está vazia.</p>';
+                render.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Vazio</p>';
                 return;
             }
 
-            const docs = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => b.created - a.created);
+            const docs = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (b.created || 0) - (a.created || 0));
             render.innerHTML = docs.map(p => `
                 <div class="lib-card">
                     <div class="lib-info" onclick="window.location.href='?pl=${p.id}'">
@@ -291,7 +301,6 @@
                     </div>
                     <div class="lib-btns">
                         <i class="fa fa-play-circle btn-play-pl" onclick="window.location.href='?pl=${p.id}&play=true'"></i>
-                        <i class="fa fa-share-nodes" onclick="copyPL('${p.id}')"></i>
                         <i class="fa fa-trash-can btn-del-pl" onclick="deletePL('${p.id}')"></i>
                     </div>
                 </div>
@@ -299,7 +308,7 @@
         };
 
         window.deletePL = async (id) => {
-            if(confirm("Deseja excluir esta playlist?")) {
+            if(confirm("Deseja apagar permanentemente?")) {
                 await deleteDoc(doc(db, "playlists", id));
                 loadLib();
             }
@@ -308,10 +317,10 @@
         window.preAdd = (id) => {
             targetSong = allSongs.find(m => m.id === id);
             openU('m-add-to');
-            loadOptions();
+            loadPlOptions();
         };
 
-        async function loadOptions() {
+        async function loadPlOptions() {
             const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
             const snap = await getDocs(q);
             document.getElementById('pl-options-render').innerHTML = snap.docs.map(d => `
@@ -321,12 +330,12 @@
 
         window.confirmAdd = async (id) => {
             await updateDoc(doc(db, "playlists", id), { musicas: arrayUnion(targetSong) });
-            alert("Adicionado!"); closeU('m-add-to');
+            alert("Salvo!"); closeU('m-add-to');
         };
 
         window.saveNewPL = async () => {
             const name = document.getElementById('new-name').value;
-            if(!name || selNew.length === 0) return alert("Preencha tudo!");
+            if(!name || selNew.length === 0) return alert("Erro!");
             const tracks = allSongs.filter(m => selNew.includes(m.id));
             await addDoc(collection(db, "playlists"), {
                 nome: name, musicas: tracks, ownerID: deviceID, created: Date.now()
@@ -364,11 +373,7 @@
         };
 
         window.closeU = (id) => document.getElementById(id).style.display = 'none';
-        window.copyPL = (id) => {
-            navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
-            alert("Link copiado!");
-        };
-
+        
         startApp();
     </script>
 </body>
