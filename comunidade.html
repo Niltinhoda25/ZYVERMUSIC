@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunidade Zyver</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --accent: #ff7a00; --bg: #000; --card: #121212; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
+        .box { background: var(--card); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; }
+        h3 { color: var(--accent); margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        /* XP Bar */
+        .xp-container { background: #333; height: 10px; border-radius: 5px; margin-top: 10px; overflow: hidden; }
+        #xp-fill { background: var(--accent); height: 100%; width: 0%; transition: 0.5s; }
+
+        /* Enquete */
+        .poll-opt { background: #222; border: 1px solid #444; color: white; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 10px; text-align: left; cursor: pointer; transition: 0.3s; }
+        .poll-opt:hover { background: var(--accent); border-color: white; }
+
+        /* Inputs */
+        input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 8px; margin-bottom: 10px; outline: none; }
+        button.main-btn { background: var(--accent); color: white; border: none; width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+        .rank-item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #222; }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" style="color:white; text-decoration:none;"><i class="fa fa-chevron-left"></i> Voltar</a>
+
+    <div class="box">
+        <h3><i class="fa fa-star"></i> Seu Status Zyver</h3>
+        <p>Nível: <span id="lvl-txt">1</span> | XP: <span id="xp-txt">0</span></p>
+        <div class="xp-container"><div id="xp-fill"></div></div>
+        <p style="font-size: 12px; margin-top: 10px; opacity: 0.6;">Dica: Interaja no site para subir de nível!</p>
+    </div>
+
+    <div class="box">
+        <h3><i class="fa fa-chart-bar"></i> Enquete do Dia</h3>
+        <h4 id="poll-q">Carregando enquete...</h4>
+        <div id="poll-opts" style="margin-top:15px;"></div>
+    </div>
+
+    <div class="box">
+        <h3><i class="fa fa-paper-plane"></i> Pedir Música/Clipe</h3>
+        <input type="text" id="req-val" placeholder="Nome da música ou artista...">
+        <button class="main-btn" onclick="sendReq()">ENVIAR PEDIDO</button>
+    </div>
+
+    <div class="box">
+        <h3><i class="fa fa-trophy"></i> Top 5 Fãs Lendários</h3>
+        <div id="rank-list"></div>
+    </div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, addDoc, getDocs, doc, onSnapshot, updateDoc, increment, query, orderBy, limit, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Identifica o usuário (Simulado, você pode usar o ID do dispositivo)
+        const userId = "user_" + navigator.userAgent.length; 
+
+        // 3. LOGICA DE XP
+        async function checkUser() {
+            const userRef = doc(db, "usuarios", userId);
+            const d = await getDoc(userRef);
+            if(!d.exists()) {
+                await setDoc(userRef, { nome: "Ouvinte Novo", xp: 0, lvl: 1 });
+            }
+            onSnapshot(userRef, (doc) => {
+                const u = doc.data();
+                document.getElementById('lvl-txt').innerText = Math.floor(u.xp / 100) + 1;
+                document.getElementById('xp-txt').innerText = u.xp;
+                document.getElementById('xp-fill').style.width = (u.xp % 100) + "%";
+            });
+        }
+
+        // 4. ENVIAR PEDIDO
+        window.sendReq = async () => {
+            const val = document.getElementById('req-val').value;
+            if(!val) return;
+            await addDoc(collection(db, "pedidos"), { musica: val, data: new Date() });
+            await updateDoc(doc(db, "usuarios", userId), { xp: increment(15) }); // Ganha XP ao pedir
+            alert("Pedido enviado! +15 XP ganho!");
+            document.getElementById('req-val').value = "";
+        };
+
+        // 5. ENQUETE AO VIVO
+        onSnapshot(doc(db, "configuracoes", "enquete"), (d) => {
+            const data = d.data();
+            document.getElementById('poll-q').innerText = data.pergunta;
+            document.getElementById('poll-opts').innerHTML = data.opcoes.map((o, i) => `
+                <button class="poll-opt" onclick="vote(${i})">${o.texto} (${o.votos} votos)</button>
+            `).join('');
+        });
+
+        window.vote = async (idx) => {
+            const ref = doc(db, "configuracoes", "enquete");
+            const d = await getDoc(ref);
+            let nOpts = d.data().opcoes;
+            nOpts[idx].votos += 1;
+            await updateDoc(ref, { opcoes: nOpts });
+            await updateDoc(doc(db, "usuarios", userId), { xp: increment(10) }); // Ganha XP ao votar
+            alert("Voto registrado! +10 XP");
+        };
+
+        // 7. RANKING
+        const q = query(collection(db, "usuarios"), orderBy("xp", "desc"), limit(5));
+        onSnapshot(q, (snap) => {
+            document.getElementById('rank-list').innerHTML = snap.docs.map((d, i) => `
+                <div class="rank-item"><span>${i+1}º ${d.data().nome}</span> <b>${d.data().xp} XP</b></div>
+            `).join('');
+        });
+
+        checkUser();
+    </script>
+</body>
+</html>
