@@ -13,7 +13,6 @@
         header { padding: 20px; display: flex; align-items: center; gap: 15px; background: #111; border-bottom: 1px solid #222; position: sticky; top: 0; z-index: 100; }
         .btn-back { color: white; font-size: 24px; text-decoration: none; }
 
-        /* AREA DE NOME CORRIGIDA PARA O BOTAO NÃO SUMIR */
         .create-area { padding: 20px; background: #080808; }
         .label-neon { color: #ff7a00; font-size: 11px; font-weight: 900; text-transform: uppercase; margin-bottom: 12px; display: block; }
         
@@ -21,10 +20,8 @@
         input#pl-name { flex: 1; background: #1a1a1a; border: 1px solid #333; padding: 12px 15px; color: white; border-radius: 12px; outline: none; min-width: 0; }
         .btn-ready { background: var(--accent); border: none; padding: 0 15px; border-radius: 12px; color: white; font-weight: 900; flex-shrink: 0; }
 
-        /* LISTA DE MÚSICAS ESTILO SELEÇÃO MODERNA */
         .selector-list { display: flex; flex-direction: column; gap: 10px; }
         
-        /* O CARD INTEIRO É O BOTÃO AGORA */
         .select-card { 
             display: flex; 
             align-items: center; 
@@ -39,19 +36,40 @@
         .song-info { flex: 1; overflow: hidden; }
         .song-info h4 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
-        /* ESTADO SELECIONADO (FICA VERDE) */
-        .select-card.selected { 
-            border-color: var(--success); 
-            background: rgba(29, 185, 84, 0.1); 
-        }
+        .select-card.selected { border-color: var(--success); background: rgba(29, 185, 84, 0.1); }
         .select-card.selected h4 { color: var(--success); }
         .check-icon { color: var(--success); font-size: 18px; margin-left: 10px; display: none; }
         .select-card.selected .check-icon { display: block; }
 
-        /* LISTA DE SALVAS */
+        /* PLAYLISTS SALVAS COM BOTÃO COMPARTILHAR */
         .saved-section { padding: 20px; }
-        .pl-card { background: var(--surface); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .btn-play { background: white; color: black; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 800; }
+        .pl-card { 
+            background: var(--surface); 
+            padding: 15px; 
+            border-radius: 15px; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border: 1px solid #222; 
+        }
+        .pl-content { flex: 1; }
+        .pl-actions { display: flex; align-items: center; gap: 12px; }
+        
+        .btn-share { 
+            background: transparent; 
+            border: 1px solid #444; 
+            color: #ccc; 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-play { background: white; color: black; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; }
 
         #player-pl { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(25,25,25,0.95); backdrop-filter: blur(10px); padding: 12px; border-radius: 15px; display: none; align-items: center; gap: 12px; border: 1px solid #333; z-index: 1000; }
         .pl-img-mini { width: 40px; height: 40px; border-radius: 5px; }
@@ -102,20 +120,16 @@
             const snap = await getDocs(collection(db, "musics"));
             allTracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // RENDERIZA COM A FOTINHA DA MÚSICA
             document.getElementById('selector').innerHTML = allTracks.map(m => `
                 <div class="select-card" id="card-${m.id}" onclick="toggleSelect('${m.id}')">
                     <img src="${m.cover}">
-                    <div class="song-info">
-                        <h4>${m.title}</h4>
-                    </div>
+                    <div class="song-info"><h4>${m.title}</h4></div>
                     <i class="fa fa-circle-check check-icon"></i>
                 </div>
             `).join('');
             loadPlaylists();
         }
 
-        // FUNÇÃO PARA SELECIONAR (FICA VERDE AO CLICAR)
         window.toggleSelect = (id) => {
             const card = document.getElementById(`card-${id}`);
             if(selectedIds.has(id)) {
@@ -132,24 +146,42 @@
             const ids = Array.from(selectedIds);
             if(!name || ids.length === 0) return alert("Dê um nome e escolha as músicas!");
 
-            const storage = JSON.parse(localStorage.getItem('zyver_v3_pls') || '[]');
+            const storage = JSON.parse(localStorage.getItem('zyver_v4_pls') || '[]');
             storage.push({ id: Date.now(), name, tracks: ids });
-            localStorage.setItem('zyver_v3_pls', JSON.stringify(storage));
+            localStorage.setItem('zyver_v4_pls', JSON.stringify(storage));
             location.reload();
         };
 
         function loadPlaylists() {
-            const storage = JSON.parse(localStorage.getItem('zyver_v3_pls') || '[]');
+            const storage = JSON.parse(localStorage.getItem('zyver_v4_pls') || '[]');
             document.getElementById('pl-list').innerHTML = storage.map((pl, idx) => `
                 <div class="pl-card">
-                    <div><h3>${pl.name}</h3><p style="font-size:12px; color:#777">${pl.tracks.length} músicas</p></div>
-                    <button class="btn-play" onclick="playPL(${idx})">OUVIR</button>
+                    <div class="pl-content">
+                        <h3>${pl.name}</h3>
+                        <p style="font-size:12px; color:#777">${pl.tracks.length} músicas</p>
+                    </div>
+                    <div class="pl-actions">
+                        <button class="btn-share" onclick="compartilhar('${pl.name}', ${pl.tracks.length})">
+                            <i class="fa fa-share-nodes"></i>
+                        </button>
+                        <button class="btn-play" onclick="playPL(${idx})">OUVIR</button>
+                    </div>
                 </div>
             `).join('');
         }
 
+        // FUNÇÃO DE COMPARTILHAR CORRIGIDA
+        window.compartilhar = (nome, total) => {
+            const msg = `🔥 Se liga na minha playlist "${nome}" no ZyverMusic! Tem ${total} músicas brabas.`;
+            if (navigator.share) {
+                navigator.share({ title: 'ZyverMusic', text: msg, url: window.location.href });
+            } else {
+                alert("Copiado: " + msg);
+            }
+        };
+
         window.playPL = (idx) => {
-            const pl = JSON.parse(localStorage.getItem('zyver_v3_pls') || '[]')[idx];
+            const pl = JSON.parse(localStorage.getItem('zyver_v4_pls') || '[]')[idx];
             currentQueue = allTracks.filter(m => pl.tracks.includes(m.id));
             currentIndex = 0;
             if(currentQueue.length > 0) {
