@@ -16,6 +16,12 @@
         .card-adm h3 { margin-bottom: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
         input { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid #444; color: white; border-radius: 12px; outline: none; transition: 0.3s; font-size: 14px; }
         input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(157, 78, 221, 0.2); }
+        
+        /* ESTILO DO CHECKBOX DE LANÇAMENTO */
+        .launch-check { display: flex; align-items: center; gap: 10px; background: rgba(157, 78, 221, 0.1); padding: 12px; border-radius: 10px; margin-bottom: 12px; border: 1px dashed var(--accent); cursor: pointer; }
+        .launch-check input { width: auto; margin-bottom: 0; cursor: pointer; }
+        .launch-check label { font-size: 12px; font-weight: bold; color: var(--accent); cursor: pointer; }
+
         .btn-post { width: 100%; padding: 16px; background: var(--accent); border: none; color: white; font-weight: 900; border-radius: 12px; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; transition: 0.2s; }
         .btn-post:active { transform: scale(0.97); opacity: 0.8; }
         .manage-section { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
@@ -36,10 +42,16 @@
         <h2>PAINEL <span>ADM</span></h2>
 
         <div class="card-adm">
-            <h3 style="color: var(--accent);">🎵 Gerenciar Músicas</h3>
+            <h3 style="color: var(--accent);"><i class="fa fa-music"></i> Gerenciar Músicas</h3>
             <input type="text" id="m-title" placeholder="Nome da Música">
-            <input type="text" id="m-cover" placeholder="Link da Capa">
-            <input type="text" id="m-url" placeholder="Link do MP3">
+            <input type="text" id="m-cover" placeholder="Link da Capa (Dropbox/URL)">
+            <input type="text" id="m-url" placeholder="Link do MP3 (Dropbox/URL)">
+            
+            <div class="launch-check" onclick="document.getElementById('m-launch').click()">
+                <input type="checkbox" id="m-launch">
+                <label for="m-launch">MARCAR COMO LANÇAMENTO EXCLUSIVO ⚡</label>
+            </div>
+
             <button class="btn-post" onclick="postar('musics')">PUBLICAR MÚSICA</button>
             <div class="manage-section">
                 <div id="lista-musicas" class="item-list"></div>
@@ -88,17 +100,34 @@
                 const t = document.getElementById('m-title').value;
                 const c = document.getElementById('m-cover').value;
                 const u = document.getElementById('m-url').value;
+                const launch = document.getElementById('m-launch').checked; // Pega o valor do lançamento
+
                 if(!t || !c || !u) return alert("Preencha tudo!");
-                data = { title: t, cover: c, url: u, date: Date.now() };
+                data = { 
+                    title: t, 
+                    cover: c, 
+                    url: u, 
+                    isLaunch: launch, // Salva se é lançamento ou não
+                    plays: 0, 
+                    date: Date.now() 
+                };
             } else {
                 const t = document.getElementById('c-title').value;
                 const u = document.getElementById('c-url').value;
                 if(!t || !u) return alert("Preencha tudo!");
                 data = { title: t, url: u, date: Date.now(), likes: 0 };
             }
+
             await addDoc(collection(db, tipo), data);
-            alert("✅ Postado!");
-            location.reload();
+            alert("✅ Postado com sucesso!");
+            
+            // Limpa os campos
+            if(tipo === 'musics') {
+                document.getElementById('m-title').value = '';
+                document.getElementById('m-cover').value = '';
+                document.getElementById('m-url').value = '';
+                document.getElementById('m-launch').checked = false;
+            }
         };
 
         // LANÇAR ENQUETE
@@ -118,30 +147,40 @@
         // MONITORAR TUDO EM TEMPO REAL
         function init() {
             // Músicas
-            onSnapshot(collection(db, "musics"), snap => {
+            onSnapshot(query(collection(db, "musics"), orderBy("date", "desc")), snap => {
                 document.getElementById('lista-musicas').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
-                        <div class="item-info"><span class="item-name">${d.data().title}</span><span class="item-type">Música</span></div>
+                        <div class="item-info">
+                            <span class="item-name">${d.data().title} ${d.data().isLaunch ? '⚡' : ''}</span>
+                            <span class="item-type">${d.data().isLaunch ? 'Lançamento' : 'Música'}</span>
+                        </div>
                         <div class="btn-del" onclick="apagar('musics', '${d.id}')"><i class="fa fa-trash"></i></div>
                     </div>`).join('');
             });
+
             // Clipes
-            onSnapshot(collection(db, "clips"), snap => {
+            onSnapshot(query(collection(db, "clips"), orderBy("date", "desc")), snap => {
                 document.getElementById('lista-clips').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
                         <div class="item-info"><span class="item-name">${d.data().title}</span><span class="item-type" style="color:var(--orange)">Clipe</span></div>
                         <div class="btn-del" onclick="apagar('clips', '${d.id}')"><i class="fa fa-trash"></i></div>
                     </div>`).join('');
             });
+
             // Pedidos
             onSnapshot(query(collection(db, "pedidos"), orderBy("data", "desc")), snap => {
+                if(snap.empty) {
+                    document.getElementById('lista-pedidos').innerHTML = '<p style="font-size:12px; color:#444">Nenhum pedido recebido.</p>';
+                    return;
+                }
                 document.getElementById('lista-pedidos').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
                         <div class="item-info"><span class="item-name">${d.data().musica}</span><span class="item-type" style="color:var(--pink)">Pedido</span></div>
                         <div class="btn-del" onclick="apagar('pedidos', '${d.id}')"><i class="fa fa-check"></i></div>
                     </div>`).join('');
             });
-            // Enquete Ativa (Ver Votos)
+
+            // Enquete Ativa
             onSnapshot(doc(db, "configuracoes", "enquete_ativa"), snap => {
                 const div = document.getElementById('lista-enquetes');
                 if(!snap.exists()) { div.innerHTML = "Nenhuma enquete ativa."; return; }
@@ -159,8 +198,8 @@
             });
         }
 
-        window.apagar = async (p, id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, p, id)); };
-        window.apagarEnquete = async () => { if(confirm("Tirar do ar?")) await deleteDoc(doc(db, "configuracoes", "enquete_ativa")); };
+        window.apagar = async (p, id) => { if(confirm("Deseja realmente excluir?")) await deleteDoc(doc(db, p, id)); };
+        window.apagarEnquete = async () => { if(confirm("Tirar enquete do ar?")) await deleteDoc(doc(db, "configuracoes", "enquete_ativa")); };
 
         init();
     </script>
