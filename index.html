@@ -14,11 +14,9 @@
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 130px; overflow-x: hidden; }
 
         /* SPLASH SCREEN */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s; }
-        .splash-logo { font-size: 38px; font-weight: 900; letter-spacing: -2px; color: #fff; }
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease; }
+        .splash-logo { font-size: 32px; font-weight: 900; color: #fff; }
         .splash-logo span { color: var(--accent); }
-        .loader-bar { width: 0; height: 3px; background: var(--accent); margin: 15px auto; border-radius: 10px; animation: loading 1.8s ease-in-out forwards; }
-        @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
         .hidden-splash { opacity: 0; visibility: hidden; }
 
         /* MODAL DE ANÚNCIO */
@@ -26,28 +24,27 @@
         .ad-content { background: var(--surface); padding: 30px; border-radius: 20px; border: 1px solid var(--accent); max-width: 400px; width: 90%; }
         .btn-close-ad { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 25px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; text-transform: uppercase; }
 
-        /* HEADER & NAV */
+        /* HEADER */
         header { padding: 15px; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 15px; }
         .logo span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .btn-top { flex: 1; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; height: 38px; border: 1px solid #333; background: #222; color: white; }
-        .btn-clipes { background: var(--accent); border: none; }
 
         /* LANÇAMENTO */
-        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 15px; padding: 20px; display: none; position: relative; }
+        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 15px; padding: 20px; display: none; position: relative; overflow: hidden; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.02); } 100% { transform: scale(1); } }
         .launch-tag { position: absolute; top: 10px; right: 10px; background: #fff; color: #000; padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 900; }
 
         /* BUSCA E PEDIDOS */
         .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 15px; border: 1px solid #222; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
-        .request-box { background: #1a1a1a; display: flex; align-items: center; padding: 5px 5px 5px 15px; border-radius: 15px; border: 1px dashed #444; margin: 0 15px; }
+        .request-box { background: #1a1a1a; display: flex; align-items: center; padding: 5px 15px; border-radius: 15px; border: 1px dashed #444; margin: 0 15px; height: 45px; }
         .request-box input { background: transparent; border: none; color: white; flex: 1; outline: none; font-size: 13px; }
-        .btn-send-req { background: var(--accent); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; }
 
         /* ENQUETE */
         .poll-container { margin: 15px; padding: 20px; background: var(--surface); border-radius: 20px; border: 1px solid #222; display: none; }
-        .poll-option { width: 100%; padding: 14px; margin-top: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 12px; text-align: left; font-weight: bold; }
+        .poll-option { width: 100%; padding: 14px; margin-top: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 12px; text-align: left; font-weight: bold; cursor: pointer; }
 
         /* LISTAS */
         .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
@@ -58,48 +55,53 @@
         
         .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
         .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; margin-bottom: 5px; background: rgba(255,255,255,0.03); }
-        .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; }
+        .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; object-fit: cover; }
 
-        /* PLAYER */
-        #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; }
-        .p-img { width: 45px; height: 45px; border-radius: 8px; }
+        /* PLAYER COM DISCO GIRANDO */
+        #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(30,30,30,0.98); backdrop-filter: blur(15px); padding: 12px; border-radius: 20px; display: none; align-items: center; gap: 15px; z-index: 2000; border: 1px solid #444; }
+        .disc-container { position: relative; width: 55px; height: 55px; flex-shrink: 0; }
+        .p-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid #333; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .playing-now { animation: rotate 4s linear infinite; }
+        .paused-now { animation-play-state: paused; }
+        .disc-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: #1e1e1e; border-radius: 50%; border: 2px solid #444; }
     </style>
 </head>
 <body>
 
-    <div id="splash"><div class="splash-content"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1><div class="loader-bar"></div></div></div>
+    <div id="splash"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1></div>
 
     <div id="ad-modal">
         <div class="ad-content">
-            <div style="font-size:40px; color:var(--accent); margin-bottom:15px;"><i class="fa fa-headphones"></i></div>
-            <h2>Curta sem limites!</h2>
-            <p>Os anúncios mantêm a <b>ZyverMusic</b> gratuita. Apoie o projeto para continuar ouvindo!</p>
-            <button class="btn-close-ad" onclick="fecharAnuncio()">VOLTAR PARA A MÚSICA</button>
+            <div style="font-size:40px; color:var(--accent); margin-bottom:15px;"><i class="fa fa-bolt"></i></div>
+            <h2>Desbloquear Play</h2>
+            <p>Apoie o site para continuar ouvindo suas músicas favoritas sem limites!</p>
+            <button class="btn-close-ad" onclick="fecharAnuncio()">LIBERAR AGORA</button>
         </div>
     </div>
 
     <header>
         <div class="logo">ZYVER<span>MUSIC</span></div>
         <div class="header-actions">
-            <a href="playlists.html" class="btn-top"><i class="fa fa-list"></i> PLAYLISTS</a>
-            <a href="clipes.html" class="btn-top btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
+            <a href="#" class="btn-top"><i class="fa fa-list"></i> PLAYLISTS</a>
+            <a href="#" class="btn-top" style="background:var(--accent);border:none;"><i class="fa fa-play-circle"></i> CLIPES</a>
         </div>
     </header>
 
     <div id="launch-area" class="launch-banner">
         <div class="launch-tag">LANÇAMENTO</div>
-        <h3 id="l-title">Música Nova</h3>
-        <p style="font-size: 12px; opacity: 0.8; margin-bottom: 12px;">Ouça agora esse exclusivo!</p>
+        <h3 id="l-title">Carregando...</h3>
+        <p style="font-size: 12px; opacity: 0.8; margin-bottom: 12px;">Ouça agora esse lançamento exclusivo!</p>
         <button onclick="triggerLaunch()" style="background: white; color: black; border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold;">OUVIR AGORA</button>
     </div>
 
     <div class="request-box">
-        <input type="text" id="input-pedido" placeholder="Peça uma música...">
-        <button class="btn-send-req" onclick="enviarPedido()"><i class="fa fa-paper-plane"></i></button>
+        <input type="text" id="input-pedido" placeholder="Peça uma música para a gente adicionar...">
+        <button onclick="enviarPedido()" style="background:var(--accent); border:none; color:white; padding:8px 15px; border-radius:10px;"><i class="fa fa-paper-plane"></i></button>
     </div>
 
-    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()"></div>
-    
+    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="O que você quer ouvir?" onkeyup="filtrar()"></div>
+
     <div id="enquete-home" class="poll-container">
         <h3 id="poll-question" style="font-size: 15px; margin-bottom: 10px;"></h3>
         <div id="poll-options-list"></div>
@@ -112,9 +114,15 @@
     <div id="grid-geral" class="lista-musicas"></div>
 
     <div id="player">
-        <img id="p-img" class="p-img">
-        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small style="color:var(--accent); font-weight:bold">TOCANDO AGORA</small></div>
-        <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:24px;"></i></div>
+        <div class="disc-container">
+            <img id="p-img" class="p-img" src="">
+            <div class="disc-center"></div>
+        </div>
+        <div style="flex:1; overflow:hidden;">
+            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
+            <small style="color:var(--accent); font-weight:900; font-size:10px;">REPRODUZINDO</small>
+        </div>
+        <div onclick="togglePlay()"><i class="fa fa-pause" id="play-icon" style="font-size:26px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
 
@@ -127,14 +135,19 @@
         let tempPlayData = null;
         let launchTrack = null;
         const audio = document.getElementById('audio-engine');
+        const pImg = document.getElementById('p-img');
 
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
+        // Splash screen timer
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2000));
 
         async function init() {
-            const snap = await getDocs(collection(db, "musics"));
+            // Puxar músicas ordenadas por data
+            const q = query(collection(db, "musics"), orderBy("date", "desc"));
+            const snap = await getDocs(q);
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            launchTrack = tracks.filter(m => m.isLaunch).sort((a,b) => b.date - a.date)[0];
+            // Configurar Lançamento
+            launchTrack = tracks.find(m => m.isLaunch);
             if(launchTrack) {
                 document.getElementById('launch-area').style.display = 'block';
                 document.getElementById('l-title').innerText = launchTrack.title;
@@ -159,7 +172,7 @@
         window.fecharAnuncio = () => {
             document.getElementById('ad-modal').style.display = 'none';
             if(tempPlayData) {
-                play(tempPlayData.id, tempPlayData.url || tempPlayData.url, tempPlayData.title || tempPlayData.n, tempPlayData.cover || tempPlayData.i);
+                play(tempPlayData.id, tempPlayData.url, tempPlayData.title || tempPlayData.n, tempPlayData.cover || tempPlayData.i);
                 tempPlayData = null;
             }
         };
@@ -167,29 +180,42 @@
         window.play = async (id, url, n, i) => { 
             document.getElementById('player').style.display = 'flex'; 
             document.getElementById('p-name').innerText = n; 
-            document.getElementById('p-img').src = i; 
+            pImg.src = i; 
             audio.src = url; audio.play(); 
+            pImg.classList.add('playing-now');
+            pImg.classList.remove('paused-now');
             document.getElementById('play-icon').className = 'fa fa-pause'; 
             try { await updateDoc(doc(db, "musics", id), { plays: increment(1) }); } catch (e) {}
+        };
+
+        window.togglePlay = () => { 
+            if(audio.paused) {
+                audio.play();
+                pImg.classList.remove('paused-now');
+                document.getElementById('play-icon').className = 'fa fa-pause';
+            } else {
+                audio.pause();
+                pImg.classList.add('paused-now');
+                document.getElementById('play-icon').className = 'fa fa-play';
+            }
         };
 
         window.enviarPedido = async () => {
             const val = document.getElementById('input-pedido').value;
             if(!val) return;
             await addDoc(collection(db, "pedidos"), { musica: val, data: Date.now() });
-            alert("Pedido enviado! 📥");
+            alert("Pedido enviado com sucesso!");
             document.getElementById('input-pedido').value = "";
         };
 
         function carregarEnquete() {
             onSnapshot(doc(db, "configuracoes", "enquete_ativa"), (snap) => {
-                const container = document.getElementById('enquete-home');
                 if (!snap.exists()) return;
-                container.style.display = 'block';
-                const data = snap.data();
-                document.getElementById('poll-question').innerText = data.pergunta;
-                document.getElementById('poll-options-list').innerHTML = data.opcoes.map((opt, i) => `
-                    <button class="poll-option" onclick="votar(${i})">${opt.texto} <span style="float:right;color:var(--accent)">${opt.votos}</span></button>
+                document.getElementById('enquete-home').style.display = 'block';
+                const d = snap.data();
+                document.getElementById('poll-question').innerText = d.pergunta;
+                document.getElementById('poll-options-list').innerHTML = d.opcoes.map((o, i) => `
+                    <button class="poll-option" onclick="votar(${i})">${o.texto} <span style="float:right;color:var(--accent)">${o.votos}</span></button>
                 `).join('');
             });
         }
@@ -213,13 +239,14 @@
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card" onclick="checkAd('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img src="${m.cover}"><div class="m-info"><h4>${m.title}</h4><p style="font-size:12px;opacity:0.6;">Zyver Music</p></div>
-                    <i class="fa-regular fa-heart" style="color:#555"></i>
+                    <img src="${m.cover}"><div><h4>${m.title}</h4><p style="font-size:12px;opacity:0.6;">Zyver Music</p></div>
                 </div>`).join('');
         }
 
-        window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };
-        window.filtrar = () => { const t = document.getElementById('busca').value.toLowerCase(); renderList(tracks.filter(m => m.title.toLowerCase().includes(t))); };
+        window.filtrar = () => {
+            const t = document.getElementById('busca').value.toLowerCase();
+            renderList(tracks.filter(m => m.title.toLowerCase().includes(t)));
+        };
         
         init();
     </script>
