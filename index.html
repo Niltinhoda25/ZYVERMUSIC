@@ -2,9 +2,12 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | v8.6 Spotify Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ZyverMusic | v8.7 The Archive 8007%</title>
     
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#121212">
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#121212%22,%22theme_color%22:%22#1DB954%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3844/3844724.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
@@ -15,280 +18,350 @@
         })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
     </script>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
         :root { 
-            --spotify-green: #1DB954;
-            --spotify-black: #121212;
-            --spotify-light-black: #181818;
-            --spotify-grey: #b3b3b3;
-            --card-hover: #282828;
+            --spotify-green: #1DB954; 
+            --bg-black: #121212;
+            --surface: #181818;
+            --highlight: #282828;
+            --text-gray: #b3b3b3;
         }
-        
-        /* TRAVA TOTAL DE MOVIMENTAÇÃO LATERAL */
+
+        /* RESET E TRAVA DE TELA 8007% */
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
+            -webkit-tap-highlight-color: transparent;
             font-family: 'Figtree', sans-serif;
         }
-        
-        html, body { 
-            width: 100%; height: 100%; 
-            overflow: hidden; /* Trava o body principal */
-            background-color: #000;
-            color: white;
-            position: fixed; /* Impede o "elástico" do iOS */
+
+        html, body {
+            width: 100vw; height: 100vh;
+            overflow: hidden; background: #000;
+            position: fixed; touch-action: pan-y; /* Trava scroll lateral */
         }
 
-        /* CONTEÚDO SCROLLÁVEL APENAS VERTICAL */
-        #main-content { 
+        /* CONTEÚDO COM SCROLL VERTICAL LISO */
+        #main-scroller {
             height: 100vh; width: 100%;
-            overflow-y: auto; overflow-x: hidden; 
-            padding-bottom: 220px;
-            background: linear-gradient(to bottom, #222, var(--spotify-black) 30%);
-            -webkit-overflow-scrolling: touch;
+            overflow-y: auto; overflow-x: hidden;
+            padding-bottom: 250px;
+            background: linear-gradient(to bottom, #252525 0%, #121212 40%);
+            scrollbar-width: none;
         }
+        #main-scroller::-webkit-scrollbar { display: none; }
 
-        header { padding: 40px 20px 20px; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; }
+        header { padding: 40px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; color: white; }
         .logo span { color: var(--spotify-green); }
 
-        /* BUSCA SPOTIFY STYLE */
-        .search-container { margin: 0 20px 25px; position: relative; }
-        .search-container input { 
-            width: 100%; background: white; border: none; 
-            padding: 14px 45px; border-radius: 4px; color: black; 
-            font-size: 14px; font-weight: 600;
+        /* BUSCA PREMIUM */
+        .search-box { margin: 15px 20px 25px; position: relative; }
+        .search-box input {
+            width: 100%; background: #ffffff; border: none;
+            padding: 16px 45px; border-radius: 8px;
+            font-size: 15px; font-weight: 700; color: #000;
         }
-        .search-container i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #535353; font-size: 18px; }
+        .search-box i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #555; font-size: 20px; }
 
-        .section-title { padding: 10px 20px; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .section-label { padding: 10px 20px; font-size: 22px; font-weight: 800; color: white; }
 
-        /* GRID HORIZONTAL TRAVADO */
-        #top-list { 
-            display: flex; overflow-x: auto; padding: 10px 20px; gap: 16px; 
-            scrollbar-width: none; -ms-overflow-style: none;
+        /* GRID HORIZONTAL SEM BALANÇO */
+        .horizontal-grid {
+            display: flex; overflow-x: auto; padding: 15px 20px; gap: 18px;
+            scrollbar-width: none;
         }
-        #top-list::-webkit-scrollbar { display: none; }
-        
-        .top-card { 
-            min-width: 140px; background: var(--spotify-light-black); 
-            padding: 12px; border-radius: 8px; transition: 0.3s;
-        }
-        .top-card:active { background: var(--card-hover); }
-        .top-img { width: 116px; height: 116px; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); object-fit: cover; }
-        .top-card b { display: block; margin-top: 10px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .horizontal-grid::-webkit-scrollbar { display: none; }
 
-        /* LISTA DE MÚSICAS */
-        .song-row { 
-            display: flex; align-items: center; padding: 10px 20px; 
+        .spot-card {
+            min-width: 155px; background: var(--surface);
+            padding: 14px; border-radius: 10px; transition: 0.3s ease;
+        }
+        .spot-card:active { background: var(--highlight); transform: scale(0.97); }
+        .card-img { width: 127px; height: 127px; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.6); }
+        .spot-card b { display: block; margin-top: 12px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: white; }
+
+        /* LISTA VERTICAL */
+        .track-row {
+            display: flex; align-items: center; padding: 12px 20px;
             transition: 0.2s; cursor: pointer;
         }
-        .song-row:active { background: rgba(255,255,255,0.1); }
-        .song-thumb { width: 48px; height: 48px; border-radius: 4px; margin-right: 15px; object-fit: cover; }
-        .song-info { flex: 1; }
-        .song-info b { font-size: 15px; display: block; }
-        .song-info span { font-size: 13px; color: var(--spotify-grey); }
+        .track-row:active { background: rgba(255,255,255,0.08); }
+        .track-img { width: 52px; height: 52px; border-radius: 4px; margin-right: 16px; object-fit: cover; }
+        .track-data { flex: 1; overflow: hidden; }
+        .track-data b { font-size: 16px; color: white; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-data span { font-size: 13px; color: var(--text-gray); }
 
-        /* PLAYER SPOTIFY STYLE */
-        #player { 
-            position: fixed; bottom: 85px; left: 8px; right: 8px; 
-            background: #282828; padding: 8px 12px; border-radius: 8px; 
-            display: none; align-items: center; gap: 12px; z-index: 5000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* PLAYER SPOTIFY ORIGINAL STYLE */
+        #player-bar {
+            position: fixed; bottom: 95px; left: 10px; right: 10px;
+            background: #282828; border-radius: 10px; padding: 10px 15px;
+            display: none; align-items: center; gap: 15px; z-index: 6000;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
+            animation: slideUp 0.3s ease-out;
         }
-        .p-thumb { width: 44px; height: 44px; border-radius: 4px; object-fit: cover; }
-        .p-meta { flex: 1; overflow: hidden; }
-        .p-meta b { font-size: 13px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-meta span { font-size: 11px; color: var(--spotify-grey); }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* BOTTOM NAV */
-        .bottom-nav { 
-            position: fixed; bottom: 0; width: 100%; height: 80px;
-            background: rgba(0,0,0,0.95); display: flex; justify-content: space-around;
-            padding-top: 10px; z-index: 4000;
-        }
-        .nav-item { color: var(--spotify-grey); text-align: center; font-size: 22px; flex: 1; }
-        .nav-item.active { color: white; }
-        .nav-item span { display: block; font-size: 10px; margin-top: 4px; font-weight: 500; }
+        .p-img { width: 48px; height: 48px; border-radius: 6px; object-fit: cover; }
+        .p-info { flex: 1; overflow: hidden; }
+        .p-info b { font-size: 14px; color: white; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-info span { font-size: 12px; color: var(--text-gray); }
+        .p-ctrl { display: flex; align-items: center; gap: 22px; color: white; }
 
-        /* MODAIS */
-        .modal-full { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #121212; z-index: 9999; display: none; flex-direction: column;
-            padding: 40px 20px;
+        /* NAV BAR INFERIOR */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 85px;
+            background: rgba(0,0,0,0.96); backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.05); z-index: 5000;
         }
-        .modal-btn { 
-            background: var(--spotify-green); color: black; border: none; 
-            padding: 16px; border-radius: 500px; font-weight: 700; font-size: 15px;
-            margin-top: auto;
+        .nav-btn { color: var(--text-gray); display: flex; flex-direction: column; align-items: center; flex: 1; cursor: pointer; }
+        .nav-btn.active { color: white; }
+        .nav-btn i { font-size: 24px; margin-bottom: 5px; }
+        .nav-btn span { font-size: 11px; font-weight: 600; }
+
+        /* MODAIS FULLSCREEN */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-black); z-index: 9999; display: none;
+            flex-direction: column; padding: 50px 20px;
         }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .modal-title { font-size: 28px; font-weight: 900; }
+        .save-btn {
+            background: var(--spotify-green); color: black; border: none;
+            padding: 18px; border-radius: 50px; font-weight: 900;
+            font-size: 16px; margin-top: auto; box-shadow: 0 10px 20px rgba(29, 185, 84, 0.3);
+        }
+
+        /* BOTÃO TELA CHEIA OCULTO */
+        .fs-btn { position: absolute; right: 20px; top: 45px; color: white; opacity: 0.5; font-size: 20px; }
     </style>
 </head>
-<body>
+<body onclick="enableFS()">
 
-    <div id="modal-cloud" class="modal-full">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h2 style="font-size:24px;">Sua Biblioteca</h2>
-            <i class="fa fa-times fa-lg" onclick="fecharModal('modal-cloud')"></i>
+    <div id="modal-library" class="modal-overlay">
+        <div class="modal-header">
+            <h2 class="modal-title">Sua Biblioteca</h2>
+            <i class="fa fa-times fa-2x" onclick="fecharModal('modal-library')"></i>
         </div>
-        <div id="cloud-list" style="overflow-y:auto; flex:1;"></div>
+        <div id="lib-content" style="overflow-y:auto; flex:1;"></div>
     </div>
 
-    <div id="modal-create" class="modal-full">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h2>Criar Playlist</h2>
-            <i class="fa fa-times fa-lg" onclick="fecharModal('modal-create')"></i>
+    <div id="modal-create" class="modal-overlay">
+        <div class="modal-header">
+            <h2 class="modal-title">Criar Playlist</h2>
+            <i class="fa fa-times fa-2x" onclick="fecharModal('modal-create')"></i>
         </div>
-        <input type="text" id="pl-title" placeholder="Dê um nome à sua playlist" style="width:100%; background:#333; border:none; padding:15px; border-radius:4px; color:white; margin-bottom:20px;">
+        <input type="text" id="new-pl-name" placeholder="Nome da playlist" style="width:100%; background:#333; border:none; padding:18px; border-radius:8px; color:white; font-size:18px; margin-bottom:25px;">
         <div id="selection-list" style="overflow-y:auto; flex:1;"></div>
-        <button class="modal-btn" onclick="salvarCloud()">CRIAR</button>
+        <button class="save-btn" onclick="executarCriacao()">CRIAR AGORA</button>
     </div>
 
-    <div id="main-content">
-        <header><div class="logo">Zyver<span>Music</span></div></header>
+    <div id="main-scroller">
+        <header>
+            <div class="logo">Zyver<span>Music</span></div>
+            <i class="fa fa-expand fs-btn" onclick="toggleFullScreen()"></i>
+        </header>
 
-        <div class="search-container">
+        <div class="search-box">
             <i class="fa fa-search"></i>
-            <input type="text" id="search-bar" placeholder="O que você quer ouvir?" oninput="filtrar()">
+            <input type="text" id="main-search" placeholder="O que você quer ouvir?" oninput="filtrarGeral()">
         </div>
 
-        <div class="section-title">Feito para você</div>
-        <div id="top-list"></div>
+        <div class="section-label">Feito para você</div>
+        <div id="top-grid" class="horizontal-grid"></div>
 
-        <div class="section-title" style="margin-top:20px;">Músicas recomendadas</div>
-        <div id="full-list"></div>
+        <div class="section-label" style="margin-top:25px;">Músicas recomendadas</div>
+        <div id="main-list"></div>
     </div>
 
-    <div id="player">
-        <img id="p-img" class="p-thumb" src="">
-        <div class="p-meta">
-            <b id="p-name">...</b>
-            <span id="p-artist">Spotify Edition</span>
+    <div id="player-bar">
+        <img id="player-img" class="p-img" src="">
+        <div class="p-info">
+            <b id="player-title">Carregando...</b>
+            <span id="player-context">Zyver Music</span>
         </div>
-        <div style="display:flex; gap:15px; align-items:center;">
-            <i class="fa fa-forward-step" onclick="proxima()" style="color:var(--spotify-grey);"></i>
-            <i class="fa fa-play" id="play-icon" onclick="toggle()" style="font-size:24px;"></i>
+        <div class="p-ctrl">
+            <i class="fa fa-step-forward" onclick="tocarProxima()" style="font-size:20px; color:#b3b3b3;"></i>
+            <i class="fa fa-play" id="master-play" onclick="togglePlayer()" style="font-size:28px;"></i>
         </div>
-        <audio id="engine"></audio>
+        <audio id="audio-engine"></audio>
     </div>
 
     <nav class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()"><i class="fa fa-house"></i><span>Início</span></div>
-        <div class="nav-item" onclick="abrirModal('modal-create')"><i class="fa fa-plus-square"></i><span>Criar</span></div>
-        <div class="nav-item" onclick="abrirCloud()"><i class="fa fa-book-open"></i><span>Sua Biblioteca</span></div>
+        <div class="nav-btn active" onclick="location.reload()">
+            <i class="fa fa-house"></i><span>Início</span>
+        </div>
+        <div class="nav-btn" onclick="abrirModal('modal-create')">
+            <i class="fa fa-plus-square"></i><span>Criar</span>
+        </div>
+        <div class="nav-btn" onclick="abrirMinhaLib()">
+            <i class="fa fa-book-open"></i><span>Sua Biblioteca</span>
+        </div>
     </nav>
 
     <script type="module">
+        // CONFIGURAÇÃO FIREBASE E LÓGICA 8007%
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        
-        let tracks = [], selecionadas = [];
-        const audio = document.getElementById('engine');
-        const pImg = document.getElementById('p-img');
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        async function init() {
-            const snap = await getDocs(collection(db, "musics"));
-            tracks = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
-            
-            const params = new URLSearchParams(window.location.search);
-            const plId = params.get('pl');
-            if(plId) {
-                const plSnap = await getDoc(doc(db, "playlists", plId));
-                if(plSnap.exists()) renderLista(plSnap.data().musicas);
-            } else { renderLista(tracks); }
-            renderTop();
+        let allMusic = [], selectedTracks = [], currentPLContext = "Zyver Originals";
+        const engine = document.getElementById('audio-engine');
+        const pImg = document.getElementById('player-img');
+
+        async function bootApp() {
+            try {
+                // Busca músicas ordenadas por plays
+                const q = query(collection(db, "musics"), orderBy("plays", "desc"));
+                const snap = await getDocs(q);
+                allMusic = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
+
+                // Checar link de playlist compartilhada
+                const urlParams = new URLSearchParams(window.location.search);
+                const plId = urlParams.get('pl');
+                
+                if(plId) {
+                    const plSnap = await getDoc(doc(db, "playlists", plId));
+                    if(plSnap.exists()) {
+                        currentPLContext = plSnap.data().nome;
+                        renderLista(plSnap.data().musicas);
+                    }
+                } else {
+                    renderLista(allMusic);
+                }
+                renderTop();
+            } catch(e) { console.error("Boot Error:", e); }
         }
 
-        function renderLista(l) {
-            document.getElementById('full-list').innerHTML = l.map(m => `
-                <div class="song-row" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img class="song-thumb" src="${m.cover}">
-                    <div class="song-info"><b>${m.title}</b><span>Música • Zyver</span></div>
+        function renderLista(data) {
+            document.getElementById('main-list').innerHTML = data.map(m => `
+                <div class="track-row" onclick="playSong('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                    <img class="track-img" src="${m.cover}">
+                    <div class="track-data"><b>${m.title}</b><span>Música • Zyver</span></div>
                 </div>
             `).join('');
         }
 
         function renderTop() {
-            const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
-            document.getElementById('top-list').innerHTML = top.map(m => `
-                <div class="top-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img class="top-img" src="${m.cover}">
+            const top = allMusic.slice(0, 10);
+            document.getElementById('top-grid').innerHTML = top.map(m => `
+                <div class="spot-card" onclick="playSong('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                    <img class="card-img" src="${m.cover}">
                     <b>${m.title}</b>
                 </div>
             `).join('');
         }
 
-        window.tocar = (id, url, title, img) => {
-            document.getElementById('player').style.display = 'flex';
-            document.getElementById('p-name').innerText = title;
-            pImg.src = img; audio.src = url; audio.play();
-            document.getElementById('play-icon').className = 'fa fa-pause';
+        window.playSong = (id, url, title, img) => {
+            document.getElementById('player-bar').style.display = 'flex';
+            document.getElementById('player-title').innerText = title;
+            document.getElementById('player-context').innerText = currentPLContext;
+            pImg.src = img;
+            engine.src = url;
+            engine.play();
+            document.getElementById('master-play').className = 'fa fa-pause';
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
         };
 
-        window.toggle = () => {
-            if(audio.paused) { audio.play(); document.getElementById('play-icon').className = 'fa fa-pause'; }
-            else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
+        window.togglePlayer = () => {
+            if(engine.paused) { engine.play(); document.getElementById('master-play').className = 'fa fa-pause'; }
+            else { engine.pause(); document.getElementById('master-play').className = 'fa fa-play'; }
         };
 
-        audio.onended = () => proxima();
-        window.proxima = () => {
-            const r = tracks[Math.floor(Math.random()*tracks.length)];
-            tocar(r.id, r.url, r.title, r.cover);
+        engine.onended = () => tocarProxima();
+        window.tocarProxima = () => {
+            const r = allMusic[Math.floor(Math.random() * allMusic.length)];
+            playSong(r.id, r.url, r.title, r.cover);
         };
 
-        window.salvarCloud = async () => {
-            const n = document.getElementById('pl-title').value;
-            if(!n || selecionadas.length === 0) return;
-            const m = tracks.filter(x => selecionadas.includes(x.id));
-            const d = await addDoc(collection(db, "playlists"), { nome: n, musicas: m });
-            prompt("Compartilhe sua playlist:", window.location.origin + window.location.pathname + "?pl=" + d.id);
-            fecharModal('modal-create');
-        };
-
-        window.abrirCloud = async () => {
-            abrirModal('modal-cloud');
+        // LÓGICA DE PLAYLISTS (ANTIGAS + NOVAS)
+        window.abrirMinhaLib = async () => {
+            abrirModal('modal-library');
             const snap = await getDocs(collection(db, "playlists"));
-            document.getElementById('cloud-list').innerHTML = snap.docs.map(d => `
-                <div class="song-row">
-                    <div class="song-info"><b>${d.data().nome}</b><span>${d.data().musicas.length} músicas</span></div>
-                    <i class="fa fa-share-alt" onclick="copy('${d.id}')" style="color:var(--spotify-green)"></i>
+            const content = document.getElementById('lib-content');
+            
+            if(snap.empty) {
+                content.innerHTML = "<p style='color:gray;text-align:center;margin-top:50px;'>Nenhuma playlist encontrada.</p>";
+                return;
+            }
+
+            content.innerHTML = snap.docs.map(d => `
+                <div class="track-row">
+                    <div class="track-data" onclick="window.location.href='?pl=${d.id}'">
+                        <b>${d.data().nome}</b>
+                        <span>${d.data().musicas.length} músicas • Playlist</span>
+                    </div>
+                    <i class="fa fa-share-nodes" onclick="copyPL('${d.id}')" style="color:var(--spotify-green); font-size:20px;"></i>
                 </div>
             `).join('');
         };
 
-        window.copy = (id) => {
-            navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
-            alert("Link copiado!");
+        window.executarCriacao = async () => {
+            const name = document.getElementById('new-pl-name').value;
+            if(!name || selectedTracks.length === 0) return alert("Escolha um nome e músicas!");
+            
+            const list = allMusic.filter(t => selectedTracks.includes(t.id));
+            const res = await addDoc(collection(db, "playlists"), { nome: name, musicas: list, date: new Date() });
+            
+            prompt("Sua playlist foi salva na nuvem! Link:", window.location.origin + window.location.pathname + "?pl=" + res.id);
+            fecharModal('modal-create');
         };
 
-        window.toggleSel = (id) => {
+        window.toggleSelect = (id) => {
             const el = document.getElementById(`sel-${id}`);
-            if(selecionadas.includes(id)) { selecionadas = selecionadas.filter(x => x !== id); el.style.background = "none"; }
-            else { selecionadas.push(id); el.style.background = "#282828"; }
+            if(selectedTracks.includes(id)) {
+                selectedTracks = selectedTracks.filter(x => x !== id);
+                el.style.background = "none";
+            } else {
+                selectedTracks.push(id);
+                el.style.background = "rgba(29, 185, 84, 0.2)";
+            }
         };
 
+        // UTILITÁRIOS DE UI
         window.abrirModal = (id) => {
             document.getElementById(id).style.display = 'flex';
             if(id === 'modal-create') {
-                document.getElementById('selection-list').innerHTML = tracks.map(m => `
-                    <div class="song-row" id="sel-${m.id}" onclick="toggleSel('${m.id}')">
-                        <img class="song-thumb" src="${m.cover}"><b>${m.title}</b>
+                document.getElementById('selection-list').innerHTML = allMusic.map(m => `
+                    <div class="track-row" id="sel-${m.id}" onclick="toggleSelect('${m.id}')">
+                        <img class="track-img" src="${m.cover}">
+                        <div class="track-data"><b>${m.title}</b></div>
                     </div>
                 `).join('');
             }
         };
-
         window.fecharModal = (id) => document.getElementById(id).style.display = 'none';
-        window.filtrar = () => {
-            const v = document.getElementById('search-bar').value.toLowerCase();
-            renderLista(tracks.filter(m => m.title.toLowerCase().includes(v)));
+        
+        window.filtrarGeral = () => {
+            const v = document.getElementById('main-search').value.toLowerCase();
+            renderLista(allMusic.filter(m => m.title.toLowerCase().includes(v)));
         };
 
-        init();
+        window.copyPL = (id) => {
+            navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
+            alert("Link copiado para a área de transferência!");
+        };
+
+        // FUNÇÃO TELA CHEIA REAL
+        window.toggleFullScreen = () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    alert(`Erro ao tentar entrar em tela cheia: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        };
+
+        window.enableFS = () => {
+            // Ativa o áudio no iOS/Android e tenta forçar o modo standalone
+            if(engine.paused) engine.play().then(() => engine.pause());
+        };
+
+        bootApp();
     </script>
 </body>
 </html>
