@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZyverMusic | Oficial</title>
+
+    <script src="https://quge5.com/88/tag.min.js" data-zone="217542" async data-cfasync="false"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --text-dim: #999; }
@@ -29,11 +32,9 @@
         .btn-fav { color: #1DB954; font-size: 22px; text-decoration: none; padding: 0 10px; }
         .btn-clipes { background: var(--accent); color: white; }
 
-        /* BUSCA (Estilo Original) */
         .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 0 15px 15px; border: 1px solid #222; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
         
-        /* PEDIDO (Visual Diferenciado para não confundir) */
         .request-area { margin: 0 15px 20px; }
         .request-label { font-size: 10px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
         .request-box { background: #000; display: flex; align-items: center; padding: 5px 5px 5px 18px; border-radius: 15px; border: 1px dashed #444; }
@@ -56,7 +57,6 @@
         .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
         .btn-heart.active { color: #1DB954; }
 
-        /* ENQUETE */
         .poll-container { margin: 15px; padding: 20px; background: var(--surface); border-radius: 20px; border: 1px solid #222; display: none; }
         .poll-option { width: 100%; padding: 14px; margin-top: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 12px; font-weight: bold; text-align: left; transition: 0.3s; }
 
@@ -112,7 +112,7 @@
         
         let tracks = []; 
         const audio = document.getElementById('audio-engine');
-        let currentMusicId = null; // Para saber qual música atualizar o play
+        let currentMusicId = null;
 
         window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
 
@@ -120,7 +120,6 @@
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Ordena pelo número de plays para o Top 10
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
@@ -130,7 +129,6 @@
             carregarEnquete();
         }
 
-        // --- SISTEMA DE PLAY (COM CONTADOR) ---
         window.play = async (id, url, n, i) => { 
             currentMusicId = id;
             document.getElementById('player').style.display = 'flex'; 
@@ -140,17 +138,12 @@
             audio.play(); 
             document.getElementById('play-icon').className = 'fa fa-pause'; 
 
-            // ATUALIZA O CONTADOR DE PLAYS NO FIREBASE
             try {
                 const musicRef = doc(db, "musics", id);
-                await updateDoc(musicRef, {
-                    plays: increment(1)
-                });
-                console.log("Play contado!");
+                await updateDoc(musicRef, { plays: increment(1) });
             } catch (e) { console.error("Erro ao contar play", e); }
         };
 
-        // --- SISTEMA DE PEDIDOS ---
         window.enviarPedido = async () => {
             const val = document.getElementById('input-pedido').value;
             if(!val) return;
@@ -159,7 +152,6 @@
             document.getElementById('input-pedido').value = "";
         };
 
-        // --- RESTO DAS FUNÇÕES ---
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
