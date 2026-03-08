@@ -3,116 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Premium</title>
+    <title>ZyverMusic | Spotify Style</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --purple: #8a2be2; --bg: #000; --card: #121212; --text: #fff; }
+        :root { --accent: #1DB954; --bg: #000; --surface: #121212; --text-dim: #b3b3b3; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 150px; }
+        
+        body { 
+            background: var(--bg); 
+            color: white; 
+            font-family: 'Circular', 'Segoe UI', sans-serif; 
+            padding-bottom: 110px; 
+        }
 
         /* HEADER */
-        header { padding: 15px; position: sticky; top: 0; background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
-        .nav-top { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 900; }
-        .logo span { color: var(--purple); }
-        .btn-cli { background: var(--purple); padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
-        
-        .search-area { position: relative; }
-        .search-area input { width: 100%; background: #181818; border: none; padding: 12px 40px; border-radius: 12px; color: white; }
-        .search-area i { position: absolute; left: 15px; top: 14px; color: #666; }
-
-        /* SEÇÃO: Top 10 Semanal (Mais Tocadas) */
-        .section-title { padding: 20px 15px 10px; font-size: 16px; color: #ff7a00; font-weight: 800; text-transform: uppercase; }
-        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
-        .ranking-wrapper::-webkit-scrollbar { display: none; }
-        
-        .rank-card { 
-            min-width: 85%; background: var(--card); border-radius: 20px; padding: 15px; 
-            display: flex; align-items: center; gap: 12px; scroll-snap-align: center; border: 1px solid #222;
+        header { 
+            padding: 20px 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            background: linear-gradient(to bottom, #1a1a1a, var(--bg));
         }
-        .rank-n { font-size: 42px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--purple); opacity: 0.8; flex-shrink: 0; }
-        .rank-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
-        .rank-info { flex: 1; overflow: hidden; }
-        .rank-info h3 { font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .rank-info p { font-size: 11px; color: #666; font-weight: bold; }
+        .logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
+        .logo span { color: #9d4edd; }
+        .btn-clipes { background: #9d4edd; padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
 
-        /* SEÇÃO: Sua Biblioteca (A CORREÇÃO DO GRID) */
-        /* Mudamos de flex-row para grid para caberem 2 por linha */
-        .grid-biblioteca { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; /* Duas colunas iguais */
-            gap: 15px; 
-            padding: 0 15px 30px; 
+        /* BUSCA */
+        .search-container { padding: 0 15px 15px; }
+        .search-box { 
+            background: #242424; 
+            display: flex; 
+            align-items: center; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+        }
+        .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
+
+        /* SEÇÃO TITULO */
+        .section-title { padding: 20px 15px 10px; font-size: 18px; font-weight: 800; }
+
+        /* BIBLIOTECA ESTILO LISTA (O QUE VOCÊ PEDIU) */
+        .lista-musicas { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 4px; 
+            padding: 0 10px; 
         }
 
         .m-card { 
-            background: var(--card); 
-            border-radius: 15px; 
-            padding: 10px; 
-            transition: 0.3s; 
-            border: 1px solid #222;
+            display: flex; 
+            align-items: center; 
+            padding: 8px 10px; 
+            border-radius: 6px;
+            transition: background 0.2s;
         }
-        .m-card:active { transform: scale(0.95); } /* Efeito de clique */
-        
+        .m-card:active { background: #282828; }
+
         .m-card img { 
-            width: 100%; 
-            aspect-ratio: 1/1; /* Garante que a capa seja sempre quadrada */
-            border-radius: 10px; 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 4px; 
             object-fit: cover; 
-            margin-bottom: 10px; 
+            margin-right: 14px; 
         }
-        .m-card h4 { 
-            font-size: 13px; 
+
+        .m-info { flex: 1; overflow: hidden; }
+        .m-info h4 { 
+            font-size: 15px; 
+            font-weight: 500; 
             white-space: nowrap; 
             overflow: hidden; 
             text-overflow: ellipsis; 
-            color: #eee; 
-            text-align: center;
+            margin-bottom: 2px;
         }
-        .m-card p { font-size: 10px; color: #666; text-align: center; margin-top: 3px; }
+        .m-info p { font-size: 12px; color: var(--text-dim); }
 
-        /* PLAYER MOBILE ESTILO SPOTIFY */
-        #player { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; padding: 12px 20px 35px; border-top: 1px solid #222; display: none; flex-direction: column; z-index: 2000; }
-        .p-main { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
-        .p-main img { width: 50px; height: 50px; border-radius: 8px; box-shadow: 0 0 15px rgba(138, 43, 226, 0.3); }
-        .p-info { flex: 1; overflow: hidden; }
-        .p-info h5 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-info span { font-size: 10px; color: var(--purple); font-weight: bold; text-transform: uppercase; }
-        .btn-play { background: white; color: black; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        
-        .progress-bar { width: 100%; height: 4px; background: #222; border-radius: 2px; }
-        #fill { height: 100%; background: var(--purple); width: 0%; border-radius: 2px; transition: width 0.1s linear; }
+        /* ICONE DE OPÇÕES (3 PONTINHOS) */
+        .m-card i.fa-ellipsis-v { color: var(--text-dim); padding: 10px; font-size: 14px; }
+
+        /* PLAYER FLUTUANTE */
+        #player { 
+            position: fixed; 
+            bottom: 15px; 
+            left: 10px; 
+            right: 10px; 
+            background: #282828; 
+            padding: 10px; 
+            border-radius: 10px; 
+            display: none; 
+            align-items: center; 
+            gap: 12px; 
+            z-index: 2000;
+        }
+        .p-img { width: 42px; height: 42px; border-radius: 4px; }
+        .p-meta { flex: 1; overflow: hidden; }
+        .p-meta h5 { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-meta span { font-size: 10px; color: #9d4edd; font-weight: bold; }
+        .btn-play { font-size: 20px; padding: 0 10px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="nav-top">
-            <div class="logo">ZYVER<span>MUSIC</span></div>
-            <a href="clipes.html" class="btn-cli"><i class="fa fa-play-circle"></i> CLIPES</a>
-        </div>
-        <div class="search-area">
-            <i class="fa fa-search"></i>
-            <input type="text" id="busca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
-        </div>
+        <div class="logo">ZYVER<span>MUSIC</span></div>
+        <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
     </header>
 
-    <div class="section-title">🔥 As Mais Tocadas</div>
-    <div id="top-10" class="ranking-wrapper"></div>
+    <div class="search-container">
+        <div class="search-box">
+            <i class="fa fa-search" style="color:#b3b3b3"></i>
+            <input type="text" id="busca" placeholder="O que você quer ouvir?" onkeyup="filtrar()">
+        </div>
+    </div>
 
-    <div class="section-title" style="color:white">Sua Biblioteca</div>
-    <div id="grid-geral" class="grid-biblioteca"></div>
+    <div class="section-title">Minha Biblioteca</div>
+    <div id="grid-geral" class="lista-musicas">
+        </div>
 
     <div id="player">
-        <div class="p-main">
-            <img id="p-img" src="">
-            <div class="p-info">
-                <h5 id="p-name">Nome da Música</h5>
-                <span>Tocando agora</span>
-            </div>
-            <div class="btn-play" onclick="togglePlay()"><i class="fa fa-play" id="play-icon"></i></div>
+        <img id="p-img" class="p-img" src="">
+        <div class="p-meta">
+            <h5 id="p-name">Música</h5>
+            <span>REPRODUZINDO AGORA</span>
         </div>
-        <div class="progress-bar"><div id="fill"></div></div>
+        <div class="btn-play" onclick="togglePlay()">
+            <i class="fa fa-play" id="play-icon"></i>
+        </div>
         <audio id="audio-engine"></audio>
     </div>
 
@@ -127,38 +143,22 @@
             try {
                 const snap = await getDocs(collection(db, "musics"));
                 tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                // Top 10 baseado em plays
-                const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
-                
-                // Render Top 10
-                document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                    <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                        <div class="rank-n">#${i+1}</div>
-                        <img src="${m.cover}">
-                        <div class="rank-info">
-                            <h3>${m.title}</h3>
-                            <p>${m.plays || 0} EXECUÇÕES</p>
-                        </div>
-                    </div>
-                `).join('');
-
-                // Render Biblioteca
-                renderGrid(tracks);
-
+                renderList(tracks);
             } catch (e) {
-                console.error("Erro ao carregar do Firebase:", e);
-                document.getElementById('grid-geral').innerText = "Erro ao carregar biblioteca.";
+                console.error("Erro:", e);
             }
         }
 
-        function renderGrid(data) {
+        function renderList(data) {
             const container = document.getElementById('grid-geral');
             container.innerHTML = data.map(m => `
                 <div class="m-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}">
-                    <h4>${m.title}</h4>
-                    <p>Música Oficial</p>
+                    <div class="m-info">
+                        <h4>${m.title}</h4>
+                        <p>Música • Zyver Music</p>
+                    </div>
+                    <i class="fa fa-ellipsis-v"></i>
                 </div>
             `).join('');
         }
@@ -182,17 +182,10 @@
             }
         }
 
-        audio.ontimeupdate = () => {
-            if(audio.duration) {
-                const pct = (audio.currentTime / audio.duration) * 100;
-                document.getElementById('fill').style.width = pct + '%';
-            }
-        }
-
         window.filtrar = () => {
             const t = document.getElementById('busca').value.toLowerCase();
             const filtrados = tracks.filter(m => m.title.toLowerCase().includes(t));
-            renderGrid(filtrados);
+            renderList(filtrados);
         }
 
         init();
