@@ -18,7 +18,7 @@
         
         .input-wrapper { display: flex; gap: 10px; margin-bottom: 20px; }
         input#pl-name { flex: 1; background: #1a1a1a; border: 1px solid #333; padding: 12px 15px; color: white; border-radius: 12px; outline: none; min-width: 0; }
-        .btn-ready { background: var(--accent); border: none; padding: 0 15px; border-radius: 12px; color: white; font-weight: 900; cursor: pointer; }
+        .btn-ready { background: var(--accent); border: none; padding: 0 15px; border-radius: 12px; color: white; font-weight: 900; cursor: pointer; height: 45px; flex-shrink: 0; }
 
         .selector-list { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
         .select-card { display: flex; align-items: center; padding: 10px; background: #161616; border-radius: 12px; border: 2px solid transparent; transition: 0.2s; cursor: pointer; }
@@ -27,13 +27,15 @@
         
         .saved-section { padding: 20px; }
         .pl-card { background: var(--surface); padding: 15px; border-radius: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .pl-info h3 { font-size: 16px; font-weight: 800; }
+        .pl-info h3 { font-size: 16px; font-weight: 800; color: #fff; }
         .pl-info p { font-size: 12px; color: #777; }
         
         .pl-actions { display: flex; align-items: center; gap: 10px; }
         .btn-icon { background: transparent; border: 1px solid #444; color: #ccc; width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
         .btn-play { background: white; color: black; border: none; padding: 10px 18px; border-radius: 20px; font-weight: 800; font-size: 12px; cursor: pointer; }
-        .btn-save-cloud { background: var(--success); color: white; border: none; padding: 10px 15px; border-radius: 10px; font-weight: 800; font-size: 12px; margin-top: 10px; width: 100%; cursor: pointer; }
+        
+        /* BOTÃO DE SALVAR PLAYLIST DO AMIGO */
+        .btn-import { background: var(--success); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 900; width: 100%; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3); }
 
         #player-pl { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(25,25,25,0.98); backdrop-filter: blur(10px); padding: 12px; border-radius: 15px; display: none; align-items: center; gap: 12px; border: 1px solid #333; z-index: 1000; }
     </style>
@@ -42,25 +44,31 @@
 
     <header>
         <a href="index.html" class="btn-back"><i class="fa fa-arrow-left"></i></a>
-        <h2>Minhas Playlists</h2>
+        <h2>Playlists Zyver</h2>
     </header>
 
     <div class="create-area" id="box-criar">
-        <span class="label-neon">Nova Playlist:</span>
+        <span class="label-neon">Criar Nova Playlist:</span>
         <div class="input-wrapper">
-            <input type="text" id="pl-name" placeholder="Nome da Playlist...">
-            <button class="btn-ready" id="btn-salvar-db">SALVAR</button>
+            <input type="text" id="pl-name" placeholder="Dê um nome...">
+            <button class="btn-ready" id="btn-save-new">SALVAR</button>
         </div>
         <div id="selector" class="selector-list"></div>
     </div>
 
+    <div id="area-amigo" style="padding: 20px; display: none;">
+        <span class="label-neon">Playlist Recebida:</span>
+        <div id="shared-content"></div>
+    </div>
+
     <div class="saved-section">
-        <span class="label-neon" id="txt-secao">Minha Biblioteca:</span>
-        <div id="pl-compartilhada"></div> <div id="pl-list"></div> </div>
+        <span class="label-neon">Minha Biblioteca:</span>
+        <div id="pl-list"></div>
+    </div>
 
     <div id="player-pl">
         <img id="pl-p-img" style="width:40px; height:40px; border-radius:5px; object-fit:cover;">
-        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small id="pl-context" style="color:var(--accent); font-weight:bold; font-size:10px;"></small></div>
+        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small id="pl-context" style="color:var(--accent); font-weight:bold;"></small></div>
         <i class="fa fa-step-forward" id="next-btn" style="font-size: 20px; cursor:pointer;"></i>
         <audio id="audio-pl"></audio>
     </div>
@@ -76,7 +84,7 @@
         const audio = document.getElementById('audio-pl');
 
         async function init() {
-            // Carrega as músicas do banco
+            // 1. Carregar Músicas
             const snap = await getDocs(collection(db, "musics"));
             allTracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
@@ -87,14 +95,16 @@
                 </div>
             `).join('');
 
-            // Lógica de Link Compartilhado
-            const urlParams = new URLSearchParams(window.location.search);
-            const sharedId = urlParams.get('id');
-            
-            if(sharedId) {
-                renderSharedPlaylist(sharedId);
+            // 2. Checar se há ID na URL
+            const urlId = new URLSearchParams(window.location.search).get('id');
+            if(urlId) {
+                document.getElementById('box-criar').style.display = 'none';
+                document.getElementById('area-amigo').style.display = 'block';
+                loadShared(urlId);
             }
-            loadLocalPlaylists();
+
+            // 3. Carregar Biblioteca
+            renderLibrary();
         }
 
         window.toggleSelect = (id) => {
@@ -102,89 +112,91 @@
             selectedIds.has(id) ? (selectedIds.delete(id), card.classList.remove('selected')) : (selectedIds.add(id), card.classList.add('selected'));
         };
 
-        // SALVA NO FIREBASE
-        document.getElementById('btn-salvar-db').onclick = async () => {
+        // CRIAR NOVA PLAYLIST NO FIREBASE
+        document.getElementById('btn-save-new').onclick = async () => {
             const name = document.getElementById('pl-name').value;
-            if(!name || selectedIds.size === 0) return alert("Preencha tudo!");
+            if(!name || selectedIds.size === 0) return alert("Nome e músicas são obrigatórios!");
             
             const docRef = await addDoc(collection(db, "playlists_publicas"), {
                 name: name,
                 tracks: Array.from(selectedIds)
             });
             
-            // Também salva localmente para aparecer na lista
-            saveLocal(docRef.id, name, Array.from(selectedIds));
-            location.href = "playlists.html"; 
+            addToLibrary(docRef.id, name, Array.from(selectedIds));
+            location.href = "playlists.html";
         };
 
-        function saveLocal(id, name, tracks) {
-            const local = JSON.parse(localStorage.getItem('zyver_v5_saved') || '[]');
-            if(!local.find(p => p.id === id)) {
-                local.push({ id, name, tracks });
-                localStorage.setItem('zyver_v5_saved', JSON.stringify(local));
-            }
-        }
-
-        async function renderSharedPlaylist(id) {
-            const docSnap = await getDoc(doc(db, "playlists_publicas", id));
-            if (docSnap.exists()) {
-                const pl = docSnap.data();
-                document.getElementById('pl-compartilhada').innerHTML = `
-                    <div class="pl-card" style="border: 2px solid var(--accent); flex-direction: column; align-items: flex-start; gap: 10px;">
-                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center;">
-                            <div class="pl-info"><h3>${pl.name} (Link)</h3><p>${pl.tracks.length} músicas</p></div>
-                            <button class="btn-play" onclick="prepararPlayCloud('${id}')">OUVIR</button>
+        // CARREGAR PLAYLIST DO LINK
+        async function loadShared(id) {
+            const snap = await getDoc(doc(db, "playlists_publicas", id));
+            if(snap.exists()) {
+                const pl = snap.data();
+                document.getElementById('shared-content').innerHTML = `
+                    <div class="pl-card" style="border: 2px solid var(--accent); flex-direction: column;">
+                        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                            <div class="pl-info"><h3>${pl.name}</h3><p>${pl.tracks.length} músicas</p></div>
+                            <button class="btn-play" onclick="playNow('${id}', true)">OUVIR</button>
                         </div>
-                        <button class="btn-save-cloud" onclick="importarPlaylist('${id}', '${pl.name}', ${JSON.stringify(pl.tracks)})">
-                            <i class="fa fa-plus"></i> SALVAR NA MINHA BIBLIOTECA
+                        <button class="btn-import" id="btn-import-act">
+                            <i class="fa fa-plus-circle"></i> SALVAR NA MINHA LISTA
                         </button>
                     </div>
                 `;
+                document.getElementById('btn-import-act').onclick = () => {
+                    addToLibrary(id, pl.name, pl.tracks);
+                    alert("Salvo na tua biblioteca!");
+                    location.href = "playlists.html";
+                };
             }
         }
 
-        window.importarPlaylist = (id, name, tracks) => {
-            saveLocal(id, name, tracks);
-            alert("Playlist salva com sucesso!");
-            location.href = "playlists.html"; // Recarrega sem o ID na URL
-        };
+        // LÓGICA DE SALVAR NA BIBLIOTECA (LOCALSTORAGE)
+        function addToLibrary(id, name, tracks) {
+            let lib = JSON.parse(localStorage.getItem('zyver_final_lib') || '[]');
+            // Evita duplicados
+            if(!lib.find(p => p.id === id)) {
+                lib.push({ id, name, tracks });
+                localStorage.setItem('zyver_final_lib', JSON.stringify(lib));
+            }
+        }
 
-        function loadLocalPlaylists() {
-            const local = JSON.parse(localStorage.getItem('zyver_v5_saved') || '[]');
-            document.getElementById('pl-list').innerHTML = local.map(pl => `
+        function renderLibrary() {
+            const lib = JSON.parse(localStorage.getItem('zyver_final_lib') || '[]');
+            document.getElementById('pl-list').innerHTML = lib.map(pl => `
                 <div class="pl-card">
                     <div class="pl-info"><h3>${pl.name}</h3><p>${pl.tracks.length} músicas</p></div>
                     <div class="pl-actions">
-                        <button class="btn-icon" onclick="compartilhar('${pl.id}', '${pl.name}')"><i class="fa fa-share-nodes"></i></button>
-                        <button class="btn-play" onclick="prepararPlayLocal('${pl.id}')">OUVIR</button>
+                        <button class="btn-icon" onclick="sharePL('${pl.id}', '${pl.name}')"><i class="fa fa-share-nodes"></i></button>
+                        <button class="btn-play" onclick="playNow('${pl.id}', false)">OUVIR</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.compartilhar = (id, nome) => {
+        window.sharePL = (id, nome) => {
             const link = window.location.origin + window.location.pathname + "?id=" + id;
-            if(navigator.share) navigator.share({ title: 'ZyverMusic', text: `Ouça minha playlist: ${nome}`, url: link });
+            if(navigator.share) navigator.share({ title: 'ZyverMusic', text: `Ouve esta playlist: ${nome}`, url: link });
+            else alert("Link: " + link);
         };
 
-        window.prepararPlayCloud = async (id) => {
-            const snap = await getDoc(doc(db, "playlists_publicas", id));
-            playQueue(snap.data().tracks, snap.data().name);
-        };
+        window.playNow = async (id, isFromCloud) => {
+            let pl;
+            if(isFromCloud) {
+                const snap = await getDoc(doc(db, "playlists_publicas", id));
+                pl = snap.data();
+            } else {
+                const lib = JSON.parse(localStorage.getItem('zyver_final_lib') || '[]');
+                pl = lib.find(p => p.id === id);
+            }
 
-        window.prepararPlayLocal = (id) => {
-            const local = JSON.parse(localStorage.getItem('zyver_v5_saved') || '[]');
-            const pl = local.find(p => p.id === id);
-            playQueue(pl.tracks, pl.name);
-        };
-
-        function playQueue(trackIds, plName) {
-            currentQueue = allTracks.filter(m => trackIds.includes(m.id));
+            currentQueue = allTracks.filter(m => pl.tracks.includes(m.id));
             currentIndex = 0;
-            tocar();
-            document.getElementById('player-pl').style.display = 'flex';
-            document.getElementById('pl-context').innerText = "Playlist: " + plName;
-        }
+            if(currentQueue.length > 0) {
+                tocar();
+                document.getElementById('player-pl').style.display = 'flex';
+                document.getElementById('pl-context').innerText = "Playlist: " + pl.name;
+            }
+        };
 
         function tocar() {
             const m = currentQueue[currentIndex];
