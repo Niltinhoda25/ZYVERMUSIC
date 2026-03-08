@@ -43,6 +43,11 @@
         .request-box input { background: transparent; border: none; color: #ccc; flex: 1; outline: none; font-size: 13px; }
         .btn-send-req { background: var(--accent); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
+        /* AVISO DE ANÚNCIOS */
+        .ad-disclaimer { margin: 10px 15px; padding: 12px; background: rgba(157, 78, 221, 0.1); border: 1px solid rgba(157, 78, 221, 0.2); border-radius: 12px; text-align: center; }
+        .ad-disclaimer p { font-size: 10px; color: #aaa; font-weight: 500; }
+        .ad-disclaimer b { color: var(--accent); }
+
         .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
         .rank-card { min-width: 260px; background: var(--surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; cursor: pointer; }
@@ -52,11 +57,11 @@
         .rank-info h3 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; margin-bottom: 5px; background: rgba(255,255,255,0.03); }
+        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; }
         .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; cursor: pointer; }
         .m-info { flex: 1; overflow: hidden; cursor: pointer; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; padding: 10px; }
+        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; padding: 5px; }
         .btn-heart.active { color: #1DB954; }
 
         /* ENQUETE */
@@ -69,7 +74,6 @@
     </style>
 </head>
 <body>
-
     <div id="splash"><div class="splash-content"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1><div class="loader-bar"></div></div></div>
 
     <header>
@@ -86,16 +90,17 @@
     <div class="request-area">
         <span class="request-label">Solicitar Música</span>
         <div class="request-box">
-            <input type="text" id="input-pedido" placeholder="O que você quer ouvir na Zyver?">
+            <input type="text" id="input-pedido" placeholder="O que queres ouvir na Zyver?">
             <button class="btn-send-req" onclick="enviarPedido()"><i class="fa fa-paper-plane"></i></button>
         </div>
     </div>
 
-    <div class="search-box">
-        <i class="fa fa-search"></i>
-        <input type="text" id="busca" placeholder="Pesquisar na biblioteca..." onkeyup="filtrar()">
-    </div>
+    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar na biblioteca..." onkeyup="filtrar()"></div>
     
+    <div class="ad-disclaimer">
+        <p>Os anúncios ajudam a manter a <b>ZyverMusic</b> gratuita e com novidades toda semana! 💜</p>
+    </div>
+
     <div id="enquete-home" class="poll-container">
         <h3 id="poll-question" style="font-size: 16px; margin-bottom: 10px;"></h3>
         <div id="poll-options-list"></div>
@@ -109,10 +114,7 @@
 
     <div id="player">
         <img id="p-img" class="p-img">
-        <div style="flex:1; overflow:hidden;">
-            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
-            <small style="color:var(--accent); font-weight:bold">REPRODUZINDO</small>
-        </div>
+        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small style="color:var(--accent); font-weight:bold">REPRODUZINDO</small></div>
         <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:24px; padding:5px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
@@ -126,46 +128,31 @@
         const audio = document.getElementById('audio-engine');
         let currentMusicId = null;
 
-        // Esconder Splash
-        window.addEventListener('load', () => setTimeout(() => {
-            document.getElementById('splash').classList.add('hidden-splash');
-        }, 2200));
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
 
-        // Inicializar App
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
-            // Renderiza Top 10 baseado em plays
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="rank-n">#${i+1}</div>
-                    <img src="${m.cover}">
-                    <div class="rank-info">
-                        <h3>${m.title}</h3>
-                        <p>${m.plays || 0} PLAYS</p>
-                    </div>
+                    <div class="rank-n">#${i+1}</div><img src="${m.cover}"><div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} PLAYS</p></div>
                 </div>`).join('');
-
             renderList(tracks);
             carregarEnquete();
         }
 
-        // --- SISTEMA DE PLAY + CONTADOR DE ANÚNCIOS ---
         window.play = async (id, url, n, i) => { 
             currentMusicId = id;
 
-            // Lógica do Contador de Cliques para Anúncio
+            // Lógica do Contador de Cliques para o Monetag agir no 3º clique
             clickCounter++;
             if (clickCounter >= 3) {
-                console.log("Limite de 3 cliques atingido. Disparando lógica de anúncio.");
-                // A Multitag do Monetag reage ao clique do usuário automaticamente.
-                // Resetamos o contador para a próxima rodada.
+                console.log("Contador em 3: O anúncio deve aparecer agora.");
                 clickCounter = 0; 
             }
 
-            // Interface do Player
             document.getElementById('player').style.display = 'flex'; 
             document.getElementById('p-name').innerText = n; 
             document.getElementById('p-img').src = i; 
@@ -173,36 +160,29 @@
             audio.play(); 
             document.getElementById('play-icon').className = 'fa fa-pause'; 
 
-            // Contador de Plays no Firebase
             try {
                 const musicRef = doc(db, "musics", id);
                 await updateDoc(musicRef, { plays: increment(1) });
             } catch (e) { console.error("Erro ao contar play", e); }
         };
 
-        // --- SISTEMA DE PEDIDOS ---
         window.enviarPedido = async () => {
             const val = document.getElementById('input-pedido').value;
             if(!val) return;
             await addDoc(collection(db, "pedidos"), { musica: val, data: Date.now() });
-            alert("Pedido enviado com sucesso! 📥");
+            alert("Pedido enviado! 📥");
             document.getElementById('input-pedido').value = "";
         };
 
-        // --- RENDERIZAR LISTA ---
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
                     <img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="m-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                        <h4>${m.title}</h4>
-                        <p>Zyver Music</p>
-                    </div>
+                    <div class="m-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')"><h4>${m.title}</h4><p>Zyver Music</p></div>
                     <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
                 </div>`).join('');
         }
 
-        // --- ENQUETE ---
         function carregarEnquete() {
             onSnapshot(doc(db, "configuracoes", "enquete_ativa"), (snap) => {
                 const container = document.getElementById('enquete-home');
@@ -226,32 +206,13 @@
             await updateDoc(ref, { opcoes: opts });
         };
 
-        // --- FAVORITOS ---
         window.toggleFav = async (id, isFav) => { 
             await updateDoc(doc(db, "musics", id), { isFav: !isFav }); 
-            // Atualiza localmente sem recarregar tudo
-            const musicIdx = tracks.findIndex(t => t.id === id);
-            if (musicIdx !== -1) tracks[musicIdx].isFav = !isFav;
-            renderList(tracks);
+            init(); 
         };
 
-        // --- CONTROLES PLAYER ---
-        window.togglePlay = () => { 
-            if (audio.paused) {
-                audio.play();
-                document.getElementById('play-icon').className = 'fa fa-pause';
-            } else {
-                audio.pause();
-                document.getElementById('play-icon').className = 'fa fa-play';
-            }
-        };
-
-        // --- FILTRO DE BUSCA ---
-        window.filtrar = () => { 
-            const t = document.getElementById('busca').value.toLowerCase(); 
-            const filtradas = tracks.filter(m => m.title.toLowerCase().includes(t));
-            renderList(filtradas); 
-        };
+        window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };
+        window.filtrar = () => { const t = document.getElementById('busca').value.toLowerCase(); renderList(tracks.filter(m => m.title.toLowerCase().includes(t))); };
         
         init();
     </script>
