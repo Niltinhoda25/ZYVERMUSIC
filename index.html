@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZyverMusic | v9.2 Iron Privacy 8054%</title>
+    <title>ZyverMusic | v9.5 Omega 9000%</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#121212">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22display%22:%22standalone%22,%22background_color%22:%22#121212%22,%22theme_color%22:%22#1DB954%22}">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600;700;900&display=swap" rel="stylesheet">
@@ -30,10 +29,9 @@
         .logo span { color: var(--sp-green); }
 
         #shared-header { 
-            display: none; padding: 20px; background: rgba(29, 185, 84, 0.2); 
+            display: none; padding: 15px; background: rgba(29, 185, 84, 0.15); 
             border-bottom: 2px solid var(--sp-green); align-items: center; justify-content: space-between;
         }
-        .btn-save-shared { background: var(--sp-green); color: black; border: none; padding: 10px 15px; border-radius: 25px; font-weight: 900; font-size: 12px; }
 
         .search-wrap { margin: 15px 20px 25px; position: relative; }
         .search-wrap input {
@@ -52,7 +50,6 @@
         .track-img { width: 50px; height: 50px; border-radius: 4px; margin-right: 15px; object-fit: cover; }
         .track-meta { flex: 1; overflow: hidden; }
         .track-meta b { font-size: 16px; display: block; color: #fff; }
-        .btn-add { color: var(--sp-gray); font-size: 22px; padding: 10px; }
 
         #player-ui {
             position: fixed; bottom: 95px; left: 8px; right: 8px;
@@ -60,73 +57,73 @@
             display: none; align-items: center; gap: 12px; z-index: 6000;
         }
         .p-thumb { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; }
-        .p-info { flex: 1; overflow: hidden; }
-        .p-info b { font-size: 14px; display: block; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         nav {
             position: fixed; bottom: 0; width: 100%; height: 85px;
             background: #000; display: flex; justify-content: space-around; padding-top: 12px; z-index: 5000;
+            border-top: 1px solid #222;
         }
         .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; }
         .nav-link.active { color: white; }
         .nav-link span { display: block; font-size: 10px; font-weight: 600; margin-top: 4px; }
 
-        /* MODAIS COM TEXTO BRANCO GARANTIDO */
+        /* MODAL E TEXTO BRANCO 9000% */
         .modal-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #121212; z-index: 9999; display: none; flex-direction: column;
-            padding: 60px 20px;
+            padding: 60px 20px; color: white !important;
         }
-        .modal-ui h2, .modal-ui b, .modal-ui div { color: #ffffff !important; }
+        .modal-ui * { color: white !important; }
         .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .input-dark { width: 100%; background: #333; border: 1px solid #444; padding: 18px; border-radius: 8px; color: white; margin-bottom: 20px; font-size: 16px; }
-        .btn-confirm { background: var(--sp-green); color: black; border: none; padding: 20px; border-radius: 50px; font-weight: 900; font-size: 16px; margin-top: 15px; }
+        .input-dark { width: 100%; background: #333; border: 1px solid #444; padding: 18px; border-radius: 8px; color: white !important; margin-bottom: 20px; font-size: 16px; }
+        .btn-confirm { background: var(--sp-green); color: black !important; border: none; padding: 20px; border-radius: 50px; font-weight: 900; font-size: 16px; margin-top: 15px; width: 100%; }
         
         .pl-box { padding: 20px; background: #222; margin-bottom: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+        .btn-add { color: var(--sp-gray) !important; font-size: 22px; padding: 10px; }
     </style>
 </head>
 <body>
 
     <div id="m-lib" class="modal-ui">
-        <div class="modal-top"><h2>Minha Biblioteca</h2><i class="fa fa-times fa-2x" onclick="closeU('m-lib')"></i></div>
+        <div class="modal-top"><h2>Sua Biblioteca</h2><i class="fa fa-times fa-2x" onclick="closeU('m-lib')"></i></div>
         <div id="my-lib-render" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="m-create" class="modal-ui">
         <div class="modal-top"><h2>Nova Playlist</h2><i class="fa fa-times fa-2x" onclick="closeU('m-create')"></i></div>
-        <input type="text" id="new-name" class="input-dark" placeholder="Nome da playlist">
+        <input type="text" id="new-name" class="input-dark" placeholder="Dê um nome...">
         <div id="select-tracks-ui" style="overflow-y:auto; flex:1;"></div>
-        <button class="btn-confirm" onclick="saveNewPL()">CRIAR PRIVADA</button>
+        <button class="btn-confirm" onclick="saveNewPL()">CRIAR PLAYLIST PRIVADA</button>
     </div>
 
     <div id="m-add-to" class="modal-ui">
-        <div class="modal-top"><h2>Salvar em...</h2><i class="fa fa-times fa-2x" onclick="closeU('m-add-to')"></i></div>
+        <div class="modal-top"><h2>Adicionar em...</h2><i class="fa fa-times fa-2x" onclick="closeU('m-add-to')"></i></div>
         <div id="pl-options-render" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="scroller">
         <div id="shared-header">
-            <span style="font-weight: 900; font-size: 14px;">Playlist Compartilhada</span>
-            <button class="btn-save-shared" onclick="cloneCurrentPL()">SALVAR PARA MIM</button>
+            <span style="font-weight: 900; font-size: 14px;">Playlist de Outro Usuário</span>
+            <button onclick="cloneCurrentPL()" style="background:var(--sp-green); border:none; padding:8px 15px; border-radius:20px; font-weight:900; font-size:11px;">COPIAR PARA MIM</button>
         </div>
 
         <header>
             <div class="logo">Zyver<span>Music</span></div>
-            <i class="fa fa-expand" onclick="doFS()" style="opacity:0.5;"></i>
+            <i class="fa fa-expand" onclick="doFS()" style="opacity:0.4;"></i>
         </header>
 
-        <div class="search-wrap"><i class="fa fa-search"></i><input type="text" id="main-search" placeholder="Buscar no Zyver Cloud..." oninput="filterTracks()"></div>
+        <div class="search-wrap"><i class="fa fa-search"></i><input type="text" id="main-search" placeholder="Buscar músicas..." oninput="filterTracks()"></div>
 
-        <div class="section-h">Destaques</div>
+        <div class="section-h">Top Cloud</div>
         <div id="top-row-ui" class="h-list"></div>
 
-        <div class="section-h" style="margin-top:20px;">Todas as Músicas</div>
+        <div class="section-h" style="margin-top:20px;">Músicas Disponíveis</div>
         <div id="main-list-ui"></div>
     </div>
 
     <div id="player-ui">
-        <img id="p-img" class="p-thumb" src=""><div class="p-info"><b id="p-title">...</b><span style="color:var(--sp-green); font-size:11px; font-weight:700;">Zyver Player</span></div>
-        <div style="display:flex; align-items:center; gap:20px;"><i class="fa fa-play" id="p-icon" onclick="doPlay()" style="font-size:30px;"></i></div>
+        <img id="p-img" class="p-thumb" src=""><div class="p-info"><b id="p-title">...</b><span style="color:var(--sp-green); font-size:11px;">Tocando Agora</span></div>
+        <div style="display:flex; align-items:center; gap:20px;"><i class="fa fa-play" id="p-icon" onclick="doPlay()" style="font-size:30px; color:white;"></i></div>
         <audio id="core-engine"></audio>
     </div>
 
@@ -138,15 +135,15 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, orderBy, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, orderBy, arrayUnion, where, writeBatch } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let allSongs = [], selNew = [], targetSong = null, currentPLData = null;
         const engine = document.getElementById('core-engine');
 
-        // ID DE DISPOSITIVO (PRIVACIDADE TOTAL)
+        // GERAÇÃO DE ID UNICO PERMANENTE
         let deviceID = localStorage.getItem('zyver_device_id');
         if(!deviceID) {
-            deviceID = 'zyver_u_' + Math.random().toString(36).substr(2, 12);
+            deviceID = 'u_' + Math.random().toString(36).substr(2, 12);
             localStorage.setItem('zyver_device_id', deviceID);
         }
 
@@ -165,10 +162,15 @@
             } else { renderMain(allSongs); }
             renderTop();
             
-            // MIGRAR ANTIGAS (SÓ NA PRIMEIRA VEZ)
-            const oldOnes = await getDocs(query(collection(db, "playlists"), where("ownerID", "==", null)));
-            oldOnes.forEach(async (d) => {
-                await updateDoc(doc(db, "playlists", d.id), { ownerID: deviceID });
+            // 🔥 RESTAURAÇÃO DE PLAYLISTS ANTIGAS (SISTEMA OMEGA)
+            const rescueQuery = query(collection(db, "playlists"));
+            const rescueSnap = await getDocs(rescueQuery);
+            rescueSnap.forEach(async (d) => {
+                const data = d.data();
+                // Se a playlist não tem dono, ela se torna de quem abrir o app primeiro (Você)
+                if(!data.ownerID || data.ownerID === "") {
+                    await updateDoc(doc(db, "playlists", d.id), { ownerID: deviceID });
+                }
             });
         }
 
@@ -204,17 +206,17 @@
             else { engine.pause(); document.getElementById('p-icon').className = 'fa fa-play'; }
         };
 
-        // BIBLIOTECA 100% PRIVADA NO BANCO
+        // BIBLIOTECA 100% PRIVADA
         window.loadLib = async () => {
             openU('m-lib');
             const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
             const snap = await getDocs(q);
             const libDiv = document.getElementById('my-lib-render');
-            libDiv.innerHTML = snap.empty ? "<p style='text-align:center; padding:40px; color:#555;'>Sua biblioteca está vazia.</p>" : 
+            libDiv.innerHTML = snap.empty ? "<p style='text-align:center; padding:40px;'>Nenhuma playlist encontrada.</p>" : 
                 snap.docs.map(d => `
                     <div class="pl-box">
                         <div onclick="window.location.href='?pl=${d.id}'">${d.data().nome}</div>
-                        <i class="fa fa-share-nodes" onclick="copyPL('${d.id}')" style="color:var(--sp-green); font-size:24px;"></i>
+                        <i class="fa fa-share-nodes" onclick="copyPL('${d.id}')" style="color:var(--sp-green); font-size:22px;"></i>
                     </div>
                 `).join('');
         };
@@ -222,7 +224,7 @@
         window.cloneCurrentPL = async () => {
             if(!currentPLData) return;
             await addDoc(collection(db, "playlists"), {
-                nome: currentPLData.nome + " (Salva)",
+                nome: currentPLData.nome + " (Cópia)",
                 musicas: currentPLData.musicas,
                 ownerID: deviceID
             });
@@ -242,13 +244,13 @@
 
         window.confirmAdd = async (idPL) => {
             await updateDoc(doc(db, "playlists", idPL), { musicas: arrayUnion(targetSong) });
-            alert("Adicionado com sucesso!");
+            alert("Música adicionada!");
             closeU('m-add-to');
         };
 
         window.saveNewPL = async () => {
             const n = document.getElementById('new-name').value;
-            if(!n || selNew.length === 0) return alert("Dê um nome e escolha músicas!");
+            if(!n || selNew.length === 0) return alert("Escolha o nome e as músicas!");
             const list = allSongs.filter(m => selNew.includes(m.id));
             await addDoc(collection(db, "playlists"), { nome: n, musicas: list, ownerID: deviceID });
             alert("Playlist Criada!");
@@ -266,7 +268,7 @@
             if(id === 'm-create') {
                 document.getElementById('select-tracks-ui').innerHTML = allSongs.map(m => `
                     <div class="track-item" id="sel-${m.id}" onclick="toggleSel('${m.id}')">
-                        <img class="track-img" src="${m.cover}"><b style="color:#fff">${m.title}</b>
+                        <img class="track-img" src="${m.cover}"><b>${m.title}</b>
                     </div>
                 `).join('');
             }
@@ -274,7 +276,7 @@
         window.closeU = (id) => document.getElementById(id).style.display = 'none';
         window.copyPL = (id) => {
             navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
-            alert("Link copiado!");
+            alert("Link de compartilhamento copiado!");
         };
         window.doFS = () => { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
 
