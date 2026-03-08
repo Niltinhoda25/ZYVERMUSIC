@@ -6,17 +6,12 @@
     <title>ZyverMusic | Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #000; --surface: #121212; --text-dim: #b3b3b3; }
+        :root { --accent: #9d4edd; --accent-glow: rgba(157, 78, 221, 0.4); --bg: #050505; --surface: #121212; --text-dim: #999; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 110px; overflow-x: hidden; }
 
-        /* --- ANIMAÇÃO DE ENTRADA (SPLASH SCREEN) --- */
-        #splash {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #000; display: flex; justify-content: center; align-items: center;
-            z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s;
-        }
-        .splash-content { text-align: center; width: 80%; }
+        /* --- SPLASH SCREEN --- */
+        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease, visibility 0.8s; }
         .splash-logo { font-size: 38px; font-weight: 900; letter-spacing: -2px; color: #fff; animation: zoomIn 0.8s ease-out forwards; }
         .splash-logo span { color: var(--accent); }
         .loader-bar { width: 0; height: 3px; background: var(--accent); margin: 15px auto; border-radius: 10px; animation: loading 1.8s ease-in-out forwards; }
@@ -24,160 +19,97 @@
         @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
         .hidden-splash { opacity: 0; visibility: hidden; }
 
-        /* --- HEADER --- */
-        header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); }
-        .logo { font-size: 22px; font-weight: 900; }
+        /* --- HEADER CORRIGIDO --- */
+        header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 22px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
         .header-actions { display: flex; align-items: center; gap: 10px; }
-        .btn-pl { background: #222; padding: 8px 12px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; border: 1px solid #333; }
+        .btn-top { border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 5px; height: 34px; padding: 0 12px; transition: 0.2s; border: none; }
+        .btn-pl { background: #222; color: #fff; border: 1px solid #333; }
         .btn-fav { color: #1DB954; font-size: 20px; text-decoration: none; }
-        .btn-clipes { background: var(--accent); padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
+        .btn-clipes { background: var(--accent); color: white; box-shadow: 0 0 10px var(--accent-glow); }
 
-        /* --- BUSCA --- */
-        .search-box { background: #242424; display: flex; align-items: center; padding: 10px 15px; border-radius: 8px; margin: 0 15px 15px; }
+        /* --- BUSCA E CONTEÚDO --- */
+        .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 10px 15px 15px; border: 1px solid #222; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
-
-        /* --- TOP 10 (LETRAS CORRIGIDAS) --- */
-        .section-title { padding: 20px 15px 10px; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #ff7a00; display: flex; align-items: center; gap: 8px; }
+        .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
+        
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
-        .ranking-wrapper::-webkit-scrollbar { display: none; }
-        .rank-card { min-width: 280px; max-width: 280px; background: var(--surface); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
-        .rank-n { font-size: 45px; font-weight: 900; color: transparent; -webkit-text-stroke: 1.5px var(--accent); opacity: 0.8; }
-        .rank-card img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-        .rank-info { flex: 1; overflow: hidden; } 
-        .rank-info h3 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-        .rank-info p { font-size: 12px; color: var(--text-dim); font-weight: bold; }
-
-        /* --- BIBLIOTECA --- */
-        .lista-musicas { display: flex; flex-direction: column; gap: 5px; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 8px; }
-        .m-card img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; margin-right: 15px; flex-shrink: 0; }
+        .rank-card { min-width: 260px; background: var(--surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; }
+        .rank-n { font-size: 40px; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--accent); opacity: 0.7; }
+        .rank-card img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
+        .rank-info { flex: 1; overflow: hidden; }
+        .rank-info h3 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        
+        .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
+        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 10px; }
+        .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; }
         .m-info { flex: 1; overflow: hidden; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .m-info p { font-size: 12px; color: var(--text-dim); }
-        .m-actions { display: flex; align-items: center; gap: 20px; }
-        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
         .btn-heart.active { color: #1DB954; }
 
-        /* --- PLAYER --- */
-        #player { position: fixed; bottom: 12px; left: 10px; right: 10px; background: #282828; padding: 10px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #333; }
-        .p-img { width: 45px; height: 45px; border-radius: 4px; }
+        /* --- PLAYER PREMIUM --- */
+        #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        .p-img { width: 45px; height: 45px; border-radius: 8px; }
     </style>
 </head>
 <body>
-
-    <div id="splash">
-        <div class="splash-content">
-            <h1 class="splash-logo">ZYVER<span>MUSIC</span></h1>
-            <div class="loader-bar"></div>
-        </div>
-    </div>
+    <div id="splash"><div class="splash-content"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1><div class="loader-bar"></div></div></div>
 
     <header>
         <div class="logo">ZYVER<span>MUSIC</span></div>
         <div class="header-actions">
-            <a href="playlists.html" class="btn-pl"><i class="fa fa-list"></i> PLAYLISTS</a>
+            <a href="playlists.html" class="btn-top btn-pl"><i class="fa fa-list"></i> PLAYLISTS</a>
             <a href="favoritos.html" class="btn-fav"><i class="fa-solid fa-heart"></i></a>
-            <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
+            <a href="clipes.html" class="btn-top btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
         </div>
     </header>
 
-    <div class="search-box">
-        <i class="fa fa-search" style="color:#b3b3b3"></i>
-        <input type="text" id="busca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
-    </div>
-
-    <div class="section-title"><i class="fa fa-fire"></i> As Mais Tocadas</div>
+    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()"></div>
+    <div class="section-title">🔥 As Mais Tocadas</div>
     <div id="top-10" class="ranking-wrapper"></div>
-
-    <div class="section-title" style="color:white; font-size:18px;">Minha Biblioteca</div>
+    <div class="section-title" style="color:white">Minha Biblioteca</div>
     <div id="grid-geral" class="lista-musicas"></div>
 
     <div id="player">
-        <img id="p-img" class="p-img" src="">
-        <div style="flex:1; overflow:hidden;">
-            <h5 id="p-name" style="font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
-            <span style="font-size:10px; color:var(--accent); font-weight:bold;">REPRODUZINDO</span>
-        </div>
-        <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:22px; padding:10px;"></i></div>
+        <img id="p-img" class="p-img">
+        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small style="color:var(--accent); font-weight:bold">REPRODUZINDO</small></div>
+        <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:24px; padding:5px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        let tracks = [];
-        const audio = document.getElementById('audio-engine');
-
-        // Lógica da Splash Screen
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('splash').classList.add('hidden-splash');
-            }, 2200);
-        });
-
+        let tracks = []; const audio = document.getElementById('audio-engine');
+        window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            // Renderiza Top 10 com correção de texto
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                    <div class="rank-n">#${i+1}</div>
-                    <img src="${m.cover}">
-                    <div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} EXECUÇÕES</p></div>
+                    <div class="rank-n">#${i+1}</div><img src="${m.cover}"><div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} PLAYS</p></div>
                 </div>`).join('');
-
             renderList(tracks);
         }
-
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
                     <img src="${m.cover}" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                    <div class="m-info" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                        <h4>${m.title}</h4><p>Música • Zyver Music</p>
-                    </div>
-                    <div class="m-actions">
-                        <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" id="h-${m.id}" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
-                        <i class="fa fa-ellipsis-v" onclick="compartilhar('${m.title}', '${m.url}')"></i>
-                    </div>
+                    <div class="m-info" onclick="play('${m.url}','${m.title}','${m.cover}')"><h4>${m.title}</h4><p>Zyver Music</p></div>
+                    <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
                 </div>`).join('');
         }
-
-        window.toggleFav = async (id, isFav) => {
-            const el = document.getElementById(`h-${id}`);
-            const novoStatus = !isFav;
-            el.className = novoStatus ? 'fa-solid fa-heart btn-heart active' : 'fa-regular fa-heart btn-heart';
-            await updateDoc(doc(db, "musics", id), { isFav: novoStatus });
-            const t = tracks.find(x => x.id === id); if(t) t.isFav = novoStatus;
+        window.toggleFav = async (id, isFav) => { await updateDoc(doc(db, "musics", id), { isFav: !isFav }); init(); };
+        window.play = (url, n, i) => { 
+            document.getElementById('player').style.display = 'flex'; 
+            document.getElementById('p-name').innerText = n; 
+            document.getElementById('p-img').src = i; audio.src = url; audio.play(); 
+            document.getElementById('play-icon').className = 'fa fa-pause'; 
         };
-
-        window.compartilhar = (t, u) => {
-            if(navigator.share) navigator.share({title: t, url: u});
-            else alert("Link: " + u);
-        };
-
-        window.play = (url, n, i) => {
-            document.getElementById('player').style.display = 'flex';
-            document.getElementById('p-name').innerText = n;
-            document.getElementById('p-img').src = i;
-            audio.src = url; audio.play();
-            document.getElementById('play-icon').className = 'fa fa-pause';
-        };
-
-        window.togglePlay = () => {
-            if(audio.paused) { audio.play(); document.getElementById('play-icon').className = 'fa fa-pause'; }
-            else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
-        };
-
-        window.filtrar = () => {
-            const t = document.getElementById('busca').value.toLowerCase();
-            renderList(tracks.filter(m => m.title.toLowerCase().includes(t)));
-        };
-
+        window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };
+        window.filtrar = () => { const t = document.getElementById('busca').value.toLowerCase(); renderList(tracks.filter(m => m.title.toLowerCase().includes(t))); };
         init();
     </script>
 </body>

@@ -3,143 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Minhas Playlists</title>
+    <title>Minhas Playlists | Zyver</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #000; --surface: #121212; --text-dim: #b3b3b3; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: white; font-family: sans-serif; padding-bottom: 100px; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background: var(--bg); color: white; font-family: sans-serif; padding-bottom: 110px; }
+        header { padding: 25px 20px; display: flex; align-items: center; gap: 15px; background: #111; border-bottom: 1px solid #222; }
+        .create-area { padding: 20px; background: #0a0a0a; }
+        .input-group { display: flex; gap: 10px; margin: 15px 0; }
+        input { flex: 1; background: #1a1a1a; border: 1px solid #333; padding: 14px; color: white; border-radius: 25px; outline: none; }
+        .btn-ready { background: var(--accent); border: none; padding: 0 20px; border-radius: 25px; color: white; font-weight: bold; }
         
-        header { padding: 20px; display: flex; align-items: center; gap: 15px; background: #1a1a1a; }
-        .btn-voltar { color: white; font-size: 20px; text-decoration: none; }
-        
-        .create-area { padding: 20px; border-bottom: 1px solid #333; }
-        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input { flex: 1; background: #222; border: 1px solid #444; padding: 12px; color: white; border-radius: 8px; outline: none; }
-        .btn-ready { background: var(--accent); border: none; padding: 0 20px; border-radius: 8px; color: white; font-weight: bold; cursor: pointer; }
+        .selector-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding: 10px; background: #000; border-radius: 15px; }
+        .select-card { display: flex; align-items: center; gap: 15px; padding: 12px; background: #161616; border-radius: 12px; border: 1px solid transparent; }
+        .select-card:has(input:checked) { border-color: var(--accent); background: #1e122a; }
+        .select-card input { width: 22px; height: 22px; accent-color: var(--accent); }
 
-        .selector-list { padding: 10px; display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; background: #080808; border-radius: 10px; }
-        .select-card { display: flex; align-items: center; gap: 10px; padding: 10px; background: #1a1a1a; border-radius: 8px; }
-        .select-card input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--accent); }
-
-        .my-playlists { padding: 20px; }
-        .playlist-card { background: var(--surface); padding: 15px; border-radius: 12px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
-        .playlist-info h3 { font-size: 18px; color: var(--accent); }
-        .btn-play-pl { background: white; color: black; padding: 8px 15px; border-radius: 20px; font-weight: bold; text-decoration: none; font-size: 12px; }
-        
-        /* Player Minimalista */
-        #player-pl { position: fixed; bottom: 10px; left: 10px; right: 10px; background: #282828; padding: 12px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; }
+        .playlist-card { background: var(--surface); padding: 20px; border-radius: 15px; margin: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; }
+        .btn-play-pl { background: white; color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; border: none; }
+        #player-pl { position: fixed; bottom: 15px; left: 15px; right: 15px; background: rgba(30,30,30,0.98); padding: 15px; border-radius: 15px; display: none; align-items: center; gap: 15px; border: 1px solid #444; }
     </style>
 </head>
 <body>
-
-    <header>
-        <a href="index.html" class="btn-voltar"><i class="fa fa-arrow-left"></i></a>
-        <h2>Minhas Playlists</h2>
-    </header>
-
+    <header><a href="index.html" style="color:white; font-size:24px;"><i class="fa fa-arrow-left"></i></a><h2>Minhas Playlists</h2></header>
     <div class="create-area">
-        <p style="margin-bottom: 10px; font-size: 14px; color: var(--text-dim);">1. Dê um nome e selecione as músicas:</p>
-        <div class="input-group">
-            <input type="text" id="pl-name" placeholder="Nome da sua Playlist...">
-            <button class="btn-ready" onclick="savePlaylist()">PRONTO</button>
-        </div>
+        <p style="color:#ff7a00; font-weight:bold; font-size:12px;">1. NOME E SELEÇÃO:</p>
+        <div class="input-group"><input type="text" id="pl-name" placeholder="Ex: As Brabas"><button class="btn-ready" onclick="savePlaylist()">PRONTO</button></div>
         <div id="selector" class="selector-list"></div>
     </div>
-
-    <div class="my-playlists">
-        <h4 style="margin-bottom: 15px;">Suas Criações:</h4>
-        <div id="pl-list"></div>
-    </div>
+    <div id="pl-list" style="padding: 10px;"></div>
 
     <div id="player-pl">
-        <div style="flex:1">
-            <h5 id="p-name">Música</h5>
-            <small id="pl-context" style="color:var(--accent)"></small>
-        </div>
-        <i class="fa fa-step-forward" id="next-btn" style="font-size: 20px;"></i>
+        <div style="flex:1"><h5 id="p-name">Música</h5><small id="pl-context" style="color:var(--accent)"></small></div>
+        <i class="fa fa-step-forward" id="next-btn" style="font-size: 24px;"></i>
         <audio id="audio-pl"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-        let allMusics = [];
-        let currentPlaylist = [];
-        let currentIndex = 0;
-        const audio = document.getElementById('audio-pl');
-
+        let allMusics = []; let currentPlaylist = []; let currentIndex = 0; const audio = document.getElementById('audio-pl');
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             allMusics = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            
-            // Renderiza seletor de músicas
-            document.getElementById('selector').innerHTML = allMusics.map(m => `
-                <div class="select-card">
-                    <input type="checkbox" value="${m.id}" class="m-check">
-                    <img src="${m.cover}" width="40" height="40" style="border-radius:4px">
-                    <span style="font-size:14px">${m.title}</span>
-                </div>
-            `).join('');
-
+            document.getElementById('selector').innerHTML = allMusics.map(m => `<div class="select-card"><input type="checkbox" value="${m.id}" class="m-check"><span>${m.title}</span></div>`).join('');
             loadPlaylists();
         }
-
         window.savePlaylist = () => {
             const name = document.getElementById('pl-name').value;
-            const selectedIds = Array.from(document.querySelectorAll('.m-check:checked')).map(c => c.value);
-            
-            if(!name || selectedIds.length === 0) return alert("Dê um nome e escolha ao menos uma música!");
-
-            const playlists = JSON.parse(localStorage.getItem('zyver_playlists') || '[]');
-            playlists.push({ name, tracks: selectedIds });
-            localStorage.setItem('zyver_playlists', JSON.stringify(playlists));
-            
-            document.getElementById('pl-name').value = "";
-            document.querySelectorAll('.m-check').forEach(c => c.checked = false);
-            loadPlaylists();
+            const ids = Array.from(document.querySelectorAll('.m-check:checked')).map(c => c.value);
+            if(!name || ids.length === 0) return alert("Preencha tudo!");
+            const pls = JSON.parse(localStorage.getItem('zyver_pls') || '[]');
+            pls.push({ name, tracks: ids }); localStorage.setItem('zyver_pls', JSON.stringify(pls));
+            location.reload();
         };
-
         function loadPlaylists() {
-            const playlists = JSON.parse(localStorage.getItem('zyver_playlists') || '[]');
-            document.getElementById('pl-list').innerHTML = playlists.map((pl, idx) => `
-                <div class="playlist-card">
-                    <div class="playlist-info">
-                        <h3>${pl.name}</h3>
-                        <p style="font-size:12px; color:#777;">${pl.tracks.length} músicas</p>
-                    </div>
-                    <button class="btn-play-pl" onclick="playPlaylist(${idx})">OUVIR AGORA</button>
-                </div>
-            `).join('');
+            const pls = JSON.parse(localStorage.getItem('zyver_pls') || '[]');
+            document.getElementById('pl-list').innerHTML = pls.map((pl, idx) => `
+                <div class="playlist-card"><div><h3>${pl.name}</h3><p>${pl.tracks.length} músicas</p></div><button class="btn-play-pl" onclick="playPlaylist(${idx})">OUVIR</button></div>`).join('');
         }
-
         window.playPlaylist = (idx) => {
-            const playlists = JSON.parse(localStorage.getItem('zyver_playlists') || '[]');
-            const pl = playlists[idx];
+            const pl = JSON.parse(localStorage.getItem('zyver_pls') || '[]')[idx];
             currentPlaylist = allMusics.filter(m => pl.tracks.includes(m.id));
-            currentIndex = 0;
-            
-            if(currentPlaylist.length > 0) {
-                startTrack();
-                document.getElementById('player-pl').style.display = 'flex';
-                document.getElementById('pl-context').innerText = "Tocando de: " + pl.name;
-            }
+            currentIndex = 0; startTrack();
+            document.getElementById('player-pl').style.display = 'flex';
+            document.getElementById('pl-context').innerText = "Playlist: " + pl.name;
         };
-
-        function startTrack() {
-            const t = currentPlaylist[currentIndex];
-            document.getElementById('p-name').innerText = t.title;
-            audio.src = t.url;
-            audio.play();
-        }
-
-        document.getElementById('next-btn').onclick = () => {
-            currentIndex++;
-            if(currentIndex >= currentPlaylist.length) currentIndex = 0;
-            startTrack();
-        };
-
+        function startTrack() { const t = currentPlaylist[currentIndex]; document.getElementById('p-name').innerText = t.title; audio.src = t.url; audio.play(); }
+        document.getElementById('next-btn').onclick = () => { currentIndex = (currentIndex + 1) % currentPlaylist.length; startTrack(); };
         init();
     </script>
 </body>
