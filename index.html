@@ -9,7 +9,7 @@
         function carregarAnuncioSutil() {
             const agora = Date.now();
             const ultimoAnuncio = localStorage.getItem('last_ad_time') || 0;
-            if (agora - ultimoAnuncio > 35000) { 
+            if (agora - ultimoAnuncio > 40000) { 
                 (function(s){
                     s.dataset.zone='10697810';
                     s.src='https://nap5k.com/tag.min.js';
@@ -23,100 +23,105 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --success: #2ecc71; --danger: #e74c3c; --share: #3498db; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --success: #2ecc71; --danger: #e74c3c; --share: #3498db; --whats: #25d366; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 220px; scrollbar-width: none; }
+        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 240px; scrollbar-width: none; }
         #main-content::-webkit-scrollbar { display: none; }
 
         header { padding: 25px 15px; background: #000; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 24px; font-weight: 900; text-transform: uppercase; }
+        .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
 
-        .btn-plus { background: var(--accent); color: white; padding: 12px 18px; border-radius: 25px; border: none; font-weight: 800; font-size: 11px; }
+        .btn-plus { background: var(--accent); color: white; padding: 10px 15px; border-radius: 20px; border: none; font-weight: 800; font-size: 10px; }
+
+        /* BOTÃO SUPORTE WHATSAPP */
+        .btn-support { position: fixed; bottom: 100px; right: 20px; background: var(--whats); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; z-index: 4500; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-decoration: none; border: 2px solid rgba(255,255,255,0.2); }
 
         .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
 
-        /* CARDS E RANKING */
-        .ranking-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 25px; scrollbar-width: none; }
-        .rank-card { min-width: 260px; background: var(--surface); border-radius: 18px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; position: relative; }
-        .rank-badge { position: absolute; top: 10px; left: 10px; background: var(--accent); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 900; border: 2px solid #000; }
-        .rank-card img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; }
+        /* RANKING E LISTAS */
+        .ranking-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 0 15px 25px; scrollbar-width: none; }
+        .rank-card { min-width: 240px; background: var(--surface); border-radius: 18px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; position: relative; }
+        .rank-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; }
+        .rank-card img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
 
-        /* HEADER DA PLAYLIST COM AÇÕES */
         .playlist-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-top: 25px; }
-        .pl-actions { display: flex; gap: 15px; align-items: center; }
-        .btn-action-icon { font-size: 18px; cursor: pointer; transition: 0.2s; }
-        .btn-action-icon.share { color: var(--share); }
-        .btn-action-icon.delete { color: var(--danger); }
+        .pl-actions { display: flex; gap: 12px; }
+        .btn-icon { font-size: 17px; cursor: pointer; }
+        .btn-icon.share { color: var(--share); }
+        .btn-icon.delete { color: var(--danger); }
 
         /* MODAL */
         #creator-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        .pl-input { background: #1a1a1a; border: 1px solid #333; padding: 18px; border-radius: 15px; color: white; width: calc(100% - 30px); margin: 15px; font-size: 16px; outline: none; }
+        .pl-input { background: #151515; border: 1px solid #333; padding: 18px; border-radius: 15px; color: white; width: calc(100% - 30px); margin: 15px; font-size: 16px; outline: none; }
         
         .select-item { display: flex; align-items: center; padding: 12px; margin: 0 15px 8px; background: #111; border-radius: 12px; border: 1px solid #222; }
         .select-item.selected { border-color: var(--success); background: rgba(46, 204, 113, 0.05); }
         .select-item img { width: 45px; height: 45px; border-radius: 8px; margin-right: 15px; }
-        .fa-check-circle { margin-left: auto; color: #222; font-size: 20px; }
         .selected .fa-check-circle { color: var(--success); }
 
-        /* PLAYER E DISCO GIRANDO */
-        #player { position: fixed; bottom: 20px; left: 12px; right: 12px; background: rgba(15,15,15,0.98); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 4000; border: 1px solid #333; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
-        .p-img { width: 52px; height: 52px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; }
+        /* PLAYER DISCO */
+        #player { position: fixed; bottom: 15px; left: 10px; right: 10px; background: rgba(15,15,15,0.98); backdrop-filter: blur(25px); padding: 12px; border-radius: 22px; display: none; align-items: center; gap: 12px; z-index: 4000; border: 1px solid #333; }
+        .p-img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); object-fit: cover; }
         
-        @keyframes rotating { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .spinning { animation: rotating 5s linear infinite; }
+        @keyframes rotateDisk { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .spinning { animation: rotateDisk 6s linear infinite; }
 
-        .btn-confirm { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; }
+        .btn-save { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
+    <a href="https://wa.me/5500000000000" target="_blank" class="btn-support">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     <div id="creator-modal">
-        <div style="padding:20px; display:flex; align-items:center; gap:20px;">
-            <i class="fa fa-chevron-left" onclick="fecharCriador()" style="font-size:20px;"></i>
-            <h3 style="font-weight:900;">Nova Playlist</h3>
+        <div style="padding:20px; display:flex; align-items:center; gap:15px;">
+            <i class="fa fa-arrow-left" onclick="fecharCriador()"></i>
+            <h3 style="font-weight:900;">Criar Playlist</h3>
         </div>
         <input type="text" id="pl-name-field" class="pl-input" placeholder="Nome da Playlist...">
         <div style="flex:1; overflow-y: auto;" id="selection-list"></div>
-        <button class="btn-confirm" onclick="finalizarPlaylist()">CRIAR AGORA</button>
+        <button class="btn-save" onclick="finalizarPlaylist()">SALVAR PLAYLIST</button>
     </div>
 
     <div id="main-content">
         <header>
             <div class="logo">ZYVER<span>MUSIC</span></div>
-            <button class="btn-plus" onclick="abrirCriador()"><i class="fa fa-plus"></i> PLAYLIST</button>
+            <button class="btn-plus" onclick="abrirCriador()">+ CRIAR</button>
         </header>
 
         <div id="shared-area" style="display:none;">
-            <div class="section-title">🔗 Playlist Recebida</div>
+            <div class="section-title">⭐ Playlist de Amigo</div>
             <div id="shared-scroll" class="ranking-scroll"></div>
-            <button class="btn-confirm" id="btn-import" style="width:calc(100% - 30px); background:var(--accent);">SALVAR NA MINHA LISTA</button>
+            <button class="btn-save" id="btn-import" style="width:calc(100% - 30px); background:var(--accent);">ADICIONAR À MINHA BIBLIOTECA</button>
         </div>
 
-        <div class="section-title"><i class="fa fa-fire"></i> Top 10 Hits</div>
+        <div class="section-title"><i class="fa fa-trophy"></i> Top 10 Mais Ouvidas</div>
         <div id="top-10" class="ranking-scroll"></div>
 
         <div id="my-playlists-section"></div>
 
-        <div class="section-title"><i class="fa fa-music"></i> Biblioteca Geral</div>
-        <div id="all-musics-list" style="padding: 0 15px; display: flex; flex-direction: column; gap: 10px;"></div>
+        <div class="section-title"><i class="fa fa-list"></i> Todas as Músicas</div>
+        <div id="all-musics-list" style="padding: 0 15px;"></div>
     </div>
 
     <div id="player">
         <img id="p-img" class="p-img" src="">
         <div style="flex:1; overflow:hidden;">
-            <b id="p-name" style="font-size:14px; white-space:nowrap; display:block;">Música</b>
+            <b id="p-name" style="font-size:13px; white-space:nowrap; display:block;">Música</b>
             <small style="color:var(--accent); font-weight:bold; font-size:10px;">REPRODUZINDO</small>
         </div>
-        <i class="fa fa-pause" id="play-btn" onclick="controlarPlay()" style="font-size:28px;"></i>
+        <i class="fa fa-pause" id="play-btn" onclick="controlarPlay()" style="font-size:26px;"></i>
         <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let musics = [];
         let selectedIds = [];
@@ -147,8 +152,8 @@
                     document.getElementById('btn-import').onclick = () => {
                         myPlaylists.push({id: Date.now(), cloudId: urlId, nome: data.nome, musicas: data.musicas});
                         localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
-                        alert("Playlist salva!");
                         renderUserPlaylists();
+                        alert("Playlist importada!");
                     };
                 }
             }
@@ -156,24 +161,22 @@
 
         window.finalizarPlaylist = async () => {
             const nome = document.getElementById('pl-name-field').value;
-            if(!nome || selectedIds.length === 0) return alert("Escolha as músicas!");
+            if(!nome || selectedIds.length === 0) return alert("Preencha tudo!");
             const musicasData = musics.filter(m => selectedIds.includes(m.id));
             const cloudRef = await addDoc(collection(db, "playlists"), { nome, musicas: musicasData });
-            
             myPlaylists.push({id: Date.now(), cloudId: cloudRef.id, nome, musicas: musicasData});
             localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
             fecharCriador();
             renderUserPlaylists();
-            alert("Playlist criada! Use o botão azul para compartilhar.");
+            alert("Sucesso! Compartilhe usando o ícone azul.");
         };
 
-        // --- COMPARTILHAR PLAYLIST EXISTENTE ---
-        window.compartilharExistente = (cloudId, nome) => {
+        window.compartilharPL = (cloudId, nome) => {
             const shareLink = window.location.origin + window.location.pathname + "?pl=" + cloudId;
             if (navigator.share) {
                 navigator.share({ title: 'ZyverMusic', text: 'Curte minha playlist: ' + nome, url: shareLink });
             } else {
-                alert("Link de compartilhamento: " + shareLink);
+                prompt("Copie o link:", shareLink);
             }
         };
 
@@ -204,7 +207,7 @@
             document.getElementById('creator-modal').style.display = 'flex';
             document.getElementById('selection-list').innerHTML = musics.map(m => `
                 <div class="select-item" id="it-${m.id}" onclick="toggleM('${m.id}')">
-                    <img src="${m.cover}"> <b>${m.title}</b> <i class="fa fa-check-circle"></i>
+                    <img src="${m.cover}"> <b>${m.title}</b> <i class="fa fa-check-circle" style="margin-left:auto; color:#222;"></i>
                 </div>`).join('');
         };
 
@@ -220,13 +223,13 @@
             const box = document.getElementById('my-playlists-section');
             box.innerHTML = myPlaylists.map(pl => `
                 <div class="playlist-header">
-                    <h3 style="font-weight:900;">${pl.nome}</h3>
+                    <h3 style="font-weight:900; font-size:16px;">${pl.nome}</h3>
                     <div class="pl-actions">
-                        <i class="fa fa-paper-plane btn-action-icon share" onclick="compartilharExistente('${pl.cloudId}', '${pl.nome}')"></i>
-                        <i class="fa fa-trash-can btn-action-icon delete" onclick="excluirPL(${pl.id})"></i>
+                        <i class="fa fa-paper-plane btn-icon share" onclick="compartilharPL('${pl.cloudId}', '${pl.nome}')"></i>
+                        <i class="fa fa-trash-can btn-icon delete" onclick="excluirPL(${pl.id})"></i>
                     </div>
                 </div>
-                <div class="ranking-scroll">${pl.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:110px; height:110px; border-radius:18px; margin-right:10px; border:1px solid #222;">`).join('')}</div>
+                <div class="ranking-scroll">${pl.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:105px; height:105px; border-radius:15px; border:1px solid #222;">`).join('')}</div>
             `).join('');
         }
 
@@ -241,7 +244,7 @@
 
         function renderGeral() {
             document.getElementById('all-musics-list').innerHTML = musics.map(m => `
-                <div class="select-item" style="margin:0;" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                <div class="select-item" style="margin:0 0 8px 0;" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}"> <b>${m.title}</b>
                 </div>`).join('');
         }
