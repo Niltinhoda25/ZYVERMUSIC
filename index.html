@@ -3,127 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Premium</title>
+    <title>ZyverMusic | Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --accent: #9d4edd; --bg: #000; --surface: #121212; --text-dim: #b3b3b3; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
-        body { 
-            background: var(--bg); 
-            color: white; 
-            font-family: 'Segoe UI', sans-serif; 
-            padding-bottom: 110px; 
-        }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 120px; }
 
-        /* HEADER */
-        header { 
-            padding: 20px 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            background: linear-gradient(to bottom, #1a1a1a, var(--bg));
-        }
+        header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); }
         .logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
         .btn-clipes { background: var(--accent); padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
 
-        /* BUSCA */
         .search-container { padding: 0 15px 15px; }
-        .search-box { 
-            background: #242424; 
-            display: flex; 
-            align-items: center; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-        }
+        .search-box { background: #242424; display: flex; align-items: center; padding: 10px 15px; border-radius: 8px; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
 
         .section-title { padding: 20px 15px 10px; font-size: 16px; font-weight: 800; text-transform: uppercase; color: #ff7a00; display: flex; align-items: center; gap: 8px; }
         .section-title.white { color: white; font-size: 18px; }
 
-        /* TOP 10 SEMANAL (CARROSSEL LATERAL) */
-        .ranking-wrapper { 
-            display: flex; 
-            overflow-x: auto; 
-            gap: 15px; 
-            padding: 0 15px 20px; 
-            scroll-snap-type: x mandatory; 
-            scrollbar-width: none; 
-        }
+        /* TOP 10 ROLAGEM LATERAL */
+        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
         .ranking-wrapper::-webkit-scrollbar { display: none; }
-        
-        .rank-card { 
-            min-width: 85%; 
-            background: var(--surface); 
-            border-radius: 15px; 
-            padding: 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            scroll-snap-align: center; 
-            border: 1px solid #222;
-        }
-        .rank-n { 
-            font-size: 45px; 
-            font-weight: 900; 
-            font-style: italic; 
-            color: transparent; 
-            -webkit-text-stroke: 1.5px var(--accent); 
-            opacity: 0.8; 
-            line-height: 1;
-        }
+        .rank-card { min-width: 85%; background: var(--surface); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
+        .rank-n { font-size: 45px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); opacity: 0.8; }
         .rank-card img { width: 75px; height: 75px; border-radius: 10px; object-fit: cover; }
-        .rank-info { flex: 1; overflow: hidden; }
-        .rank-info h3 { font-size: 15px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .rank-info p { font-size: 11px; color: var(--text-dim); font-weight: bold; text-transform: uppercase; }
+        .rank-info h3 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* BIBLIOTECA ESTILO LISTA */
+        /* LISTA BIBLIOTECA COM CURTIR */
         .lista-musicas { display: flex; flex-direction: column; gap: 4px; padding: 0 10px; }
         .m-card { display: flex; align-items: center; padding: 8px 10px; border-radius: 6px; }
         .m-card img { width: 52px; height: 52px; border-radius: 4px; object-fit: cover; margin-right: 14px; }
         .m-info { flex: 1; overflow: hidden; }
-        .m-info h4 { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .m-info p { font-size: 12px; color: var(--text-dim); }
-        .m-card i.fa-ellipsis-v { color: var(--text-dim); padding: 10px; font-size: 14px; }
+        .actions-btn { display: flex; gap: 15px; align-items: center; padding-left: 10px; }
+        .heart-btn { font-size: 18px; color: var(--text-dim); transition: 0.2s; }
+        .heart-btn.active { color: #1DB954; }
 
         /* PLAYER */
-        #player { position: fixed; bottom: 15px; left: 10px; right: 10px; background: #282828; padding: 10px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; }
+        #player { position: fixed; bottom: 15px; left: 10px; right: 10px; background: #282828; padding: 10px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #333; }
         .p-img { width: 42px; height: 42px; border-radius: 4px; }
-        .p-meta { flex: 1; overflow: hidden; }
-        .p-meta h5 { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-meta span { font-size: 10px; color: var(--accent); font-weight: bold; }
     </style>
 </head>
 <body>
-
     <header>
         <div class="logo">ZYVER<span>MUSIC</span></div>
         <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
     </header>
 
     <div class="search-container">
-        <div class="search-box">
-            <i class="fa fa-search" style="color:#b3b3b3"></i>
-            <input type="text" id="busca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
-        </div>
+        <div class="search-box"><i class="fa fa-search" style="color:#b3b3b3"></i><input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()"></div>
     </div>
 
     <div class="section-title"><i class="fa fa-fire"></i> As Mais Tocadas</div>
-    <div id="top-10" class="ranking-wrapper">
-        </div>
+    <div id="top-10" class="ranking-wrapper"></div>
 
     <div class="section-title white">Minha Biblioteca</div>
-    <div id="grid-geral" class="lista-musicas">
-        </div>
+    <div id="grid-geral" class="lista-musicas"></div>
 
     <div id="player">
         <img id="p-img" class="p-img" src="">
-        <div class="p-meta">
-            <h5 id="p-name">Música</h5>
-            <span>REPRODUZINDO AGORA</span>
-        </div>
-        <div onclick="togglePlay()" style="padding: 0 10px;"><i class="fa fa-play" id="play-icon" style="font-size: 20px;"></i></div>
+        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><span style="font-size:10px; color:var(--accent); font-weight:bold;">REPRODUZINDO AGORA</span></div>
+        <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:20px; padding:10px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
 
@@ -135,46 +77,43 @@
         const audio = document.getElementById('audio-engine');
 
         async function init() {
-            try {
-                const snap = await getDocs(collection(db, "musics"));
-                tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                // 1. Renderiza o Top 10 (Rolagem lateral)
-                const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
-                document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                    <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                        <div class="rank-n">#${i+1}</div>
-                        <img src="${m.cover}">
-                        <div class="rank-info">
-                            <h3>${m.title}</h3>
-                            <p>${m.plays || 0} EXECUÇÕES</p>
-                        </div>
-                    </div>
-                `).join('');
+            const snap = await getDocs(collection(db, "musics"));
+            tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
+            document.getElementById('top-10').innerHTML = top.map((m, i) => `
+                <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                    <div class="rank-n">#${i+1}</div>
+                    <img src="${m.cover}">
+                    <div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} EXECUÇÕES</p></div>
+                </div>`).join('');
 
-                // 2. Renderiza a Biblioteca (Lista vertical)
-                renderList(tracks);
-            } catch (e) { console.error(e); }
+            renderList(tracks);
         }
 
         function renderList(data) {
-            const container = document.getElementById('grid-geral');
-            container.innerHTML = data.map(m => `
-                <div class="m-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                    <img src="${m.cover}">
-                    <div class="m-info">
-                        <h4>${m.title}</h4>
-                        <p>Música • Zyver Music</p>
+            document.getElementById('grid-geral').innerHTML = data.map(m => `
+                <div class="m-card">
+                    <img src="${m.cover}" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                    <div class="m-info" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                        <h4>${m.title}</h4><p>Música • Zyver Music</p>
                     </div>
-                    <i class="fa fa-ellipsis-v"></i>
-                </div>
-            `).join('');
+                    <div class="actions-btn">
+                        <i class="fa-regular fa-heart heart-btn" id="h-${m.id}" onclick="toggleLike('${m.id}')"></i>
+                        <i class="fa fa-ellipsis-v" style="color:#b3b3b3"></i>
+                    </div>
+                </div>`).join('');
         }
 
-        window.play = (url, name, img) => {
+        window.toggleLike = (id) => {
+            const el = document.getElementById(`h-${id}`);
+            el.classList.toggle('fa-regular'); el.classList.toggle('fa-solid'); el.classList.toggle('active');
+        }
+
+        window.play = (url, n, i) => {
             document.getElementById('player').style.display = 'flex';
-            document.getElementById('p-name').innerText = name;
-            document.getElementById('p-img').src = img;
+            document.getElementById('p-name').innerText = n;
+            document.getElementById('p-img').src = i;
             audio.src = url; audio.play();
             document.getElementById('play-icon').className = 'fa fa-pause';
         }

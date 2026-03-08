@@ -3,134 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverClips | Reels Style</title>
+    <title>ZyverClips | Reels</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; color: #fff; font-family: sans-serif; overflow: hidden; }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { background:#000; color:#fff; font-family:sans-serif; overflow:hidden; }
+        .clips-container { height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; }
+        .clips-container::-webkit-scrollbar { display:none; }
 
-        /* Container de Scroll Infinito Vertical */
-        .clips-container {
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory; /* Faz o efeito de 'travar' no vídeo */
-            scrollbar-width: none;
-        }
-        .clips-container::-webkit-scrollbar { display: none; }
+        .clip-section { height:100vh; width:100vw; scroll-snap-align:start; position:relative; }
+        video { width:100%; height:100%; object-fit:cover; }
 
-        .clip-section {
-            height: 100vh;
-            width: 100vw;
-            scroll-snap-align: start;
-            position: relative;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        /* BOTÕES LATERAIS (INTERAÇÃO) */
+        .side-actions { position:absolute; right:15px; bottom:120px; display:flex; flex-direction:column; gap:22px; align-items:center; z-index:20; }
+        .action-item { display:flex; flex-direction:column; align-items:center; gap:5px; }
+        .action-item i { font-size:28px; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        .action-item span { font-size:12px; font-weight:bold; }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Preenche a tela toda igual no print */
-        }
-
-        /* Interface por cima do vídeo */
-        .overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 40px 20px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.8));
-            pointer-events: none;
-        }
-
-        .clip-info h2 { font-size: 18px; margin-bottom: 5px; text-shadow: 2px 2px 4px #000; }
-        .clip-info p { font-size: 14px; opacity: 0.8; }
-
-        .btn-voltar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            background: rgba(0,0,0,0.5);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            color: white;
-        }
-
-        /* Ícone de carregar */
-        .loader {
-            position: absolute;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #9d4edd;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .overlay { position:absolute; bottom:0; left:0; width:100%; padding:40px 20px; background:linear-gradient(transparent, rgba(0,0,0,0.9)); pointer-events:none; }
+        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:20px; }
     </style>
 </head>
 <body>
-
     <a href="index.html" class="btn-voltar"><i class="fa fa-arrow-left"></i></a>
-
-    <div id="clips-feed" class="clips-container">
-        </div>
+    <div id="clips-feed" class="clips-container"></div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         async function loadClips() {
-            const querySnapshot = await getDocs(collection(db, "clips"));
-            const container = document.getElementById('clips-feed');
-            
-            let html = '';
-            querySnapshot.forEach((doc) => {
+            const snap = await getDocs(collection(db, "clips"));
+            document.getElementById('clips-feed').innerHTML = snap.docs.map(doc => {
                 const data = doc.data();
-                html += `
-                    <div class="clip-section">
-                        <div class="loader"></div>
-                        <video src="${data.url}" loop playsinline preload="metadata" onclick="this.paused ? this.play() : this.pause()"></video>
-                        <div class="overlay">
-                            <div class="clip-info">
-                                <h2>${data.title}</h2>
-                                <p><i class="fa fa-music"></i> Som Original - ZyverMusic</p>
-                            </div>
-                        </div>
+                return `
+                <div class="clip-section">
+                    <video src="${data.url}" loop playsinline preload="metadata" onclick="this.paused ? this.play() : this.pause()"></video>
+                    <div class="side-actions">
+                        <div class="action-item" onclick="this.style.color='#ff0050'"><i class="fa-solid fa-heart"></i><span>${data.likes || 'Curtir'}</span></div>
+                        <div class="action-item"><i class="fa-solid fa-comment-dots"></i><span>72</span></div>
+                        <div class="action-item" onclick="navigator.share({url:window.location.href})"><i class="fa-solid fa-share"></i><span>Enviar</span></div>
                     </div>
-                `;
-            });
-            container.innerHTML = html;
+                    <div class="overlay"><h2>${data.title}</h2><p>@zyvermusic • Som Original</p></div>
+                </div>`;
+            }).join('');
             setupAutoPlay();
         }
 
         function setupAutoPlay() {
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (entry.isIntersecting) {
-                        video.play().catch(() => {}); // Autoplay ao entrar na tela
-                    } else {
-                        video.pause(); // Pausa ao sair para não travar o celular
-                    }
+                entries.forEach(e => {
+                    const v = e.target.querySelector('video');
+                    if (e.isIntersecting) v.play(); else v.pause();
                 });
             }, { threshold: 0.7 });
-
-            document.querySelectorAll('.clip-section').forEach(section => {
-                observer.observe(section);
-            });
+            document.querySelectorAll('.clip-section').forEach(s => observer.observe(s));
         }
-
         loadClips();
     </script>
 </body>
