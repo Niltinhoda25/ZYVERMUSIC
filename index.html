@@ -32,9 +32,11 @@
         .btn-fav { color: #1DB954; font-size: 22px; text-decoration: none; padding: 0 10px; }
         .btn-clipes { background: var(--accent); color: white; }
 
+        /* BUSCA */
         .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 0 15px 15px; border: 1px solid #222; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
         
+        /* PEDIDO */
         .request-area { margin: 0 15px 20px; }
         .request-label { font-size: 10px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
         .request-box { background: #000; display: flex; align-items: center; padding: 5px 5px 5px 18px; border-radius: 15px; border: 1px dashed #444; }
@@ -50,21 +52,24 @@
         .rank-info h3 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; }
+        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; margin-bottom: 5px; background: rgba(255,255,255,0.03); }
         .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; cursor: pointer; }
         .m-info { flex: 1; overflow: hidden; cursor: pointer; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
+        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; padding: 10px; }
         .btn-heart.active { color: #1DB954; }
 
+        /* ENQUETE */
         .poll-container { margin: 15px; padding: 20px; background: var(--surface); border-radius: 20px; border: 1px solid #222; display: none; }
         .poll-option { width: 100%; padding: 14px; margin-top: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 12px; font-weight: bold; text-align: left; transition: 0.3s; }
 
+        /* PLAYER */
         #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; }
         .p-img { width: 45px; height: 45px; border-radius: 8px; }
     </style>
 </head>
 <body>
+
     <div id="splash"><div class="splash-content"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1><div class="loader-bar"></div></div></div>
 
     <header>
@@ -86,7 +91,10 @@
         </div>
     </div>
 
-    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar na biblioteca..." onkeyup="filtrar()"></div>
+    <div class="search-box">
+        <i class="fa fa-search"></i>
+        <input type="text" id="busca" placeholder="Pesquisar na biblioteca..." onkeyup="filtrar()">
+    </div>
     
     <div id="enquete-home" class="poll-container">
         <h3 id="poll-question" style="font-size: 16px; margin-bottom: 10px;"></h3>
@@ -101,7 +109,10 @@
 
     <div id="player">
         <img id="p-img" class="p-img">
-        <div style="flex:1; overflow:hidden;"><h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5><small style="color:var(--accent); font-weight:bold">REPRODUZINDO</small></div>
+        <div style="flex:1; overflow:hidden;">
+            <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
+            <small style="color:var(--accent); font-weight:bold">REPRODUZINDO</small>
+        </div>
         <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:24px; padding:5px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
@@ -111,26 +122,50 @@
         import { collection, getDocs, doc, updateDoc, onSnapshot, getDoc, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
         let tracks = []; 
+        let clickCounter = 0; // Contador de cliques para anúncios
         const audio = document.getElementById('audio-engine');
         let currentMusicId = null;
 
-        window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
+        // Esconder Splash
+        window.addEventListener('load', () => setTimeout(() => {
+            document.getElementById('splash').classList.add('hidden-splash');
+        }, 2200));
 
+        // Inicializar App
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
+            // Renderiza Top 10 baseado em plays
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="rank-n">#${i+1}</div><img src="${m.cover}"><div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} PLAYS</p></div>
+                    <div class="rank-n">#${i+1}</div>
+                    <img src="${m.cover}">
+                    <div class="rank-info">
+                        <h3>${m.title}</h3>
+                        <p>${m.plays || 0} PLAYS</p>
+                    </div>
                 </div>`).join('');
+
             renderList(tracks);
             carregarEnquete();
         }
 
+        // --- SISTEMA DE PLAY + CONTADOR DE ANÚNCIOS ---
         window.play = async (id, url, n, i) => { 
             currentMusicId = id;
+
+            // Lógica do Contador de Cliques para Anúncio
+            clickCounter++;
+            if (clickCounter >= 3) {
+                console.log("Limite de 3 cliques atingido. Disparando lógica de anúncio.");
+                // A Multitag do Monetag reage ao clique do usuário automaticamente.
+                // Resetamos o contador para a próxima rodada.
+                clickCounter = 0; 
+            }
+
+            // Interface do Player
             document.getElementById('player').style.display = 'flex'; 
             document.getElementById('p-name').innerText = n; 
             document.getElementById('p-img').src = i; 
@@ -138,29 +173,36 @@
             audio.play(); 
             document.getElementById('play-icon').className = 'fa fa-pause'; 
 
+            // Contador de Plays no Firebase
             try {
                 const musicRef = doc(db, "musics", id);
                 await updateDoc(musicRef, { plays: increment(1) });
             } catch (e) { console.error("Erro ao contar play", e); }
         };
 
+        // --- SISTEMA DE PEDIDOS ---
         window.enviarPedido = async () => {
             const val = document.getElementById('input-pedido').value;
             if(!val) return;
             await addDoc(collection(db, "pedidos"), { musica: val, data: Date.now() });
-            alert("Pedido enviado! 📥");
+            alert("Pedido enviado com sucesso! 📥");
             document.getElementById('input-pedido').value = "";
         };
 
+        // --- RENDERIZAR LISTA ---
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
                     <img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="m-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')"><h4>${m.title}</h4><p>Zyver Music</p></div>
+                    <div class="m-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                        <h4>${m.title}</h4>
+                        <p>Zyver Music</p>
+                    </div>
                     <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
                 </div>`).join('');
         }
 
+        // --- ENQUETE ---
         function carregarEnquete() {
             onSnapshot(doc(db, "configuracoes", "enquete_ativa"), (snap) => {
                 const container = document.getElementById('enquete-home');
@@ -184,13 +226,32 @@
             await updateDoc(ref, { opcoes: opts });
         };
 
+        // --- FAVORITOS ---
         window.toggleFav = async (id, isFav) => { 
             await updateDoc(doc(db, "musics", id), { isFav: !isFav }); 
-            init(); 
+            // Atualiza localmente sem recarregar tudo
+            const musicIdx = tracks.findIndex(t => t.id === id);
+            if (musicIdx !== -1) tracks[musicIdx].isFav = !isFav;
+            renderList(tracks);
         };
 
-        window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };
-        window.filtrar = () => { const t = document.getElementById('busca').value.toLowerCase(); renderList(tracks.filter(m => m.title.toLowerCase().includes(t))); };
+        // --- CONTROLES PLAYER ---
+        window.togglePlay = () => { 
+            if (audio.paused) {
+                audio.play();
+                document.getElementById('play-icon').className = 'fa fa-pause';
+            } else {
+                audio.pause();
+                document.getElementById('play-icon').className = 'fa fa-play';
+            }
+        };
+
+        // --- FILTRO DE BUSCA ---
+        window.filtrar = () => { 
+            const t = document.getElementById('busca').value.toLowerCase(); 
+            const filtradas = tracks.filter(m => m.title.toLowerCase().includes(t));
+            renderList(filtradas); 
+        };
         
         init();
     </script>
