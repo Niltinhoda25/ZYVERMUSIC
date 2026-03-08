@@ -19,52 +19,30 @@
         @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
         .hidden-splash { opacity: 0; visibility: hidden; }
 
-        /* --- HEADER CORRIGIDO (FLEX-WRAP PARA NÃO SUMIR) --- */
-        header { 
-            padding: 15px; 
-            background: linear-gradient(to bottom, #1a1a1a, var(--bg)); 
-            display: flex; 
-            flex-direction: column; /* Organiza em colunas no celular */
-            gap: 15px;
-        }
+        header { padding: 15px; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); display: flex; flex-direction: column; gap: 15px; }
         .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
-
-        .header-actions { 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; /* Distribui os botões na largura da tela */
-            gap: 8px; 
-            width: 100%;
-        }
-        
-        .btn-top { 
-            flex: 1; /* Faz os botões dividirem o espaço igualmente */
-            border-radius: 20px; 
-            font-size: 11px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            text-decoration: none; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            gap: 6px; 
-            height: 38px; 
-            border: none; 
-        }
+        .header-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; }
+        .btn-top { flex: 1; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; height: 38px; border: none; }
         .btn-pl { background: #222; color: #fff; border: 1px solid #333; }
         .btn-fav { color: #1DB954; font-size: 22px; text-decoration: none; padding: 0 10px; }
         .btn-clipes { background: var(--accent); color: white; }
 
-        /* --- BUSCA --- */
+        /* BUSCA (Estilo Original) */
         .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 0 15px 15px; border: 1px solid #222; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
         
-        /* --- CONTEÚDO --- */
+        /* PEDIDO (Visual Diferenciado para não confundir) */
+        .request-area { margin: 0 15px 20px; }
+        .request-label { font-size: 10px; font-weight: 900; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
+        .request-box { background: #000; display: flex; align-items: center; padding: 5px 5px 5px 18px; border-radius: 15px; border: 1px dashed #444; }
+        .request-box input { background: transparent; border: none; color: #ccc; flex: 1; outline: none; font-size: 13px; }
+        .btn-send-req { background: var(--accent); color: white; border: none; width: 35px; height: 35px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
         .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
-        .rank-card { min-width: 260px; background: var(--surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; }
+        .rank-card { min-width: 260px; background: var(--surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; cursor: pointer; }
         .rank-n { font-size: 40px; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--accent); opacity: 0.7; }
         .rank-card img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; }
         .rank-info { flex: 1; overflow: hidden; }
@@ -72,13 +50,16 @@
         
         .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
         .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; }
-        .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; }
-        .m-info { flex: 1; overflow: hidden; }
+        .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; cursor: pointer; }
+        .m-info { flex: 1; overflow: hidden; cursor: pointer; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
         .btn-heart.active { color: #1DB954; }
 
-        /* --- PLAYER --- */
+        /* ENQUETE */
+        .poll-container { margin: 15px; padding: 20px; background: var(--surface); border-radius: 20px; border: 1px solid #222; display: none; }
+        .poll-option { width: 100%; padding: 14px; margin-top: 10px; background: #000; border: 1px solid #333; color: white; border-radius: 12px; font-weight: bold; text-align: left; transition: 0.3s; }
+
         #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; }
         .p-img { width: 45px; height: 45px; border-radius: 8px; }
     </style>
@@ -97,8 +78,21 @@
         </div>
     </header>
 
-    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()"></div>
+    <div class="request-area">
+        <span class="request-label">Solicitar Música</span>
+        <div class="request-box">
+            <input type="text" id="input-pedido" placeholder="O que você quer ouvir na Zyver?">
+            <button class="btn-send-req" onclick="enviarPedido()"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar na biblioteca..." onkeyup="filtrar()"></div>
     
+    <div id="enquete-home" class="poll-container">
+        <h3 id="poll-question" style="font-size: 16px; margin-bottom: 10px;"></h3>
+        <div id="poll-options-list"></div>
+    </div>
+
     <div class="section-title">🔥 As Mais Tocadas</div>
     <div id="top-10" class="ranking-wrapper"></div>
     
@@ -114,43 +108,93 @@
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc, onSnapshot, getDoc, addDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        let tracks = []; const audio = document.getElementById('audio-engine');
-        
+        let tracks = []; 
+        const audio = document.getElementById('audio-engine');
+        let currentMusicId = null; // Para saber qual música atualizar o play
+
         window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
 
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
             
+            // Ordena pelo número de plays para o Top 10
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="rank-n">#${i+1}</div><img src="${m.cover}"><div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} PLAYS</p></div>
                 </div>`).join('');
             renderList(tracks);
+            carregarEnquete();
         }
 
+        // --- SISTEMA DE PLAY (COM CONTADOR) ---
+        window.play = async (id, url, n, i) => { 
+            currentMusicId = id;
+            document.getElementById('player').style.display = 'flex'; 
+            document.getElementById('p-name').innerText = n; 
+            document.getElementById('p-img').src = i; 
+            audio.src = url; 
+            audio.play(); 
+            document.getElementById('play-icon').className = 'fa fa-pause'; 
+
+            // ATUALIZA O CONTADOR DE PLAYS NO FIREBASE
+            try {
+                const musicRef = doc(db, "musics", id);
+                await updateDoc(musicRef, {
+                    plays: increment(1)
+                });
+                console.log("Play contado!");
+            } catch (e) { console.error("Erro ao contar play", e); }
+        };
+
+        // --- SISTEMA DE PEDIDOS ---
+        window.enviarPedido = async () => {
+            const val = document.getElementById('input-pedido').value;
+            if(!val) return;
+            await addDoc(collection(db, "pedidos"), { musica: val, data: Date.now() });
+            alert("Pedido enviado! 📥");
+            document.getElementById('input-pedido').value = "";
+        };
+
+        // --- RESTO DAS FUNÇÕES ---
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
-                    <img src="${m.cover}" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                    <div class="m-info" onclick="play('${m.url}','${m.title}','${m.cover}')"><h4>${m.title}</h4><p>Zyver Music</p></div>
+                    <img src="${m.cover}" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
+                    <div class="m-info" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')"><h4>${m.title}</h4><p>Zyver Music</p></div>
                     <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
                 </div>`).join('');
         }
 
+        function carregarEnquete() {
+            onSnapshot(doc(db, "configuracoes", "enquete_ativa"), (snap) => {
+                const container = document.getElementById('enquete-home');
+                if (!snap.exists()) { container.style.display = 'none'; return; }
+                container.style.display = 'block';
+                const data = snap.data();
+                document.getElementById('poll-question').innerText = data.pergunta;
+                document.getElementById('poll-options-list').innerHTML = data.opcoes.map((opt, i) => `
+                    <button class="poll-option" onclick="votar(${i})">
+                        ${opt.texto} <span style="float:right; color:var(--accent); font-size:10px;">${opt.votos} votos</span>
+                    </button>
+                `).join('');
+            });
+        }
+
+        window.votar = async (idx) => {
+            const ref = doc(db, "configuracoes", "enquete_ativa");
+            const snap = await getDoc(ref);
+            let opts = snap.data().opcoes;
+            opts[idx].votos += 1;
+            await updateDoc(ref, { opcoes: opts });
+        };
+
         window.toggleFav = async (id, isFav) => { 
             await updateDoc(doc(db, "musics", id), { isFav: !isFav }); 
             init(); 
-        };
-
-        window.play = (url, n, i) => { 
-            document.getElementById('player').style.display = 'flex'; 
-            document.getElementById('p-name').innerText = n; 
-            document.getElementById('p-img').src = i; audio.src = url; audio.play(); 
-            document.getElementById('play-icon').className = 'fa fa-pause'; 
         };
 
         window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };

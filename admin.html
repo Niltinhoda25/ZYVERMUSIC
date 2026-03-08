@@ -6,58 +6,28 @@
     <title>ZyverMusic | Painel ADM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; --danger: #ff4444; --orange: #ff7a00; }
+        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; --danger: #ff4444; --orange: #ff7a00; --blue: #4cc9f0; --pink: #f72585; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; padding-bottom: 50px; }
         .container { max-width: 650px; margin: auto; }
-        
         h2 { text-align: center; margin-bottom: 30px; font-weight: 900; letter-spacing: -1px; font-size: 28px; }
         h2 span { color: var(--accent); }
-
         .card-adm { background: var(--surface); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card-adm h3 { margin-bottom: 18px; font-size: 14px; color: var(--orange); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
-
+        .card-adm h3 { margin-bottom: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
         input { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid #444; color: white; border-radius: 12px; outline: none; transition: 0.3s; font-size: 14px; }
         input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(157, 78, 221, 0.2); }
-
         .btn-post { width: 100%; padding: 16px; background: var(--accent); border: none; color: white; font-weight: 900; border-radius: 12px; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; transition: 0.2s; }
         .btn-post:active { transform: scale(0.97); opacity: 0.8; }
-        
-        /* LISTAS DE GERENCIAMENTO */
         .manage-section { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
-        .item-list { display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto; padding-right: 8px; }
-        
+        .item-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
         .item-list::-webkit-scrollbar { width: 4px; }
         .item-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        .item-row { 
-            background: #111; 
-            padding: 12px 15px; 
-            border-radius: 12px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border: 1px solid #222;
-        }
+        .item-row { background: #111; padding: 12px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; margin-bottom: 5px; }
         .item-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .item-name { font-size: 14px; font-weight: 700; color: #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .item-type { font-size: 10px; color: var(--accent); font-weight: 900; text-transform: uppercase; }
-
-        .btn-del { 
-            background: rgba(255, 68, 68, 0.1); 
-            color: var(--danger); 
-            border: 1px solid rgba(255, 68, 68, 0.3); 
-            width: 38px; height: 38px; 
-            border-radius: 10px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            cursor: pointer; 
-            transition: 0.2s;
-            flex-shrink: 0;
-            margin-left: 10px;
-        }
-        .btn-del:hover { background: var(--danger); color: white; border-color: var(--danger); }
+        .item-name { font-size: 14px; font-weight: 700; color: #eee; }
+        .item-type { font-size: 10px; font-weight: 900; text-transform: uppercase; }
+        .btn-del { background: rgba(255, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 68, 0.3); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
+        .btn-del:hover { background: var(--danger); color: white; }
     </style>
 </head>
 <body>
@@ -66,147 +36,133 @@
         <h2>PAINEL <span>ADM</span></h2>
 
         <div class="card-adm">
-            <h3>🎵 Postar Música</h3>
+            <h3 style="color: var(--accent);">🎵 Gerenciar Músicas</h3>
             <input type="text" id="m-title" placeholder="Nome da Música">
-            <input type="text" id="m-cover" placeholder="Link da Capa (Imagem)">
-            <input type="text" id="m-url" placeholder="Link do Arquivo (MP3)">
+            <input type="text" id="m-cover" placeholder="Link da Capa">
+            <input type="text" id="m-url" placeholder="Link do MP3">
             <button class="btn-post" onclick="postar('musics')">PUBLICAR MÚSICA</button>
-
             <div class="manage-section">
-                <span style="font-size:10px; color:#555; font-weight:900; letter-spacing:1px;">MÚSICAS ATIVAS:</span>
-                <div id="lista-musicas" class="item-list" style="margin-top:12px;"></div>
+                <div id="lista-musicas" class="item-list"></div>
             </div>
         </div>
 
         <div class="card-adm">
-            <h3 style="color: var(--orange);">🎬 Postar Clipe</h3>
+            <h3 style="color: var(--orange);">🎬 Gerenciar Clipes</h3>
             <input type="text" id="c-title" placeholder="Nome do Clipe">
-            <input type="text" id="c-url" placeholder="Link do Vídeo (URL)">
+            <input type="text" id="c-url" placeholder="Link do Vídeo">
             <button class="btn-post" style="background: var(--orange);" onclick="postar('clips')">PUBLICAR CLIPE</button>
-
             <div class="manage-section">
-                <span style="font-size:10px; color:#555; font-weight:900; letter-spacing:1px;">CLIPES ATIVOS:</span>
-                <div id="lista-clips" class="item-list" style="margin-top:12px;"></div>
+                <div id="lista-clips" class="item-list"></div>
             </div>
         </div>
 
         <div class="card-adm">
-            <h3 style="color: #4cc9f0;">📊 Lançar Enquete</h3>
-            <input type="text" id="poll-q" placeholder="Qual a pergunta da enquete?">
+            <h3 style="color: var(--blue);">📊 Criar Enquete na Home</h3>
+            <input type="text" id="poll-q" placeholder="Qual a pergunta?">
             <input type="text" id="poll-o1" placeholder="Opção 1">
             <input type="text" id="poll-o2" placeholder="Opção 2">
-            <button class="btn-post" style="background: #4cc9f0;" onclick="lancarEnquete()">LANÇAR NO SITE</button>
-        </div>
-
-        <div class="card-adm">
-            <h3 style="color: #f72585;">📥 Pedidos dos Fãs</h3>
-            <div class="manage-section" style="border:none; padding:0;">
-                <div id="lista-pedidos" class="item-list">
-                    <p style="font-size:12px; color:#444">Nenhum pedido pendente.</p>
-                </div>
+            <button class="btn-post" style="background: var(--blue);" onclick="lancarEnquete()">LANÇAR NO SITE</button>
+            
+            <div class="manage-section">
+                <span style="font-size:10px; color:#555; font-weight:900;">ENQUETE ATIVA / RESULTADOS:</span>
+                <div id="lista-enquetes" class="item-list" style="margin-top:10px;"></div>
             </div>
         </div>
 
+        <div class="card-adm">
+            <h3 style="color: var(--pink);">📥 Pedidos dos Fãs</h3>
+            <div id="lista-pedidos" class="item-list">
+                <p style="font-size:12px; color:#444">Nenhum pedido recebido.</p>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // FUNÇÃO PARA POSTAR NO BANCO (Música e Clipe)
+        // POSTAR MÚSICA/CLIPE
         window.postar = async (tipo) => {
             let data = {};
             if(tipo === 'musics') {
-                const title = document.getElementById('m-title').value;
-                const cover = document.getElementById('m-cover').value;
-                const url = document.getElementById('m-url').value;
-                if(!title || !cover || !url) return alert("Erro: Preencha todos os campos!");
-                data = { title, cover, url, plays: 0, date: Date.now() };
+                const t = document.getElementById('m-title').value;
+                const c = document.getElementById('m-cover').value;
+                const u = document.getElementById('m-url').value;
+                if(!t || !c || !u) return alert("Preencha tudo!");
+                data = { title: t, cover: c, url: u, date: Date.now() };
             } else {
-                const title = document.getElementById('c-title').value;
-                const url = document.getElementById('c-url').value;
-                if(!title || !url) return alert("Erro: Preencha o nome e a URL!");
-                data = { title, url, date: Date.now(), likes: 0, comments: [] };
+                const t = document.getElementById('c-title').value;
+                const u = document.getElementById('c-url').value;
+                if(!t || !u) return alert("Preencha tudo!");
+                data = { title: t, url: u, date: Date.now(), likes: 0 };
             }
-
-            try {
-                await addDoc(collection(db, tipo), data);
-                alert("✅ Postado com sucesso!");
-                location.reload();
-            } catch (e) { alert("❌ Erro ao salvar!"); }
+            await addDoc(collection(db, tipo), data);
+            alert("✅ Postado!");
+            location.reload();
         };
 
-        // 5. FUNÇÃO PARA LANÇAR ENQUETE
+        // LANÇAR ENQUETE
         window.lancarEnquete = async () => {
             const q = document.getElementById('poll-q').value;
             const o1 = document.getElementById('poll-o1').value;
             const o2 = document.getElementById('poll-o2').value;
-
-            if(!q || !o1 || !o2) return alert("Preencha a enquete toda!");
-
-            try {
-                await setDoc(doc(db, "configuracoes", "enquete"), {
-                    pergunta: q,
-                    opcoes: [
-                        { texto: o1, votos: 0 },
-                        { texto: o2, votos: 0 }
-                    ]
-                });
-                alert("✅ Enquete ao vivo!");
-            } catch (e) { alert("Erro ao lançar enquete."); }
+            if(!q || !o1 || !o2) return alert("Preencha a enquete!");
+            await setDoc(doc(db, "configuracoes", "enquete_ativa"), {
+                pergunta: q,
+                opcoes: [{texto: o1, votos: 0}, {texto: o2, votos: 0}],
+                timestamp: Date.now()
+            });
+            alert("✅ Enquete no ar!");
         };
 
-        // CARREGA TUDO (Músicas, Clipes e Pedidos)
-        async function carregarTudo() {
+        // MONITORAR TUDO EM TEMPO REAL
+        function init() {
             // Músicas
-            onSnapshot(collection(db, "musics"), (snap) => {
-                const div = document.getElementById('lista-musicas');
-                div.innerHTML = snap.docs.map(d => `
+            onSnapshot(collection(db, "musics"), snap => {
+                document.getElementById('lista-musicas').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
-                        <div class="item-info">
-                            <span class="item-name">${d.data().title}</span>
-                            <span class="item-type">Música</span>
-                        </div>
+                        <div class="item-info"><span class="item-name">${d.data().title}</span><span class="item-type">Música</span></div>
                         <div class="btn-del" onclick="apagar('musics', '${d.id}')"><i class="fa fa-trash"></i></div>
                     </div>`).join('');
             });
-
             // Clipes
-            onSnapshot(collection(db, "clips"), (snap) => {
-                const div = document.getElementById('lista-clips');
-                div.innerHTML = snap.docs.map(d => `
+            onSnapshot(collection(db, "clips"), snap => {
+                document.getElementById('lista-clips').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
-                        <div class="item-info">
-                            <span class="item-name">${d.data().title}</span>
-                            <span class="item-type" style="color:var(--orange)">Clipe</span>
-                        </div>
+                        <div class="item-info"><span class="item-name">${d.data().title}</span><span class="item-type" style="color:var(--orange)">Clipe</span></div>
                         <div class="btn-del" onclick="apagar('clips', '${d.id}')"><i class="fa fa-trash"></i></div>
                     </div>`).join('');
             });
-
-            // 4. Pedidos (Tempo real)
-            onSnapshot(query(collection(db, "pedidos"), orderBy("data", "desc")), (snap) => {
-                const div = document.getElementById('lista-pedidos');
-                if(snap.empty) { div.innerHTML = "<p style='font-size:12px; color:#444'>Nenhum pedido pendente.</p>"; return; }
-                div.innerHTML = snap.docs.map(d => `
+            // Pedidos
+            onSnapshot(query(collection(db, "pedidos"), orderBy("data", "desc")), snap => {
+                document.getElementById('lista-pedidos').innerHTML = snap.docs.map(d => `
                     <div class="item-row">
-                        <div class="item-info">
-                            <span class="item-name">${d.data().musica}</span>
-                            <span class="item-type" style="color:#f72585">Pedido Fã</span>
-                        </div>
+                        <div class="item-info"><span class="item-name">${d.data().musica}</span><span class="item-type" style="color:var(--pink)">Pedido</span></div>
                         <div class="btn-del" onclick="apagar('pedidos', '${d.id}')"><i class="fa fa-check"></i></div>
                     </div>`).join('');
             });
+            // Enquete Ativa (Ver Votos)
+            onSnapshot(doc(db, "configuracoes", "enquete_ativa"), snap => {
+                const div = document.getElementById('lista-enquetes');
+                if(!snap.exists()) { div.innerHTML = "Nenhuma enquete ativa."; return; }
+                const d = snap.data();
+                div.innerHTML = `
+                    <div class="item-row" style="flex-direction:column; align-items:flex-start;">
+                        <div style="width:100%; display:flex; justify-content:space-between;">
+                            <b>${d.pergunta}</b>
+                            <div class="btn-del" onclick="apagarEnquete()"><i class="fa fa-trash"></i></div>
+                        </div>
+                        <div style="font-size:12px; margin-top:8px; color:var(--blue)">
+                            ${d.opcoes[0].texto}: ${d.opcoes[0].votos} votos | ${d.opcoes[1].texto}: ${d.opcoes[1].votos} votos
+                        </div>
+                    </div>`;
+            });
         }
 
-        // DELETAR QUALQUER COISA
-        window.apagar = async (pasta, id) => {
-            if(confirm("Deseja excluir/remover este item?")) {
-                await deleteDoc(doc(db, pasta, id));
-            }
-        };
+        window.apagar = async (p, id) => { if(confirm("Excluir?")) await deleteDoc(doc(db, p, id)); };
+        window.apagarEnquete = async () => { if(confirm("Tirar do ar?")) await deleteDoc(doc(db, "configuracoes", "enquete_ativa")); };
 
-        carregarTudo();
+        init();
     </script>
 </body>
 </html>
