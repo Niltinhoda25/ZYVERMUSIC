@@ -9,7 +9,7 @@
         function carregarAnuncioSutil() {
             const agora = Date.now();
             const ultimoAnuncio = localStorage.getItem('last_ad_time') || 0;
-            if (agora - ultimoAnuncio > 40000) { 
+            if (agora - ultimoAnuncio > 45000) { 
                 (function(s){
                     s.dataset.zone='10697810';
                     s.src='https://nap5k.com/tag.min.js';
@@ -30,37 +30,39 @@
         #main-content { height: 100vh; overflow-y: auto; padding-bottom: 240px; scrollbar-width: none; }
         #main-content::-webkit-scrollbar { display: none; }
 
-        header { padding: 25px 15px; background: #000; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
-        .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -1px; }
+        header { padding: 20px 15px; background: #000; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 0; z-index: 1000; }
+        .header-top { display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; }
         .logo span { color: var(--accent); }
 
-        .btn-plus { background: var(--accent); color: white; padding: 10px 15px; border-radius: 20px; border: none; font-weight: 800; font-size: 10px; }
+        /* BARRA DE PESQUISA */
+        .search-container { position: relative; width: 100%; }
+        .search-input { width: 100%; background: #151515; border: 1px solid #333; padding: 12px 15px 12px 40px; border-radius: 12px; color: white; font-size: 14px; outline: none; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
 
-        /* BOTÃO SUPORTE WHATSAPP */
-        .btn-support { position: fixed; bottom: 100px; right: 20px; background: var(--whats); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; z-index: 4500; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-decoration: none; border: 2px solid rgba(255,255,255,0.2); }
+        .btn-nav { background: #1a1a1a; color: white; padding: 10px 15px; border-radius: 20px; border: 1px solid #333; font-weight: 800; font-size: 10px; cursor: pointer; }
+        .btn-nav.active { background: var(--accent); border: none; }
 
-        .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        /* SUPORTE */
+        .btn-support { position: fixed; bottom: 100px; right: 20px; background: var(--whats); width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; color: white; z-index: 4500; box-shadow: 0 4px 15px rgba(0,0,0,0.5); text-decoration: none; }
 
-        /* RANKING E LISTAS */
+        .section-title { padding: 20px 15px 10px; font-size: 13px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
+
+        /* RANKING */
         .ranking-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 0 15px 25px; scrollbar-width: none; }
-        .rank-card { min-width: 240px; background: var(--surface); border-radius: 18px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; position: relative; }
-        .rank-badge { position: absolute; top: 8px; left: 8px; background: var(--accent); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 900; }
+        .rank-card { min-width: 240px; background: var(--surface); border-radius: 18px; padding: 12px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
         .rank-card img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
 
-        .playlist-header { display: flex; justify-content: space-between; align-items: center; padding: 0 15px; margin-top: 25px; }
-        .pl-actions { display: flex; gap: 12px; }
-        .btn-icon { font-size: 17px; cursor: pointer; }
-        .btn-icon.share { color: var(--share); }
-        .btn-icon.delete { color: var(--danger); }
+        /* MODAIS / GAVETAS */
+        .full-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
+        .modal-header { padding: 20px; display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #222; }
 
-        /* MODAL */
-        #creator-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        .pl-input { background: #151515; border: 1px solid #333; padding: 18px; border-radius: 15px; color: white; width: calc(100% - 30px); margin: 15px; font-size: 16px; outline: none; }
-        
-        .select-item { display: flex; align-items: center; padding: 12px; margin: 0 15px 8px; background: #111; border-radius: 12px; border: 1px solid #222; }
-        .select-item.selected { border-color: var(--success); background: rgba(46, 204, 113, 0.05); }
-        .select-item img { width: 45px; height: 45px; border-radius: 8px; margin-right: 15px; }
-        .selected .fa-check-circle { color: var(--success); }
+        /* PLAYLISTS NO MODAL */
+        .playlist-row { padding: 15px; border-bottom: 1px solid #111; }
+        .pl-actions { display: flex; gap: 15px; margin-top: 10px; }
+        .btn-icon { font-size: 17px; cursor: pointer; }
+        .share-btn { color: var(--share); }
+        .del-btn { color: var(--danger); }
 
         /* PLAYER DISCO */
         #player { position: fixed; bottom: 15px; left: 10px; right: 10px; background: rgba(15,15,15,0.98); backdrop-filter: blur(25px); padding: 12px; border-radius: 22px; display: none; align-items: center; gap: 12px; z-index: 4000; border: 1px solid #333; }
@@ -69,44 +71,58 @@
         @keyframes rotateDisk { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .spinning { animation: rotateDisk 6s linear infinite; }
 
-        .btn-save { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; }
+        .btn-big { background: var(--success); color: white; padding: 18px; border-radius: 15px; border: none; font-weight: 900; margin: 15px; text-transform: uppercase; }
+        .select-item { display: flex; align-items: center; padding: 12px; background: #111; border-radius: 12px; border: 1px solid #222; margin-bottom: 8px; }
     </style>
 </head>
 <body>
 
-    <a href="https://wa.me/5500000000000" target="_blank" class="btn-support">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <a href="https://wa.me/5500000000000" target="_blank" class="btn-support"><i class="fab fa-whatsapp"></i></a>
 
-    <div id="creator-modal">
-        <div style="padding:20px; display:flex; align-items:center; gap:15px;">
-            <i class="fa fa-arrow-left" onclick="fecharCriador()"></i>
-            <h3 style="font-weight:900;">Criar Playlist</h3>
+    <div id="my-playlists-modal" class="full-modal">
+        <div class="modal-header">
+            <i class="fa fa-arrow-left" onclick="fecharPlaylists()"></i>
+            <h3 style="font-weight:900;">Minhas Playlists</h3>
         </div>
-        <input type="text" id="pl-name-field" class="pl-input" placeholder="Nome da Playlist...">
-        <div style="flex:1; overflow-y: auto;" id="selection-list"></div>
-        <button class="btn-save" onclick="finalizarPlaylist()">SALVAR PLAYLIST</button>
+        <div id="playlists-list-area" style="flex:1; overflow-y: auto;"></div>
+    </div>
+
+    <div id="creator-modal" class="full-modal">
+        <div class="modal-header">
+            <i class="fa fa-close" onclick="fecharCriador()"></i>
+            <h3 style="font-weight:900;">Nova Playlist</h3>
+        </div>
+        <input type="text" id="pl-name-field" style="background:#151515; border:1px solid #333; padding:15px; margin:15px; border-radius:12px; color:white;" placeholder="Nome da Playlist...">
+        <div id="selection-list" style="flex:1; overflow-y: auto; padding: 0 15px;"></div>
+        <button class="btn-big" onclick="finalizarPlaylist()">CRIAR E SALVAR</button>
     </div>
 
     <div id="main-content">
         <header>
-            <div class="logo">ZYVER<span>MUSIC</span></div>
-            <button class="btn-plus" onclick="abrirCriador()">+ CRIAR</button>
+            <div class="header-top">
+                <div class="logo">ZYVER<span>MUSIC</span></div>
+                <div style="display:flex; gap:8px;">
+                    <button class="btn-nav active" onclick="abrirPlaylists()"><i class="fa fa-folder"></i> PLAYLISTS</button>
+                    <button class="btn-nav" style="background:var(--accent); border:none;" onclick="abrirCriador()">+ CRIAR</button>
+                </div>
+            </div>
+            <div class="search-container">
+                <i class="fa fa-search search-icon"></i>
+                <input type="text" id="search-bar" class="search-input" placeholder="O que você quer ouvir?" oninput="filtrarMusicas()">
+            </div>
         </header>
 
-        <div id="shared-area" style="display:none;">
-            <div class="section-title">⭐ Playlist de Amigo</div>
+        <div id="shared-area" style="display:none; padding: 0 15px;">
+            <div class="section-title">⭐ Playlist Recebida</div>
             <div id="shared-scroll" class="ranking-scroll"></div>
-            <button class="btn-save" id="btn-import" style="width:calc(100% - 30px); background:var(--accent);">ADICIONAR À MINHA BIBLIOTECA</button>
+            <button class="btn-big" id="btn-import" style="width:100%; margin: 10px 0;">IMPORTAR PARA MINHA CONTA</button>
         </div>
 
-        <div class="section-title"><i class="fa fa-trophy"></i> Top 10 Mais Ouvidas</div>
+        <div class="section-title"><i class="fa fa-fire"></i> Top 10 Mais Tocadas</div>
         <div id="top-10" class="ranking-scroll"></div>
 
-        <div id="my-playlists-section"></div>
-
-        <div class="section-title"><i class="fa fa-list"></i> Todas as Músicas</div>
-        <div id="all-musics-list" style="padding: 0 15px;"></div>
+        <div class="section-title"><i class="fa fa-list"></i> Biblioteca Geral</div>
+        <div id="all-musics-list" style="padding: 0 15px; display: flex; flex-direction: column; gap: 8px;"></div>
     </div>
 
     <div id="player">
@@ -133,11 +149,41 @@
             const snap = await getDocs(collection(db, "musics"));
             musics = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
             renderRanking();
-            renderGeral();
-            renderUserPlaylists();
+            renderGeral(musics);
             verificarURL();
         }
 
+        // --- BUSCA ---
+        window.filtrarMusicas = () => {
+            const termo = document.getElementById('search-bar').value.toLowerCase();
+            const filtradas = musics.filter(m => m.title.toLowerCase().includes(termo));
+            renderGeral(filtradas);
+        };
+
+        // --- PLAYLISTS MODAL ---
+        window.abrirPlaylists = () => {
+            document.getElementById('my-playlists-modal').style.display = 'flex';
+            const area = document.getElementById('playlists-list-area');
+            if(myPlaylists.length === 0) {
+                area.innerHTML = "<p style='padding:20px; color:#666;'>Nenhuma playlist criada ainda.</p>";
+                return;
+            }
+            area.innerHTML = myPlaylists.map(pl => `
+                <div class="playlist-row">
+                    <b style="font-size:16px;">${pl.nome}</b>
+                    <div class="pl-actions">
+                        <i class="fa fa-paper-plane btn-icon share-btn" onclick="compartilharPL('${pl.cloudId}', '${pl.nome}')"></i>
+                        <i class="fa fa-trash-can btn-icon del-btn" onclick="excluirPL(${pl.id})"></i>
+                    </div>
+                    <div class="ranking-scroll" style="padding:10px 0 0 0;">
+                        ${pl.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:80px; height:80px; border-radius:10px; margin-right:8px;">`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        };
+        window.fecharPlaylists = () => document.getElementById('my-playlists-modal').style.display = 'none';
+
+        // --- SISTEMA ---
         async function verificarURL() {
             const urlId = new URLSearchParams(window.location.search).get('pl');
             if(urlId) {
@@ -146,14 +192,12 @@
                     const data = res.data();
                     document.getElementById('shared-area').style.display = 'block';
                     document.getElementById('shared-scroll').innerHTML = data.musicas.map(m => `
-                        <div class="rank-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                            <img src="${m.cover}"> <b>${m.title}</b>
-                        </div>`).join('');
+                        <div class="rank-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')"><img src="${m.cover}"> <b>${m.title}</b></div>`).join('');
                     document.getElementById('btn-import').onclick = () => {
                         myPlaylists.push({id: Date.now(), cloudId: urlId, nome: data.nome, musicas: data.musicas});
                         localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
-                        renderUserPlaylists();
                         alert("Playlist importada!");
+                        abrirPlaylists();
                     };
                 }
             }
@@ -167,24 +211,19 @@
             myPlaylists.push({id: Date.now(), cloudId: cloudRef.id, nome, musicas: musicasData});
             localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
             fecharCriador();
-            renderUserPlaylists();
-            alert("Sucesso! Compartilhe usando o ícone azul.");
+            abrirPlaylists();
         };
 
         window.compartilharPL = (cloudId, nome) => {
             const shareLink = window.location.origin + window.location.pathname + "?pl=" + cloudId;
-            if (navigator.share) {
-                navigator.share({ title: 'ZyverMusic', text: 'Curte minha playlist: ' + nome, url: shareLink });
-            } else {
-                prompt("Copie o link:", shareLink);
-            }
+            navigator.share({ title: 'ZyverMusic', text: 'Minha Playlist: ' + nome, url: shareLink });
         };
 
         window.excluirPL = (id) => {
-            if(confirm("Excluir esta playlist?")) {
+            if(confirm("Excluir playlist?")) {
                 myPlaylists = myPlaylists.filter(p => p.id !== id);
                 localStorage.setItem('z_user_pl', JSON.stringify(myPlaylists));
-                renderUserPlaylists();
+                abrirPlaylists();
             }
         };
 
@@ -207,46 +246,28 @@
             document.getElementById('creator-modal').style.display = 'flex';
             document.getElementById('selection-list').innerHTML = musics.map(m => `
                 <div class="select-item" id="it-${m.id}" onclick="toggleM('${m.id}')">
-                    <img src="${m.cover}"> <b>${m.title}</b> <i class="fa fa-check-circle" style="margin-left:auto; color:#222;"></i>
+                    <img src="${m.cover}" style="width:40px; height:40px; border-radius:8px; margin-right:12px;"> <b>${m.title}</b>
+                    <i class="fa fa-check-circle" style="margin-left:auto; color:#222;"></i>
                 </div>`).join('');
         };
 
         window.toggleM = (id) => {
             const el = document.getElementById(`it-${id}`);
-            if(selectedIds.includes(id)) { selectedIds = selectedIds.filter(x => x !== id); el.classList.remove('selected'); }
-            else { selectedIds.push(id); el.classList.add('selected'); }
+            if(selectedIds.includes(id)) { selectedIds = selectedIds.filter(x => x !== id); el.style.borderColor = "#222"; el.querySelector('.fa-check-circle').style.color = "#222"; }
+            else { selectedIds.push(id); el.style.borderColor = "var(--success)"; el.querySelector('.fa-check-circle').style.color = "var(--success)"; }
         };
 
         window.fecharCriador = () => { document.getElementById('creator-modal').style.display = 'none'; selectedIds = []; };
 
-        function renderUserPlaylists() {
-            const box = document.getElementById('my-playlists-section');
-            box.innerHTML = myPlaylists.map(pl => `
-                <div class="playlist-header">
-                    <h3 style="font-weight:900; font-size:16px;">${pl.nome}</h3>
-                    <div class="pl-actions">
-                        <i class="fa fa-paper-plane btn-icon share" onclick="compartilharPL('${pl.cloudId}', '${pl.nome}')"></i>
-                        <i class="fa fa-trash-can btn-icon delete" onclick="excluirPL(${pl.id})"></i>
-                    </div>
-                </div>
-                <div class="ranking-scroll">${pl.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:105px; height:105px; border-radius:15px; border:1px solid #222;">`).join('')}</div>
-            `).join('');
-        }
-
         function renderRanking() {
             const top = [...musics].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
-            document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                <div class="rank-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <div class="rank-badge">${i+1}</div>
-                    <img src="${m.cover}"> <b style="font-size:14px;">${m.title}</b>
-                </div>`).join('');
+            document.getElementById('top-10').innerHTML = top.map(m => `
+                <div class="rank-card" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')"><img src="${m.cover}"> <b>${m.title}</b></div>`).join('');
         }
 
-        function renderGeral() {
-            document.getElementById('all-musics-list').innerHTML = musics.map(m => `
-                <div class="select-item" style="margin:0 0 8px 0;" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img src="${m.cover}"> <b>${m.title}</b>
-                </div>`).join('');
+        function renderGeral(lista) {
+            document.getElementById('all-musics-list').innerHTML = lista.map(m => `
+                <div class="select-item" style="margin:0;" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')"><img src="${m.cover}" style="width:40px; height:40px; border-radius:8px; margin-right:12px;"> <b>${m.title}</b></div>`).join('');
         }
 
         startup();
