@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZyverMusic | v10.7 Visualizer Edition</title>
+    <title>ZyverMusic | v10.7 God Mode</title>
     
     <script>
         (function(s){
@@ -28,24 +28,14 @@
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Figtree', sans-serif; }
         html, body { width: 100%; height: 100%; overflow: hidden; background: #000; position: fixed; color: white; }
 
-        /* EQUALIZADOR FUNDO */
-        #visualizer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 150px;
-            z-index: 1; /* Fica atrás do player-ui mas acima do scroller */
-            pointer-events: none;
-            opacity: 0.6;
-        }
+        /* VISUALIZADOR NO FUNDO */
+        #visualizer { position: fixed; bottom: 95px; left: 0; width: 100%; height: 120px; z-index: 1; pointer-events: none; opacity: 0.7; }
 
         #scroller {
             height: 100vh; width: 100%; overflow-y: auto; overflow-x: hidden;
             padding-bottom: 280px; scrollbar-width: none;
             background: linear-gradient(to bottom, #222 0%, #121212 35%, #000 100%);
-            position: relative;
-            z-index: 2;
+            position: relative; z-index: 2;
         }
         #scroller::-webkit-scrollbar { display: none; }
 
@@ -61,34 +51,31 @@
         .section-h { padding: 20px 20px 10px; font-size: 24px; font-weight: 800; }
         .h-list { display: flex; overflow-x: auto; padding: 10px 20px; gap: 18px; scrollbar-width: none; }
         .card-p { min-width: 165px; background: var(--sp-light); padding: 14px; border-radius: 10px; transition: 0.3s; }
-        .card-p img { width: 137px; height: 137px; border-radius: 6px; object-fit: cover; }
+        .card-p img { width: 137px; height: 137px; border-radius: 6px; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .card-p b { display: block; margin-top: 12px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         .track-item { display: flex; align-items: center; padding: 14px 20px; border-radius: 8px; margin: 0 10px; transition: 0.2s; }
+        .track-item:active { background: rgba(255,255,255,0.1); }
         .track-img { width: 56px; height: 56px; border-radius: 5px; margin-right: 18px; object-fit: cover; }
         .track-meta { flex: 1; overflow: hidden; }
         .track-meta b { font-size: 17px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .track-meta span { font-size: 13px; color: var(--sp-gray); }
 
-        /* PLAYER UI */
         #player-ui {
             position: fixed; bottom: 100px; left: 12px; right: 12px;
-            background: rgba(40, 40, 40, 0.95); backdrop-filter: blur(15px);
-            border-radius: 12px; padding: 15px;
+            background: #282828; border-radius: 12px; padding: 15px;
             display: none; flex-direction: column; gap: 10px; z-index: 6000;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1);
         }
         .p-main { display: flex; align-items: center; gap: 15px; }
         .p-thumb { width: 52px; height: 52px; border-radius: 6px; object-fit: cover; }
         .p-info { flex: 1; overflow: hidden; }
         .p-info b { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-info span { font-size: 11px; color: var(--sp-green); font-weight: 800; }
-        
-        .p-bar-bg { width: 100%; height: 4px; background: #444; border-radius: 2px; }
+        .p-info span { font-size: 11px; color: var(--sp-green); font-weight: 800; text-transform: uppercase; }
+        .p-bar-bg { width: 100%; height: 4px; background: #444; border-radius: 2px; position: relative; }
         #p-bar-fill { width: 0%; height: 100%; background: var(--sp-green); border-radius: 2px; }
 
-        nav { position: fixed; bottom: 0; width: 100%; height: 95px; background: #000; display: flex; justify-content: space-around; padding-top: 15px; z-index: 5000; }
+        nav { position: fixed; bottom: 0; width: 100%; height: 95px; background: linear-gradient(to top, #000 80%, transparent); display: flex; justify-content: space-around; padding-top: 15px; z-index: 5000; }
         .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; }
         .nav-link i { font-size: 24px; margin-bottom: 6px; display: block; }
         .nav-link span { font-size: 11px; font-weight: 700; }
@@ -96,7 +83,7 @@
 
         .modal-ui { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; z-index: 9999; display: none; flex-direction: column; padding: 70px 25px 120px; }
         .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-        .lib-card { background: #1c1c1c; margin-bottom: 15px; border-radius: 12px; display: flex; align-items: center; padding: 20px; gap: 18px; }
+        .lib-card { background: #1c1c1c; margin-bottom: 15px; border-radius: 12px; display: flex; align-items: center; padding: 20px; gap: 18px; border: 1px solid rgba(255,255,255,0.03); }
 
         #loader { position: fixed; top:0; left:0; width:100%; height:100%; background:#000; z-index:10000; display:flex; align-items:center; justify-content:center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #222; border-top: 5px solid var(--sp-green); border-radius: 50%; animation: spin 1s linear infinite; }
@@ -106,7 +93,6 @@
 <body>
 
     <div id="loader"><div class="spinner"></div></div>
-    
     <canvas id="visualizer"></canvas>
 
     <div id="m-lib" class="modal-ui">
@@ -168,93 +154,72 @@
         import { collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, increment, query, where, arrayUnion } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let allSongs = [], selNew = [], targetSong = null;
-        let deviceID = localStorage.getItem('zyver_device_id');
+        let deviceID = localStorage.getItem('zyver_device_id') || 'zy_'+Math.random().toString(36).substr(2,12);
+        localStorage.setItem('zyver_device_id', deviceID);
+
         const engine = document.getElementById('core-engine');
-        
-        // Contexto de Áudio para o Visualizador
         let audioCtx, analyzer, source, visualInit = false;
 
-        if(!deviceID) {
-            deviceID = 'zy_' + Math.random().toString(36).substr(2, 12);
-            localStorage.setItem('zyver_device_id', deviceID);
-        }
-
         window.toggleFS = () => {
-            if (!document.fullscreenElement) { document.documentElement.requestFullscreen(); }
-            else { if (document.exitFullscreen) document.exitFullscreen(); }
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
         };
 
-        async function startApp() {
+        // VISUALIZADOR REAL-TIME
+        function startVisualizer() {
+            if (visualInit) return;
             try {
-                const snap = await getDocs(collection(db, "musics"));
-                allSongs = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                analyzer = audioCtx.createAnalyser();
+                source = audioCtx.createMediaElementSource(engine);
+                source.connect(analyzer);
+                analyzer.connect(audioCtx.destination);
+                analyzer.fftSize = 64;
                 
-                const urlParams = new URLSearchParams(window.location.search);
-                const plId = urlParams.get('pl');
-                const shouldPlay = urlParams.get('play');
+                const canvas = document.getElementById('visualizer');
+                const ctx = canvas.getContext('2d');
+                const dataArray = new Uint8Array(analyzer.frequencyBinCount);
 
-                if(plId) {
-                    const plSnap = await getDoc(doc(db, "playlists", plId));
-                    if(plSnap.exists()) {
-                        const data = plSnap.data().musicas || [];
-                        renderMain(data);
-                        if(shouldPlay === "true" && data.length > 0) {
-                            playNow(data[0].id, data[0].url, data[0].title, data[0].cover);
-                        }
+                function draw() {
+                    requestAnimationFrame(draw);
+                    canvas.width = window.innerWidth;
+                    canvas.height = 120;
+                    analyzer.getByteFrequencyData(dataArray);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    let barWidth = (canvas.width / dataArray.length) * 2.5;
+                    let x = 0;
+                    for(let i=0; i<dataArray.length; i++) {
+                        let h = dataArray[i] / 2;
+                        ctx.fillStyle = `rgba(29, 185, 84, ${h/60})`;
+                        ctx.fillRect(x, canvas.height - h, barWidth - 2, h);
+                        x += barWidth;
                     }
-                } else {
-                    renderMain(allSongs);
                 }
-                renderTop();
-                document.getElementById('loader').style.display = 'none';
-            } catch(e) { console.error(e); }
+                draw(); visualInit = true;
+            } catch(e) { console.log("Visualizer blocked by CORS, but song will play."); }
         }
 
-        // LÓGICA DO VISUALIZADOR (EQUALIZADOR)
-        function initVisualizer() {
-            if (visualInit) return;
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            analyzer = audioCtx.createAnalyser();
-            source = audioCtx.createMediaElementSource(engine);
-            source.connect(analyzer);
-            analyzer.connect(audioCtx.destination);
-            analyzer.fftSize = 64; // Quantidade de barras (metade deste valor)
-
-            const canvas = document.getElementById('visualizer');
-            const ctx = canvas.getContext('2d');
-            const bufferLength = analyzer.frequencyBinCount;
-            const dataArray = new Uint8Array(bufferLength);
-
-            function draw() {
-                requestAnimationFrame(draw);
-                canvas.width = window.innerWidth;
-                canvas.height = 150;
-                analyzer.getByteFrequencyData(dataArray);
-
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                let barWidth = (canvas.width / bufferLength) * 2;
-                let barHeight;
-                let x = 0;
-
-                for (let i = 0; i < bufferLength; i++) {
-                    barHeight = dataArray[i] / 1.5;
-                    ctx.fillStyle = `rgba(29, 185, 84, ${barHeight / 100})`; // Verde Spotify com opacidade dinâmica
-                    ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
-                    x += barWidth;
-                }
-            }
-            draw();
-            visualInit = true;
+        async function startApp() {
+            const snap = await getDocs(collection(db, "musics"));
+            allSongs = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
+            
+            const plId = new URLSearchParams(window.location.search).get('pl');
+            if(plId) {
+                const p = await getDoc(doc(db, "playlists", plId));
+                if(p.exists()) renderMain(p.data().musicas || []);
+            } else renderMain(allSongs);
+            
+            renderTop();
+            document.getElementById('loader').style.display = 'none';
         }
 
         window.playNow = (id, url, title, img) => {
-            // Inicializa o áudio no primeiro play (exigência dos navegadores)
-            if (!visualInit) initVisualizer();
+            if (!visualInit) startVisualizer();
             if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
 
             if(!url || url === "undefined") {
                 const f = allSongs.find(s => s.id === id);
-                if(f) { url = f.url; title = f.title; img = f.cover; }
+                url = f?.url; title = f?.title; img = f?.cover;
             }
             if(!url) return;
 
@@ -262,8 +227,20 @@
             document.getElementById('p-title').innerText = title;
             document.getElementById('p-img').src = img;
             
+            // FIX DEFINITIVO PARA MÚSICAS QUE NÃO TOCAM
+            engine.setAttribute('crossorigin', 'anonymous');
             engine.src = url;
-            engine.play();
+            
+            const playPromise = engine.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    // Se falhar por causa do visualizador (CORS), tenta o modo simples
+                    engine.removeAttribute('crossorigin');
+                    engine.load();
+                    engine.play();
+                });
+            }
+
             document.getElementById('p-icon').className = 'fa fa-pause-circle';
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
         };
@@ -274,51 +251,41 @@
         };
 
         engine.ontimeupdate = () => {
-            const perc = (engine.currentTime / engine.duration) * 100;
-            document.getElementById('p-bar-fill').style.width = perc + "%";
+            document.getElementById('p-bar-fill').style.width = (engine.currentTime / engine.duration) * 100 + "%";
         };
 
-        // ... Restante das suas funções (renderMain, renderTop, loadLib, etc) ...
-        function renderMain(data) {
+        window.renderMain = (data) => {
             document.getElementById('main-list-ui').innerHTML = data.map(m => `
                 <div class="track-item">
                     <img class="track-img" src="${m.cover}" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="track-meta" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                        <b>${m.title}</b>
-                        <span>Zyver Artist</span>
+                        <b>${m.title}</b><span>Zyver Artist</span>
                     </div>
                     <i class="fa fa-plus-circle" style="color:#555; font-size:24px; padding:10px;" onclick="preAdd('${m.id}')"></i>
                 </div>
             `).join('');
-        }
+        };
 
-        function renderTop() {
+        window.renderTop = () => {
             document.getElementById('top-row-ui').innerHTML = allSongs.slice(0, 10).map(m => `
                 <div class="card-p" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img src="${m.cover}">
-                    <b>${m.title}</b>
+                    <img src="${m.cover}"><b>${m.title}</b>
                 </div>
             `).join('');
-        }
+        };
 
         window.loadLib = async () => {
             openU('m-lib');
-            const render = document.getElementById('my-lib-render');
-            render.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
-            const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
-            const snap = await getDocs(q);
-            if(snap.empty) { render.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Vazio</p>'; return; }
-            const docs = snap.docs.map(d => ({id: d.id, ...d.data()})).sort((a,b) => (b.created || 0) - (a.created || 0));
-            render.innerHTML = docs.map(p => `
+            const r = document.getElementById('my-lib-render');
+            r.innerHTML = '<div class="spinner" style="margin:20px auto;"></div>';
+            const snap = await getDocs(query(collection(db, "playlists"), where("ownerID", "==", deviceID)));
+            if(snap.empty) { r.innerHTML = '<p style="text-align:center; padding:40px; color:#555;">Vazio</p>'; return; }
+            r.innerHTML = snap.docs.map(d => `
                 <div class="lib-card">
-                    <div class="lib-info" onclick="window.location.href='?pl=${p.id}'">
-                        <b>${p.nome}</b>
-                        <span>${p.musicas ? p.musicas.length : 0} músicas</span>
+                    <div style="flex:1" onclick="window.location.href='?pl=${d.id}'">
+                        <b>${d.data().nome}</b><span>${d.data().musicas?.length || 0} músicas</span>
                     </div>
-                    <div style="display:flex; gap:20px;">
-                        <i class="fa fa-play-circle" style="color:var(--sp-green); font-size:30px;" onclick="window.location.href='?pl=${p.id}&play=true'"></i>
-                        <i class="fa fa-trash" style="color:var(--sp-red); font-size:20px;" onclick="deletePL('${p.id}')"></i>
-                    </div>
+                    <i class="fa fa-trash" style="color:var(--sp-red)" onclick="deletePL('${d.id}')"></i>
                 </div>
             `).join('');
         };
@@ -326,16 +293,14 @@
         window.deletePL = async (id) => { if(confirm("Apagar?")) { await deleteDoc(doc(db, "playlists", id)); loadLib(); } };
         window.preAdd = (id) => { targetSong = allSongs.find(m => m.id === id); openU('m-add-to'); loadPlOptions(); };
         async function loadPlOptions() {
-            const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
-            const snap = await getDocs(q);
+            const snap = await getDocs(query(collection(db, "playlists"), where("ownerID", "==", deviceID)));
             document.getElementById('pl-options-render').innerHTML = snap.docs.map(d => `<div class="lib-card" onclick="confirmAdd('${d.id}')"><b>${d.data().nome}</b></div>`).join('');
         }
         window.confirmAdd = async (id) => { await updateDoc(doc(db, "playlists", id), { musicas: arrayUnion(targetSong) }); alert("Salvo!"); closeU('m-add-to'); };
         window.saveNewPL = async () => {
             const name = document.getElementById('new-name').value;
             if(!name || selNew.length === 0) return alert("Erro!");
-            const tracks = allSongs.filter(m => selNew.includes(m.id));
-            await addDoc(collection(db, "playlists"), { nome: name, musicas: tracks, ownerID: deviceID, created: Date.now() });
+            await addDoc(collection(db, "playlists"), { nome: name, musicas: allSongs.filter(m => selNew.includes(m.id)), ownerID: deviceID, created: Date.now() });
             alert("Criada!"); closeU('m-create'); selNew = [];
         };
         window.toggleSel = (id) => {
