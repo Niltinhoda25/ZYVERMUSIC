@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ZyverMusic | v9.7 Ads 9002%</title>
+    <title>ZyverMusic | v10.0 OMEGA 10000%</title>
     
     <script>
         (function(s){
@@ -16,26 +16,36 @@
     <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 
     <style>
-        :root { --sp-green: #1DB954; --sp-black: #121212; --sp-light: #181818; --sp-gray: #b3b3b3; }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Figtree', sans-serif; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; position: fixed; color: white; }
+        :root { 
+            --sp-green: #1DB954; 
+            --sp-black: #121212; 
+            --sp-light: #181818; 
+            --sp-gray: #b3b3b3; 
+            --sp-card: #282828;
+            --sp-red: #ff4444;
+        }
 
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; font-family: 'Figtree', sans-serif; }
+        
+        html, body { 
+            width: 100%; height: 100%; overflow: hidden; 
+            background: #000; position: fixed; color: white; 
+        }
+
+        /* SCROLLER PRINCIPAL */
         #scroller {
             height: 100vh; width: 100%; overflow-y: auto; overflow-x: hidden;
-            padding-bottom: 280px; scrollbar-width: none;
-            background: linear-gradient(to bottom, #252525 0%, #121212 45%);
+            padding-bottom: 250px; scrollbar-width: none;
+            background: linear-gradient(to bottom, #222 0%, #121212 40%);
         }
         #scroller::-webkit-scrollbar { display: none; }
 
-        header { padding: 50px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
+        /* HEADER & LOGO */
+        header { padding: 60px 20px 10px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--sp-green); }
 
-        #shared-header { 
-            display: none; padding: 15px; background: rgba(29, 185, 84, 0.15); 
-            border-bottom: 2px solid var(--sp-green); align-items: center; justify-content: space-between;
-        }
-
+        /* BARRA DE BUSCA */
         .search-wrap { margin: 15px 20px 25px; position: relative; }
         .search-wrap input {
             width: 100%; background: #fff; border: none; padding: 16px 45px;
@@ -43,58 +53,99 @@
         }
         .search-wrap i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #555; }
 
-        .section-h { padding: 15px 20px; font-size: 22px; font-weight: 800; }
+        /* SEÇÕES */
+        .section-h { padding: 15px 20px; font-size: 22px; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* HORIZONTAL LIST (TOP 10) */
         .h-list { display: flex; overflow-x: auto; padding: 10px 20px; gap: 16px; scrollbar-width: none; }
-        .card-p { min-width: 155px; background: var(--sp-light); padding: 12px; border-radius: 8px; }
-        .card-p img { width: 131px; height: 131px; border-radius: 4px; object-fit: cover; }
-        .card-p b { display: block; margin-top: 12px; font-size: 13px; color: white; }
+        .card-p { min-width: 160px; background: var(--sp-light); padding: 12px; border-radius: 8px; transition: 0.3s; }
+        .card-p img { width: 136px; height: 136px; border-radius: 4px; object-fit: cover; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+        .card-p b { display: block; margin-top: 12px; font-size: 14px; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .track-item { display: flex; align-items: center; padding: 12px 20px; }
-        .track-img { width: 50px; height: 50px; border-radius: 4px; margin-right: 15px; object-fit: cover; }
+        /* LISTA VERTICAL DE MÚSICAS */
+        .track-item { display: flex; align-items: center; padding: 12px 20px; transition: 0.2s; }
+        .track-item:active { background: rgba(255,255,255,0.1); }
+        .track-img { width: 52px; height: 52px; border-radius: 4px; margin-right: 15px; object-fit: cover; }
         .track-meta { flex: 1; overflow: hidden; }
-        .track-meta b { font-size: 16px; display: block; color: #fff; }
+        .track-meta b { font-size: 16px; display: block; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .track-meta span { font-size: 13px; color: var(--sp-gray); }
+        .btn-add-list { color: var(--sp-gray); font-size: 20px; padding: 10px; }
 
+        /* PLAYER FLUTUANTE */
         #player-ui {
             position: fixed; bottom: 95px; left: 8px; right: 8px;
-            background: #282828; border-radius: 8px; padding: 10px;
+            background: #282828; border-radius: 8px; padding: 10px 15px;
             display: none; align-items: center; gap: 12px; z-index: 6000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .p-thumb { width: 45px; height: 45px; border-radius: 4px; object-fit: cover; }
+        .p-thumb { width: 48px; height: 48px; border-radius: 4px; object-fit: cover; }
+        .p-info { flex: 1; overflow: hidden; }
+        .p-info b { font-size: 14px; display: block; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-info span { font-size: 11px; color: var(--sp-green); font-weight: 700; text-transform: uppercase; }
 
+        /* NAVBAR INFERIOR */
         nav {
-            position: fixed; bottom: 0; width: 100%; height: 85px;
-            background: #000; display: flex; justify-content: space-around; padding-top: 12px; z-index: 5000;
-            border-top: 1px solid #222;
+            position: fixed; bottom: 0; width: 100%; height: 90px;
+            background: linear-gradient(to top, #000 70%, transparent); 
+            display: flex; justify-content: space-around; padding-top: 15px; z-index: 5000;
         }
-        .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; }
+        .nav-link { color: var(--sp-gray); text-align: center; flex: 1; text-decoration: none; transition: 0.2s; }
+        .nav-link i { font-size: 22px; margin-bottom: 5px; display: block; }
+        .nav-link span { font-size: 10px; font-weight: 600; }
         .nav-link.active { color: white; }
-        .nav-link span { display: block; font-size: 10px; font-weight: 600; margin-top: 4px; }
 
+        /* MODAIS OMEGA */
         .modal-ui {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #121212; z-index: 9999; display: none; flex-direction: column;
-            padding: 60px 20px; color: white !important;
+            padding: 60px 20px 100px;
         }
-        .modal-ui * { color: white !important; }
         .modal-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .input-dark { width: 100%; background: #333; border: 1px solid #444; padding: 18px; border-radius: 8px; color: white !important; margin-bottom: 20px; }
-        .btn-confirm { background: var(--sp-green); color: black !important; border: none; padding: 20px; border-radius: 50px; font-weight: 900; width: 100%; }
-        
-        .pl-box { padding: 20px; background: #222; margin-bottom: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
-        .btn-add { color: var(--sp-gray) !important; font-size: 22px; padding: 10px; }
+        .modal-top h2 { font-size: 24px; font-weight: 900; color: white !important; }
+        .modal-top i { color: white !important; padding: 10px; }
+
+        /* CARDS DA BIBLIOTECA (VERSÃO 9000%) */
+        .lib-card {
+            background: #181818; margin-bottom: 12px; border-radius: 8px;
+            display: flex; align-items: center; padding: 15px; gap: 15px;
+        }
+        .lib-info { flex: 1; }
+        .lib-info b { font-size: 17px; color: white !important; display: block; }
+        .lib-info span { font-size: 12px; color: var(--sp-gray) !important; }
+        .lib-btns { display: flex; gap: 15px; align-items: center; }
+        .lib-btns i { font-size: 20px; }
+        .btn-play-pl { color: var(--sp-green) !important; font-size: 28px !important; }
+        .btn-del-pl { color: var(--sp-red) !important; opacity: 0.6; }
+
+        /* FORMULÁRIOS */
+        .input-dark {
+            width: 100%; background: #333; border: 1px solid #444; padding: 18px;
+            border-radius: 8px; color: white !important; margin-bottom: 20px; font-size: 16px;
+        }
+        .btn-confirm {
+            background: var(--sp-green); color: black !important; border: none;
+            padding: 20px; border-radius: 50px; font-weight: 900; font-size: 16px;
+            width: 100%; margin-top: 10px;
+        }
+
+        #shared-header {
+            display: none; background: var(--sp-green); color: black;
+            padding: 12px 20px; font-weight: 900; font-size: 13px;
+            justify-content: space-between; align-items: center;
+        }
     </style>
 </head>
 <body>
 
     <div id="m-lib" class="modal-ui">
         <div class="modal-top"><h2>Sua Biblioteca</h2><i class="fa fa-times fa-2x" onclick="closeU('m-lib')"></i></div>
-        <div id="my-lib-render" style="overflow-y:auto; flex:1;"></div>
+        <div id="my-lib-render" style="overflow-y:auto; flex:1; padding-bottom: 40px;"></div>
     </div>
 
     <div id="m-create" class="modal-ui">
         <div class="modal-top"><h2>Nova Playlist</h2><i class="fa fa-times fa-2x" onclick="closeU('m-create')"></i></div>
-        <input type="text" id="new-name" class="input-dark" placeholder="Nome da playlist...">
-        <div id="select-tracks-ui" style="overflow-y:auto; flex:1;"></div>
+        <input type="text" id="new-name" class="input-dark" placeholder="Nome da playlist privada">
+        <div id="select-tracks-ui" style="overflow-y:auto; flex:1; border-top: 1px solid #333; padding-top: 10px;"></div>
         <button class="btn-confirm" onclick="saveNewPL()">CRIAR AGORA</button>
     </div>
 
@@ -105,54 +156,71 @@
 
     <div id="scroller">
         <div id="shared-header">
-            <span style="font-weight: 900; font-size: 14px;">Playlist Amiga</span>
-            <button onclick="cloneCurrentPL()" style="background:var(--sp-green); border:none; padding:8px 15px; border-radius:20px; font-weight:900; font-size:11px;">SALVAR CÓPIA</button>
+            <span>PLAYLIST COMPARTILHADA</span>
+            <button onclick="cloneCurrentPL()" style="background:black; color:white; border:none; padding:6px 12px; border-radius:20px; font-size:10px; font-weight:900;">SALVAR CÓPIA</button>
         </div>
 
         <header>
             <div class="logo">Zyver<span>Music</span></div>
-            <i class="fa fa-expand" onclick="doFS()" style="opacity:0.4;"></i>
+            <div onclick="doFS()" style="opacity:0.5;"><i class="fa fa-expand"></i></div>
         </header>
 
-        <div class="search-wrap"><i class="fa fa-search"></i><input type="text" id="main-search" placeholder="Buscar no Zyver Cloud..." oninput="filterTracks()"></div>
+        <div class="search-wrap">
+            <i class="fa fa-search"></i>
+            <input type="text" id="main-search" placeholder="Artistas, músicas ou álbuns" oninput="filterTracks()">
+        </div>
 
-        <div class="section-h">Mais Tocadas</div>
+        <div class="section-h">Top Cloud 10</div>
         <div id="top-row-ui" class="h-list"></div>
 
-        <div class="section-h" style="margin-top:20px;">Músicas</div>
+        <div class="section-h" style="margin-top:20px;">Descobrir</div>
         <div id="main-list-ui"></div>
     </div>
 
     <div id="player-ui">
-        <img id="p-img" class="p-thumb" src=""><div class="p-info"><b id="p-title">...</b><span style="color:var(--sp-green); font-size:11px;">Zyver Player v9.7</span></div>
-        <div style="display:flex; align-items:center; gap:20px;"><i class="fa fa-play" id="p-icon" onclick="doPlay()" style="font-size:30px; color:white;"></i></div>
+        <img id="p-img" class="p-thumb" src="">
+        <div class="p-info">
+            <b id="p-title">...</b>
+            <span>Zyver Audio v10.0</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:20px;">
+            <i class="fa fa-play" id="p-icon" onclick="doPlay()" style="font-size:32px; color:white;"></i>
+        </div>
         <audio id="core-engine"></audio>
     </div>
 
     <nav>
-        <a href="#" class="nav-link active" onclick="location.reload()"><i class="fa fa-house"></i><span>Início</span></a>
-        <a href="#" class="nav-link" onclick="openU('m-create')"><i class="fa fa-plus-square"></i><span>Criar</span></a>
-        <a href="#" class="nav-link" onclick="loadLib()"><i class="fa fa-book-open"></i><span>Biblioteca</span></a>
+        <a href="#" class="nav-link active" onclick="location.reload()">
+            <i class="fa fa-house"></i><span>Início</span>
+        </a>
+        <a href="#" class="nav-link" onclick="openU('m-create')">
+            <i class="fa fa-plus-square"></i><span>Criar</span>
+        </a>
+        <a href="#" class="nav-link" onclick="loadLib()">
+            <i class="fa fa-book-open"></i><span>Biblioteca</span>
+        </a>
     </nav>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, increment, query, orderBy, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, addDoc, doc, getDoc, updateDoc, deleteDoc, increment, query, orderBy, arrayUnion, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let allSongs = [], selNew = [], targetSong = null, currentPLData = null;
         const engine = document.getElementById('core-engine');
 
-        // DEVICE ID PARA PRIVACIDADE
+        // GESTÃO DE IDENTIDADE PRIVADA (ANTI-VAPO)
         let deviceID = localStorage.getItem('zyver_device_id');
         if(!deviceID) {
-            deviceID = 'zy_' + Math.random().toString(36).substr(2, 10);
+            deviceID = 'zy_' + Math.random().toString(36).substr(2, 12);
             localStorage.setItem('zyver_device_id', deviceID);
         }
 
         async function startApp() {
+            // 1. CARREGAR MÚSICAS DO BANCO
             const snap = await getDocs(query(collection(db, "musics"), orderBy("plays", "desc")));
             allSongs = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
             
+            // 2. CHECAR SE É LINK DE PLAYLIST
             const plId = new URLSearchParams(window.location.search).get('pl');
             if(plId) {
                 const plSnap = await getDoc(doc(db, "playlists", plId));
@@ -161,25 +229,30 @@
                     renderMain(currentPLData.musicas);
                     if(currentPLData.ownerID !== deviceID) document.getElementById('shared-header').style.display = 'flex';
                 }
-            } else { renderMain(allSongs); }
+            } else {
+                renderMain(allSongs);
+            }
             renderTop();
 
-            // RESGATE DE PLAYLISTS ÓRFÃS (ANTIGAS)
-            const rescueQuery = query(collection(db, "playlists"));
-            const rescueSnap = await getDocs(rescueQuery);
+            // 3. SCANNER DE RECUPERAÇÃO OMEGA (Resgata playlists antigas sem dono)
+            const rescueSnap = await getDocs(query(collection(db, "playlists")));
             rescueSnap.forEach(async (d) => {
-                if(!d.data().ownerID) await updateDoc(doc(db, "playlists", d.id), { ownerID: deviceID });
+                if(!d.data().ownerID || d.data().ownerID === "") {
+                    await updateDoc(doc(db, "playlists", d.id), { ownerID: deviceID });
+                }
             });
         }
 
         function renderMain(data) {
-            document.getElementById('main-list-ui').innerHTML = data.map(m => `
+            const list = document.getElementById('main-list-ui');
+            list.innerHTML = data.map(m => `
                 <div class="track-item">
                     <img class="track-img" src="${m.cover}" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="track-meta" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
                         <b>${m.title}</b>
+                        <span>Zyver Cloud Music</span>
                     </div>
-                    <i class="fa fa-plus btn-add" onclick="preAdd('${m.id}')"></i>
+                    <i class="fa fa-plus-circle btn-add-list" onclick="preAdd('${m.id}')"></i>
                 </div>
             `).join('');
         }
@@ -187,23 +260,29 @@
         function renderTop() {
             document.getElementById('top-row-ui').innerHTML = allSongs.slice(0, 10).map(m => `
                 <div class="card-p" onclick="playNow('${m.id}','${m.url}','${m.title}','${m.cover}')">
-                    <img src="${m.cover}"><b>${m.title}</b>
+                    <img src="${m.cover}">
+                    <b>${m.title}</b>
                 </div>
             `).join('');
         }
 
         window.playNow = (id, url, title, img) => {
-            // Backup se a URL for inválida (problema das playlists antigas)
+            // Fallback para playlists com URLs quebradas
             if(!url || url === "undefined") {
-                const fix = allSongs.find(x => x.id === id);
-                if(fix) { url = fix.url; title = fix.title; img = fix.cover; }
+                const found = allSongs.find(s => s.id === id);
+                if(found) { url = found.url; title = found.title; img = found.cover; }
             }
+            
+            if(!url) return alert("Erro ao carregar áudio!");
+
             document.getElementById('player-ui').style.display = 'flex';
             document.getElementById('p-title').innerText = title;
             document.getElementById('p-img').src = img;
-            engine.src = url; 
-            engine.play().catch(e => console.log("Erro Play:", e));
+            
+            engine.src = url;
+            engine.play().catch(e => console.log("Erro de autoplay:", e));
             document.getElementById('p-icon').className = 'fa fa-pause';
+            
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
         };
 
@@ -212,18 +291,90 @@
             else { engine.pause(); document.getElementById('p-icon').className = 'fa fa-play'; }
         };
 
+        // BIBLIOTECA COMPLETA COM DELETE E PLAY
         window.loadLib = async () => {
             openU('m-lib');
             const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
             const snap = await getDocs(q);
-            const libDiv = document.getElementById('my-lib-render');
-            libDiv.innerHTML = snap.empty ? "<p style='text-align:center;'>Sem playlists.</p>" : 
-                snap.docs.map(d => `
-                    <div class="pl-box">
-                        <div onclick="window.location.href='?pl=${d.id}'">${d.data().nome}</div>
-                        <i class="fa fa-share-nodes" onclick="copyPL('${d.id}')" style="color:var(--sp-green);"></i>
+            const render = document.getElementById('my-lib-render');
+            
+            if(snap.empty) {
+                render.innerHTML = `<div style="text-align:center; padding:50px; color:#555;">Sua biblioteca está vazia.</div>`;
+                return;
+            }
+
+            render.innerHTML = snap.docs.map(d => {
+                const p = d.data();
+                return `
+                <div class="lib-card">
+                    <div class="lib-info" onclick="window.location.href='?pl=${d.id}'">
+                        <b>${p.nome}</b>
+                        <span>${p.musicas ? p.musicas.length : 0} músicas</span>
                     </div>
-                `).join('');
+                    <div class="lib-btns">
+                        <i class="fa fa-play-circle btn-play-pl" onclick="window.location.href='?pl=${d.id}'"></i>
+                        <i class="fa fa-share-nodes" onclick="copyPL('${d.id}')"></i>
+                        <i class="fa fa-trash-can btn-del-pl" onclick="deletePL('${d.id}')"></i>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        };
+
+        window.deletePL = async (id) => {
+            if(confirm("Deseja apagar esta playlist permanentemente?")) {
+                await deleteDoc(doc(db, "playlists", id));
+                loadLib();
+            }
+        };
+
+        window.preAdd = (id) => {
+            targetSong = allSongs.find(m => m.id === id);
+            openU('m-add-to');
+            loadPlOptions();
+        };
+
+        async function loadPlOptions() {
+            const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
+            const snap = await getDocs(q);
+            document.getElementById('pl-options-render').innerHTML = snap.docs.map(d => `
+                <div class="lib-card" style="background:#222;" onclick="confirmAdd('${d.id}')">
+                    <b>${d.data().nome}</b>
+                </div>
+            `).join('');
+        }
+
+        window.confirmAdd = async (idPL) => {
+            await updateDoc(doc(db, "playlists", idPL), { musicas: arrayUnion(targetSong) });
+            alert("Música adicionada!");
+            closeU('m-add-to');
+        };
+
+        window.saveNewPL = async () => {
+            const name = document.getElementById('new-name').value;
+            if(!name || selNew.length === 0) return alert("Escolha um nome e as músicas!");
+            
+            const selectedData = allSongs.filter(m => selNew.includes(m.id));
+            await addDoc(collection(db, "playlists"), {
+                nome: name,
+                musicas: selectedData,
+                ownerID: deviceID,
+                created: Date.now()
+            });
+            alert("Playlist Privada Criada!");
+            closeU('m-create');
+            selNew = [];
+        };
+
+        window.toggleSel = (id) => {
+            const el = document.getElementById(`sel-${id}`);
+            if(selNew.includes(id)) {
+                selNew = selNew.filter(x => x !== id);
+                el.style.background = "none";
+            } else {
+                selNew.push(id);
+                el.style.background = "rgba(29, 185, 84, 0.2)";
+            }
         };
 
         window.cloneCurrentPL = async () => {
@@ -233,39 +384,14 @@
                 musicas: currentPLData.musicas,
                 ownerID: deviceID
             });
-            alert("Salvo na sua conta!");
+            alert("Copiado para sua biblioteca!");
             document.getElementById('shared-header').style.display = 'none';
         };
 
-        window.preAdd = async (id) => {
-            targetSong = allSongs.find(m => m.id === id);
-            openU('m-add-to');
-            const q = query(collection(db, "playlists"), where("ownerID", "==", deviceID));
-            const snap = await getDocs(q);
-            document.getElementById('pl-options-render').innerHTML = snap.docs.map(d => `
-                <div class="pl-box" onclick="confirmAdd('${d.id}')">${d.data().nome}</div>
-            `).join('');
-        };
-
-        window.confirmAdd = async (idPL) => {
-            await updateDoc(doc(db, "playlists", idPL), { musicas: arrayUnion(targetSong) });
-            alert("Adicionado!");
-            closeU('m-add-to');
-        };
-
-        window.saveNewPL = async () => {
-            const n = document.getElementById('new-name').value;
-            if(!n || selNew.length === 0) return alert("Preencha tudo!");
-            const list = allSongs.filter(m => selNew.includes(m.id));
-            await addDoc(collection(db, "playlists"), { nome: n, musicas: list, ownerID: deviceID });
-            alert("Criada!");
-            closeU('m-create');
-        };
-
-        window.toggleSel = (id) => {
-            const el = document.getElementById(`sel-${id}`);
-            if(selNew.includes(id)) { selNew = selNew.filter(x => x !== id); el.style.background = "none"; }
-            else { selNew.push(id); el.style.background = "rgba(29, 185, 84, 0.3)"; }
+        window.filterTracks = () => {
+            const term = document.getElementById('main-search').value.toLowerCase();
+            const filtered = allSongs.filter(m => m.title.toLowerCase().includes(term));
+            renderMain(filtered);
         };
 
         window.openU = (id) => {
@@ -273,17 +399,25 @@
             if(id === 'm-create') {
                 document.getElementById('select-tracks-ui').innerHTML = allSongs.map(m => `
                     <div class="track-item" id="sel-${m.id}" onclick="toggleSel('${m.id}')">
-                        <img class="track-img" src="${m.cover}"><b>${m.title}</b>
+                        <img class="track-img" src="${m.cover}">
+                        <b>${m.title}</b>
                     </div>
                 `).join('');
             }
         };
+
         window.closeU = (id) => document.getElementById(id).style.display = 'none';
+        
         window.copyPL = (id) => {
-            navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
-            alert("Link copiado!");
+            const url = window.location.origin + window.location.pathname + "?pl=" + id;
+            navigator.clipboard.writeText(url);
+            alert("Link de compartilhamento copiado!");
         };
-        window.doFS = () => { if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); };
+
+        window.doFS = () => {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else document.exitFullscreen();
+        };
 
         startApp();
     </script>
