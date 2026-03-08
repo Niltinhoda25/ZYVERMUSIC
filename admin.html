@@ -2,206 +2,146 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Painel ADM</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZyverMusic | Painel de Controle</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; --danger: #ff4444; --orange: #ff7a00; --blue: #4cc9f0; --pink: #f72585; }
+        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; --danger: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; padding-bottom: 50px; }
-        .container { max-width: 650px; margin: auto; }
-        h2 { text-align: center; margin-bottom: 30px; font-weight: 900; letter-spacing: -1px; font-size: 28px; }
-        h2 span { color: var(--accent); }
-        .card-adm { background: var(--surface); padding: 20px; border-radius: 20px; margin-bottom: 25px; border: 1px solid #333; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .card-adm h3 { margin-bottom: 18px; font-size: 14px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 800; }
-        input { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid #444; color: white; border-radius: 12px; outline: none; transition: 0.3s; font-size: 14px; }
-        input:focus { border-color: var(--accent); box-shadow: 0 0 10px rgba(157, 78, 221, 0.2); }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: auto; }
         
-        /* ESTILO DO CHECKBOX DE LANÇAMENTO */
-        .launch-check { display: flex; align-items: center; gap: 10px; background: rgba(157, 78, 221, 0.1); padding: 12px; border-radius: 10px; margin-bottom: 12px; border: 1px dashed var(--accent); cursor: pointer; }
-        .launch-check input { width: auto; margin-bottom: 0; cursor: pointer; }
-        .launch-check label { font-size: 12px; font-weight: bold; color: var(--accent); cursor: pointer; }
+        h2 { text-align: center; margin-bottom: 25px; font-weight: 900; letter-spacing: -1px; }
+        h2 span { color: var(--accent); }
 
-        .btn-post { width: 100%; padding: 16px; background: var(--accent); border: none; color: white; font-weight: 900; border-radius: 12px; cursor: pointer; margin-top: 5px; font-size: 14px; text-transform: uppercase; transition: 0.2s; }
-        .btn-post:active { transform: scale(0.97); opacity: 0.8; }
-        .manage-section { margin-top: 20px; border-top: 1px solid #333; padding-top: 20px; }
-        .item-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 8px; }
-        .item-list::-webkit-scrollbar { width: 4px; }
-        .item-list::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-        .item-row { background: #111; padding: 12px 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #222; margin-bottom: 5px; }
-        .item-info { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .item-name { font-size: 14px; font-weight: 700; color: #eee; }
-        .item-type { font-size: 10px; font-weight: 900; text-transform: uppercase; }
-        .btn-del { background: rgba(255, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(255, 68, 68, 0.3); width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; }
-        .btn-del:hover { background: var(--danger); color: white; }
+        .card { background: var(--surface); padding: 20px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #333; }
+        h3 { margin-bottom: 15px; font-size: 16px; text-transform: uppercase; color: var(--accent); }
+
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 10px; outline: none; }
+        
+        .check-box { display: flex; align-items: center; gap: 10px; background: #222; padding: 12px; border-radius: 10px; margin-bottom: 15px; cursor: pointer; }
+        .check-box input { width: auto; margin: 0; }
+
+        .btn-action { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; font-weight: bold; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+        .btn-action:hover { opacity: 0.8; }
+
+        /* LISTA DE MÚSICAS */
+        .list-container { margin-top: 10px; max-height: 300px; overflow-y: auto; padding-right: 5px; }
+        .item-row { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px 15px; border-radius: 10px; margin-bottom: 8px; border: 1px solid #222; }
+        .btn-del { color: var(--danger); cursor: pointer; font-size: 18px; padding: 5px; }
+        
+        /* SCROLLBAR */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>PAINEL <span>ADM</span></h2>
+        <h2>ZYVER<span>ADM</span></h2>
 
-        <div class="card-adm">
-            <h3 style="color: var(--accent);"><i class="fa fa-music"></i> Gerenciar Músicas</h3>
-            <input type="text" id="m-title" placeholder="Nome da Música">
-            <input type="text" id="m-cover" placeholder="Link da Capa (Dropbox/URL)">
-            <input type="text" id="m-url" placeholder="Link do MP3 (Dropbox/URL)">
+        <div class="card">
+            <h3>🎵 Adicionar Nova Música</h3>
+            <input type="text" id="m-title" placeholder="Nome da Música (Ex: Fall Out Boy - Centuries)">
+            <input type="text" id="m-cover" placeholder="Link da Capa (URL da Imagem)">
+            <input type="text" id="m-url" placeholder="Link do MP3 (Direto)">
             
-            <div class="launch-check" onclick="document.getElementById('m-launch').click()">
+            <label class="check-box">
                 <input type="checkbox" id="m-launch">
-                <label for="m-launch">MARCAR COMO LANÇAMENTO EXCLUSIVO ⚡</label>
-            </div>
+                <span>Marcar como LANÇAMENTO (Banner Topo)</span>
+            </label>
 
-            <button class="btn-post" onclick="postar('musics')">PUBLICAR MÚSICA</button>
-            <div class="manage-section">
-                <div id="lista-musicas" class="item-list"></div>
-            </div>
+            <button class="btn-action" onclick="postarMusica()">PUBLICAR NO SITE</button>
         </div>
 
-        <div class="card-adm">
-            <h3 style="color: var(--orange);">🎬 Gerenciar Clipes</h3>
-            <input type="text" id="c-title" placeholder="Nome do Clipe">
-            <input type="text" id="c-url" placeholder="Link do Vídeo">
-            <button class="btn-post" style="background: var(--orange);" onclick="postar('clips')">PUBLICAR CLIPE</button>
-            <div class="manage-section">
-                <div id="lista-clips" class="item-list"></div>
-            </div>
+        <div class="card">
+            <h3>📊 Editar Enquete da Home</h3>
+            <input type="text" id="p-question" placeholder="Pergunta da Enquete">
+            <input type="text" id="p-opt1" placeholder="Opção 1">
+            <input type="text" id="p-opt2" placeholder="Opção 2">
+            <button class="btn-action" style="background:#444;" onclick="atualizarEnquete()">ATUALIZAR ENQUETE</button>
         </div>
 
-        <div class="card-adm">
-            <h3 style="color: var(--blue);">📊 Criar Enquete na Home</h3>
-            <input type="text" id="poll-q" placeholder="Qual a pergunta?">
-            <input type="text" id="poll-o1" placeholder="Opção 1">
-            <input type="text" id="poll-o2" placeholder="Opção 2">
-            <button class="btn-post" style="background: var(--blue);" onclick="lancarEnquete()">LANÇAR NO SITE</button>
-            
-            <div class="manage-section">
-                <span style="font-size:10px; color:#555; font-weight:900;">ENQUETE ATIVA / RESULTADOS:</span>
-                <div id="lista-enquetes" class="item-list" style="margin-top:10px;"></div>
-            </div>
-        </div>
-
-        <div class="card-adm">
-            <h3 style="color: var(--pink);">📥 Pedidos dos Fãs</h3>
-            <div id="lista-pedidos" class="item-list">
-                <p style="font-size:12px; color:#444">Nenhum pedido recebido.</p>
+        <div class="card">
+            <h3>📂 Gerenciar Biblioteca (<span id="count">0</span>)</h3>
+            <div id="lista-musicas" class="list-container">
+                <p style="text-align:center; opacity:0.5;">Carregando músicas...</p>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, addDoc, getDocs, deleteDoc, doc, setDoc, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, deleteDoc, doc, onSnapshot, query, orderBy, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // POSTAR MÚSICA/CLIPE
-        window.postar = async (tipo) => {
-            let data = {};
-            if(tipo === 'musics') {
-                const t = document.getElementById('m-title').value;
-                const c = document.getElementById('m-cover').value;
-                const u = document.getElementById('m-url').value;
-                const launch = document.getElementById('m-launch').checked; // Pega o valor do lançamento
+        // FUNÇÃO PARA POSTAR MÚSICA
+        window.postarMusica = async () => {
+            const title = document.getElementById('m-title').value;
+            const cover = document.getElementById('m-cover').value;
+            const url = document.getElementById('m-url').value;
+            const isLaunch = document.getElementById('m-launch').checked;
 
-                if(!t || !c || !u) return alert("Preencha tudo!");
-                data = { 
-                    title: t, 
-                    cover: c, 
-                    url: u, 
-                    isLaunch: launch, // Salva se é lançamento ou não
-                    plays: 0, 
-                    date: Date.now() 
-                };
-            } else {
-                const t = document.getElementById('c-title').value;
-                const u = document.getElementById('c-url').value;
-                if(!t || !u) return alert("Preencha tudo!");
-                data = { title: t, url: u, date: Date.now(), likes: 0 };
-            }
+            if(!title || !url) return alert("Título e URL são obrigatórios!");
 
-            await addDoc(collection(db, tipo), data);
-            alert("✅ Postado com sucesso!");
+            try {
+                await addDoc(collection(db, "musics"), {
+                    title, cover, url, isLaunch,
+                    date: Date.now(),
+                    plays: 0
+                });
+                alert("Música postada com sucesso!");
+                location.reload(); 
+            } catch (e) { alert("Erro ao postar: " + e); }
+        };
+
+        // LISTAR MÚSICAS EM TEMPO REAL
+        const q = query(collection(db, "musics"), orderBy("date", "desc"));
+        onSnapshot(q, (snap) => {
+            const lista = document.getElementById('lista-musicas');
+            document.getElementById('count').innerText = snap.size;
             
-            // Limpa os campos
-            if(tipo === 'musics') {
-                document.getElementById('m-title').value = '';
-                document.getElementById('m-cover').value = '';
-                document.getElementById('m-url').value = '';
-                document.getElementById('m-launch').checked = false;
+            if(snap.empty) {
+                lista.innerHTML = "<p style='text-align:center; opacity:0.5;'>Nenhuma música cadastrada.</p>";
+                return;
+            }
+
+            lista.innerHTML = snap.docs.map(d => `
+                <div class="item-row">
+                    <div style="overflow:hidden; white-space:nowrap; text-overflow:ellipsis; padding-right:10px;">
+                        <small style="color:var(--accent)">${d.data().isLaunch ? '[L] ' : ''}</small>
+                        <b>${d.data().title}</b>
+                    </div>
+                    <i class="fa fa-trash-can btn-del" onclick="apagarMusica('${d.id}')"></i>
+                </div>
+            `).join('');
+        });
+
+        // APAGAR MÚSICA
+        window.apagarMusica = async (id) => {
+            if(confirm("Tem certeza que deseja apagar esta música?")) {
+                await deleteDoc(doc(db, "musics", id));
             }
         };
 
-        // LANÇAR ENQUETE
-        window.lancarEnquete = async () => {
-            const q = document.getElementById('poll-q').value;
-            const o1 = document.getElementById('poll-o1').value;
-            const o2 = document.getElementById('poll-o2').value;
-            if(!q || !o1 || !o2) return alert("Preencha a enquete!");
-            await setDoc(doc(db, "configuracoes", "enquete_ativa"), {
-                pergunta: q,
-                opcoes: [{texto: o1, votos: 0}, {texto: o2, votos: 0}],
-                timestamp: Date.now()
-            });
-            alert("✅ Enquete no ar!");
+        // ATUALIZAR ENQUETE
+        window.atualizarEnquete = async () => {
+            const pergunta = document.getElementById('p-question').value;
+            const opt1 = document.getElementById('p-opt1').value;
+            const opt2 = document.getElementById('p-opt2').value;
+
+            if(!pergunta || !opt1 || !opt2) return alert("Preencha todos os campos da enquete!");
+
+            try {
+                await setDoc(doc(db, "configuracoes", "enquete_ativa"), {
+                    pergunta: pergunta,
+                    opcoes: [
+                        { texto: opt1, votos: 0 },
+                        { texto: opt2, votos: 0 }
+                    ]
+                });
+                alert("Enquete atualizada!");
+            } catch (e) { alert("Erro na enquete: " + e); }
         };
-
-        // MONITORAR TUDO EM TEMPO REAL
-        function init() {
-            // Músicas
-            onSnapshot(query(collection(db, "musics"), orderBy("date", "desc")), snap => {
-                document.getElementById('lista-musicas').innerHTML = snap.docs.map(d => `
-                    <div class="item-row">
-                        <div class="item-info">
-                            <span class="item-name">${d.data().title} ${d.data().isLaunch ? '⚡' : ''}</span>
-                            <span class="item-type">${d.data().isLaunch ? 'Lançamento' : 'Música'}</span>
-                        </div>
-                        <div class="btn-del" onclick="apagar('musics', '${d.id}')"><i class="fa fa-trash"></i></div>
-                    </div>`).join('');
-            });
-
-            // Clipes
-            onSnapshot(query(collection(db, "clips"), orderBy("date", "desc")), snap => {
-                document.getElementById('lista-clips').innerHTML = snap.docs.map(d => `
-                    <div class="item-row">
-                        <div class="item-info"><span class="item-name">${d.data().title}</span><span class="item-type" style="color:var(--orange)">Clipe</span></div>
-                        <div class="btn-del" onclick="apagar('clips', '${d.id}')"><i class="fa fa-trash"></i></div>
-                    </div>`).join('');
-            });
-
-            // Pedidos
-            onSnapshot(query(collection(db, "pedidos"), orderBy("data", "desc")), snap => {
-                if(snap.empty) {
-                    document.getElementById('lista-pedidos').innerHTML = '<p style="font-size:12px; color:#444">Nenhum pedido recebido.</p>';
-                    return;
-                }
-                document.getElementById('lista-pedidos').innerHTML = snap.docs.map(d => `
-                    <div class="item-row">
-                        <div class="item-info"><span class="item-name">${d.data().musica}</span><span class="item-type" style="color:var(--pink)">Pedido</span></div>
-                        <div class="btn-del" onclick="apagar('pedidos', '${d.id}')"><i class="fa fa-check"></i></div>
-                    </div>`).join('');
-            });
-
-            // Enquete Ativa
-            onSnapshot(doc(db, "configuracoes", "enquete_ativa"), snap => {
-                const div = document.getElementById('lista-enquetes');
-                if(!snap.exists()) { div.innerHTML = "Nenhuma enquete ativa."; return; }
-                const d = snap.data();
-                div.innerHTML = `
-                    <div class="item-row" style="flex-direction:column; align-items:flex-start;">
-                        <div style="width:100%; display:flex; justify-content:space-between;">
-                            <b>${d.pergunta}</b>
-                            <div class="btn-del" onclick="apagarEnquete()"><i class="fa fa-trash"></i></div>
-                        </div>
-                        <div style="font-size:12px; margin-top:8px; color:var(--blue)">
-                            ${d.opcoes[0].texto}: ${d.opcoes[0].votos} votos | ${d.opcoes[1].texto}: ${d.opcoes[1].votos} votos
-                        </div>
-                    </div>`;
-            });
-        }
-
-        window.apagar = async (p, id) => { if(confirm("Deseja realmente excluir?")) await deleteDoc(doc(db, p, id)); };
-        window.apagarEnquete = async () => { if(confirm("Tirar enquete do ar?")) await deleteDoc(doc(db, "configuracoes", "enquete_ativa")); };
-
-        init();
     </script>
 </body>
 </html>
