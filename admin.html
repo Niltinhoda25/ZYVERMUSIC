@@ -3,72 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ADM | ZyverMusic</title>
+    <title>ZyverMusic | Master Panel 3.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #0b0b0b; --surface: #1a1a1a; }
-        body { background: var(--bg); color: white; font-family: sans-serif; padding: 20px; }
-        .card { background: var(--surface); padding: 20px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #333; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 8px; }
-        .btn { width: 100%; padding: 15px; background: var(--accent); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; }
-        .item { display: flex; justify-content: space-between; background: #111; padding: 10px; margin-bottom: 5px; border-radius: 5px; font-size: 14px; }
-        .del { color: #ff4444; cursor: pointer; padding: 5px; }
+        :root { --accent: #bc4fff; --bg: #080808; --card: #151515; --text: #ffffff; --danger: #ff4d4d; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+
+        .header { background: linear-gradient(135deg, #2d00f7, #bc4fff); padding: 40px 20px; text-align: center; border-radius: 0 0 30px 30px; }
+        .header h1 { font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+        .container { max-width: 800px; margin: -30px auto 0; padding: 0 15px; }
+
+        .tabs { display: flex; background: var(--card); padding: 5px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #222; overflow-x: auto; }
+        .tab-btn { flex: 1; padding: 12px; border: none; background: transparent; color: #888; font-weight: 800; cursor: pointer; border-radius: 12px; white-space: nowrap; }
+        .tab-btn.active { background: var(--accent); color: white; }
+
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+
+        .card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid #252525; margin-bottom: 20px; }
+        h3 { font-size: 18px; margin-bottom: 20px; color: var(--accent); display: flex; align-items: center; gap: 10px; }
+
+        input { width: 100%; padding: 14px; background: #0c0c0c; border: 1px solid #333; color: white; border-radius: 12px; outline: none; margin-bottom: 15px; }
+        .btn-save { width: 100%; padding: 16px; background: var(--accent); border: none; color: white; font-weight: 900; border-radius: 12px; cursor: pointer; }
+
+        .list-item { display: flex; align-items: center; justify-content: space-between; background: #0c0c0c; padding: 15px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #1a1a1a; }
+        .item-info b { display: block; font-size: 14px; }
+        .item-info span { font-size: 11px; color: #555; }
+        .btn-del { width: 40px; height: 40px; background: rgba(255, 77, 77, 0.1); color: var(--danger); border: none; border-radius: 10px; cursor: pointer; }
+        
+        .launch-check { display: flex; align-items: center; gap: 10px; background: #0c0c0c; padding: 15px; border-radius: 12px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom:20px;">Painel <span>Zyver</span></h2>
-
-    <div class="card">
-        <input type="text" id="t" placeholder="Título">
-        <input type="text" id="c" placeholder="Link da Capa">
-        <input type="text" id="u" placeholder="Link do MP3">
-        <label><input type="checkbox" id="l"> MARCAR LANÇAMENTO</label><br><br>
-        <button class="btn" onclick="postar()">POSTAR MÚSICA</button>
+    <div class="header">
+        <h1>ZYVER<span>ADMIN</span> 3.0</h1>
+        <p>Painel de Controle Total</p>
     </div>
 
-    <div class="card">
-        <h3>Músicas no Ar (<span id="total">0</span>)</h3><br>
-        <div id="lista">Carregando...</div>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('musicas', this)">Músicas</button>
+            <button class="tab-btn" onclick="switchTab('clips', this)">Clipes</button>
+            <button class="tab-btn" onclick="switchTab('playlists', this)">Playlists</button>
+            <button class="tab-btn" onclick="switchTab('enquete', this)">Enquete</button>
+        </div>
+
+        <div id="musicas" class="content-section active">
+            <div class="card">
+                <h3><i class="fa fa-plus"></i> Nova Música</h3>
+                <input type="text" id="m-title" placeholder="Nome da Música e Artista">
+                <input type="text" id="m-cover" placeholder="Link da Capa (URL)">
+                <input type="text" id="m-url" placeholder="Link do MP3 (Dropbox/URL)">
+                <div class="launch-check">
+                    <input type="checkbox" id="m-launch">
+                    <label>Marcar como Lançamento Principal</label>
+                </div>
+                <button class="btn-save" onclick="salvar('musics', 'm')">POSTAR MÚSICA</button>
+            </div>
+            <div class="card">
+                <h3><i class="fa fa-list"></i> Gerenciar Biblioteca (<span id="count-musics">0</span>)</h3>
+                <div id="list-musics">Carregando todas as músicas...</div>
+            </div>
+        </div>
+
+        <div id="clips" class="content-section">
+            <div class="card">
+                <h3><i class="fa fa-video"></i> Novo Clipe</h3>
+                <input type="text" id="c-title" placeholder="Título do Clipe">
+                <input type="text" id="c-url" placeholder="Link do Vídeo (MP4)">
+                <input type="text" id="c-cover" placeholder="Link da Capa do Clipe">
+                <button class="btn-save" onclick="salvar('clips', 'c')">POSTAR CLIPE</button>
+            </div>
+            <div class="card">
+                <div id="list-clips">Carregando clipes...</div>
+            </div>
+        </div>
+
+        <div id="playlists" class="content-section">
+            <div class="card">
+                <h3><i class="fa fa-folder-plus"></i> Nova Playlist</h3>
+                <input type="text" id="p-title" placeholder="Nome da Playlist">
+                <input type="text" id="p-url" placeholder="Link Externo">
+                <input type="text" id="p-cover" placeholder="Link da Capa">
+                <button class="btn-save" onclick="salvar('playlists', 'p')">CRIAR PLAYLIST</button>
+            </div>
+            <div class="card" id="list-playlists"></div>
+        </div>
+
+        <div id="enquete" class="content-section">
+            <div class="card">
+                <h3><i class="fa fa-vote-yea"></i> Enquete Ativa</h3>
+                <input type="text" id="poll-q" placeholder="Pergunta">
+                <input type="text" id="poll-o1" placeholder="Opção 1">
+                <input type="text" id="poll-o2" placeholder="Opção 2">
+                <button class="btn-save" onclick="atualizarEnquete()">SALVAR ENQUETE</button>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, addDoc, getDocs, deleteDoc, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, addDoc, deleteDoc, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        window.postar = async () => {
-            const title = document.getElementById('t').value;
-            const cover = document.getElementById('c').value;
-            const url = document.getElementById('u').value;
-            const isLaunch = document.getElementById('l').checked;
+        window.switchTab = (id, btn) => {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        };
 
-            if(!title || !url) return alert("Preencha tudo!");
-
-            await addDoc(collection(db, "musics"), {
-                title, cover, url, isLaunch, date: Date.now(), plays: 0
-            });
-            alert("Postado!");
+        window.salvar = async (col, pre) => {
+            const t = document.getElementById(`${pre}-title`).value;
+            const u = document.getElementById(`${pre}-url`).value;
+            const c = document.getElementById(`${pre}-cover`).value;
+            const launch = document.getElementById(`${pre}-launch`)?.checked || false;
+            if(!t || !u) return alert("Preencha título e link!");
+            await addDoc(collection(db, col), { title: t, url: u, cover: c, isLaunch: launch, date: Date.now(), plays: 0 });
+            alert("Sucesso!");
             location.reload();
         };
 
-        // Escuta o banco em tempo real
-        onSnapshot(collection(db, "musics"), (snap) => {
-            const lista = document.getElementById('lista');
-            document.getElementById('total').innerText = snap.size;
-            let tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-            tracks.sort((a,b) => (b.date || 0) - (a.date || 0));
+        // CARREGAMENTO "FORÇA BRUTA" (SEM FILTROS QUE BLOQUEIAM)
+        const setupList = (col, elementId, countId) => {
+            onSnapshot(collection(db, col), (snap) => {
+                const box = document.getElementById(elementId);
+                if(countId) document.getElementById(countId).innerText = snap.size;
+                
+                // Puxa tudo e ordena no JavaScript para não dar erro de índice no Firebase
+                let items = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                items.sort((a, b) => (b.date || 0) - (a.date || 0));
 
-            lista.innerHTML = tracks.map(m => `
-                <div class="item">
-                    <span>${m.title}</span>
-                    <i class="fa fa-trash del" onclick="apagar('${m.id}')"></i>
-                </div>
-            `).join('');
-        });
+                if(items.length === 0) { box.innerHTML = "Vazio."; return; }
 
-        window.apagar = async (id) => {
-            if(confirm("Apagar?")) await deleteDoc(doc(db, "musics", id));
+                box.innerHTML = items.map(d => `
+                    <div class="list-item">
+                        <div class="item-info">
+                            <b>${d.title}</b>
+                            <span>${d.id}</span>
+                        </div>
+                        <button class="btn-del" onclick="apagar('${col}', '${d.id}')"><i class="fa fa-trash"></i></button>
+                    </div>
+                `).join('');
+            });
         };
+
+        window.apagar = async (col, id) => {
+            if(confirm("Excluir item?")) await deleteDoc(doc(db, col, id));
+        };
+
+        window.atualizarEnquete = async () => {
+            const q = document.getElementById('poll-q').value;
+            const o1 = document.getElementById('poll-o1').value;
+            const o2 = document.getElementById('poll-o2').value;
+            await setDoc(doc(db, "settings", "enquete"), { question: q, opt1: o1, opt2: o2 });
+            alert("Enquete salva!");
+        };
+
+        setupList("musics", "list-musics", "count-musics");
+        setupList("clips", "list-clips");
+        setupList("playlists", "list-playlists");
     </script>
 </body>
 </html>
