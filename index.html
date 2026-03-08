@@ -6,7 +6,7 @@
     <title>ZyverMusic | Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --accent-glow: rgba(157, 78, 221, 0.4); --bg: #050505; --surface: #121212; --text-dim: #999; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --text-dim: #999; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 110px; overflow-x: hidden; }
 
@@ -19,21 +19,50 @@
         @keyframes loading { 0% { width: 0; } 100% { width: 100%; } }
         .hidden-splash { opacity: 0; visibility: hidden; }
 
-        /* --- HEADER CORRIGIDO --- */
-        header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); position: sticky; top: 0; z-index: 100; }
-        .logo { font-size: 22px; font-weight: 900; letter-spacing: -1.5px; }
+        /* --- HEADER CORRIGIDO (FLEX-WRAP PARA NÃO SUMIR) --- */
+        header { 
+            padding: 15px; 
+            background: linear-gradient(to bottom, #1a1a1a, var(--bg)); 
+            display: flex; 
+            flex-direction: column; /* Organiza em colunas no celular */
+            gap: 15px;
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
-        .header-actions { display: flex; align-items: center; gap: 10px; }
-        .btn-top { border-radius: 20px; font-size: 10px; font-weight: 800; text-transform: uppercase; text-decoration: none; display: flex; align-items: center; gap: 5px; height: 34px; padding: 0 12px; transition: 0.2s; border: none; }
-        .btn-pl { background: #222; color: #fff; border: 1px solid #333; }
-        .btn-fav { color: #1DB954; font-size: 20px; text-decoration: none; }
-        .btn-clipes { background: var(--accent); color: white; box-shadow: 0 0 10px var(--accent-glow); }
 
-        /* --- BUSCA E CONTEÚDO --- */
-        .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 10px 15px 15px; border: 1px solid #222; }
-        .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
-        .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
+        .header-actions { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* Distribui os botões na largura da tela */
+            gap: 8px; 
+            width: 100%;
+        }
         
+        .btn-top { 
+            flex: 1; /* Faz os botões dividirem o espaço igualmente */
+            border-radius: 20px; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            gap: 6px; 
+            height: 38px; 
+            border: none; 
+        }
+        .btn-pl { background: #222; color: #fff; border: 1px solid #333; }
+        .btn-fav { color: #1DB954; font-size: 22px; text-decoration: none; padding: 0 10px; }
+        .btn-clipes { background: var(--accent); color: white; }
+
+        /* --- BUSCA --- */
+        .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 12px 18px; border-radius: 25px; margin: 0 15px 15px; border: 1px solid #222; }
+        .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
+        
+        /* --- CONTEÚDO --- */
+        .section-title { padding: 20px 15px 10px; font-size: 14px; font-weight: 900; color: #ff7a00; text-transform: uppercase; }
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
         .rank-card { min-width: 260px; background: var(--surface); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid #222; }
         .rank-n { font-size: 40px; font-weight: 900; color: transparent; -webkit-text-stroke: 1px var(--accent); opacity: 0.7; }
@@ -42,14 +71,15 @@
         .rank-info h3 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
         .lista-musicas { display: flex; flex-direction: column; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 10px; }
+        .m-card { display: flex; align-items: center; padding: 12px; border-radius: 10px; }
         .m-card img { width: 50px; height: 50px; border-radius: 6px; margin-right: 15px; flex-shrink: 0; }
         .m-info { flex: 1; overflow: hidden; }
         .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-heart { font-size: 20px; color: var(--text-dim); cursor: pointer; }
         .btn-heart.active { color: #1DB954; }
 
-        /* --- PLAYER PREMIUM --- */
-        #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+        /* --- PLAYER --- */
+        #player { position: fixed; bottom: 12px; left: 12px; right: 12px; background: rgba(35,35,35,0.98); backdrop-filter: blur(10px); padding: 10px; border-radius: 15px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #444; }
         .p-img { width: 45px; height: 45px; border-radius: 8px; }
     </style>
 </head>
@@ -57,7 +87,9 @@
     <div id="splash"><div class="splash-content"><h1 class="splash-logo">ZYVER<span>MUSIC</span></h1><div class="loader-bar"></div></div></div>
 
     <header>
-        <div class="logo">ZYVER<span>MUSIC</span></div>
+        <div class="header-top">
+            <div class="logo">ZYVER<span>MUSIC</span></div>
+        </div>
         <div class="header-actions">
             <a href="playlists.html" class="btn-top btn-pl"><i class="fa fa-list"></i> PLAYLISTS</a>
             <a href="favoritos.html" class="btn-fav"><i class="fa-solid fa-heart"></i></a>
@@ -66,8 +98,10 @@
     </header>
 
     <div class="search-box"><i class="fa fa-search"></i><input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()"></div>
+    
     <div class="section-title">🔥 As Mais Tocadas</div>
     <div id="top-10" class="ranking-wrapper"></div>
+    
     <div class="section-title" style="color:white">Minha Biblioteca</div>
     <div id="grid-geral" class="lista-musicas"></div>
 
@@ -81,11 +115,15 @@
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        
         let tracks = []; const audio = document.getElementById('audio-engine');
+        
         window.addEventListener('load', () => setTimeout(() => document.getElementById('splash').classList.add('hidden-splash'), 2200));
+
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
             tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
             const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
                 <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
@@ -93,6 +131,7 @@
                 </div>`).join('');
             renderList(tracks);
         }
+
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
@@ -101,15 +140,22 @@
                     <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
                 </div>`).join('');
         }
-        window.toggleFav = async (id, isFav) => { await updateDoc(doc(db, "musics", id), { isFav: !isFav }); init(); };
+
+        window.toggleFav = async (id, isFav) => { 
+            await updateDoc(doc(db, "musics", id), { isFav: !isFav }); 
+            init(); 
+        };
+
         window.play = (url, n, i) => { 
             document.getElementById('player').style.display = 'flex'; 
             document.getElementById('p-name').innerText = n; 
             document.getElementById('p-img').src = i; audio.src = url; audio.play(); 
             document.getElementById('play-icon').className = 'fa fa-pause'; 
         };
+
         window.togglePlay = () => { audio.paused ? (audio.play(), document.getElementById('play-icon').className = 'fa fa-pause') : (audio.pause(), document.getElementById('play-icon').className = 'fa fa-play'); };
         window.filtrar = () => { const t = document.getElementById('busca').value.toLowerCase(); renderList(tracks.filter(m => m.title.toLowerCase().includes(t))); };
+        
         init();
     </script>
 </body>
