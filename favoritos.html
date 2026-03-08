@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favoritos | ZyverMusic</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { background: #000; color: white; font-family: sans-serif; padding: 20px; }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 30px; }
+        .btn-back { color: white; font-size: 22px; text-decoration: none; }
+        .item-fav { display: flex; align-items: center; gap: 15px; padding: 12px 0; border-bottom: 1px solid #1a1a1a; }
+        .item-fav img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; }
+        h4 { font-size: 16px; margin-bottom: 3px; }
+        p { font-size: 12px; color: #b3b3b3; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="btn-back"><i class="fa fa-arrow-left"></i></a>
+        <h2>Músicas Curtidas</h2>
+    </div>
+
+    <div id="lista-favoritos"></div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        async function carregar() {
+            const q = query(collection(db, "musics"), where("isFav", "==", true));
+            const snap = await getDocs(q);
+            const container = document.getElementById('lista-favoritos');
+            
+            if(snap.empty) {
+                container.innerHTML = "<p style='color:gray; text-align:center; margin-top:50px;'>Nenhuma música curtida ainda.</p>";
+                return;
+            }
+
+            container.innerHTML = snap.docs.map(doc => {
+                const m = doc.data();
+                return `
+                    <div class="item-fav">
+                        <img src="${m.cover}">
+                        <div><h4>${m.title}</h4><p>Zyver Music • Favorita</p></div>
+                    </div>`;
+            }).join('');
+        }
+        carregar();
+    </script>
+</body>
+</html>

@@ -3,21 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Premium</title>
+    <title>ZyverMusic | Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --accent: #9d4edd; --bg: #000; --surface: #121212; --text-dim: #b3b3b3; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 110px; overflow-x: hidden; }
 
-        /* HEADER */
         header { padding: 20px 15px; display: flex; justify-content: space-between; align-items: center; background: linear-gradient(to bottom, #1a1a1a, var(--bg)); }
         .logo { font-size: 22px; font-weight: 900; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
+        .header-btns { display: flex; gap: 12px; align-items: center; }
+        .btn-fav-top { color: white; font-size: 20px; text-decoration: none; }
         .btn-clipes { background: var(--accent); padding: 8px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
 
-        /* BUSCA */
         .search-container { padding: 0 15px 15px; }
         .search-box { background: #242424; display: flex; align-items: center; padding: 10px 15px; border-radius: 8px; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
@@ -25,40 +24,27 @@
         .section-title { padding: 20px 15px 10px; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #ff7a00; display: flex; align-items: center; gap: 8px; }
         .section-title.white { color: white; font-size: 18px; margin-top: 10px; }
 
-        /* TOP 10 - CORREÇÃO DAS LETRAS VAZANDO */
+        /* AJUSTE TOP 10 (LETRAS NÃO PASSAM MAIS) */
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scrollbar-width: none; }
         .ranking-wrapper::-webkit-scrollbar { display: none; }
-        
-        .rank-card { 
-            min-width: 280px; /* Largura fixa para evitar espremer o texto */
-            max-width: 280px;
-            background: var(--surface); 
-            border-radius: 15px; 
-            padding: 15px; 
-            display: flex; 
-            align-items: center; 
-            gap: 12px; 
-            border: 1px solid #222;
-        }
-        .rank-n { font-size: 45px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); opacity: 0.8; line-height: 1; }
+        .rank-card { min-width: 280px; max-width: 280px; background: var(--surface); border-radius: 15px; padding: 15px; display: flex; align-items: center; gap: 12px; border: 1px solid #222; }
+        .rank-n { font-size: 45px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--accent); opacity: 0.8; }
         .rank-card img { width: 70px; height: 70px; border-radius: 10px; object-fit: cover; flex-shrink: 0; }
-        
-        .rank-info { flex: 1; overflow: hidden; } /* Impede que o texto saia do card */
-        .rank-info h3 { font-size: 16px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
-        .rank-info p { font-size: 12px; color: var(--text-dim); font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rank-info { flex: 1; overflow: hidden; }
+        .rank-info h3 { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+        .rank-info p { font-size: 12px; color: var(--text-dim); font-weight: bold; }
 
-        /* LISTA BIBLIOTECA - COM BOTÃO FAVORITOS */
-        .lista-musicas { display: flex; flex-direction: column; gap: 4px; padding: 0 10px; }
-        .m-card { display: flex; align-items: center; padding: 8px 10px; border-radius: 6px; }
-        .m-card img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; margin-right: 14px; flex-shrink: 0; }
+        /* LISTA BIBLIOTECA */
+        .lista-musicas { display: flex; flex-direction: column; gap: 5px; padding: 0 10px; }
+        .m-card { display: flex; align-items: center; padding: 10px; border-radius: 8px; transition: 0.2s; }
+        .m-card img { width: 55px; height: 55px; border-radius: 4px; object-fit: cover; margin-right: 15px; }
         .m-info { flex: 1; overflow: hidden; }
-        .m-info h4 { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #fff; }
+        .m-info h4 { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .m-info p { font-size: 12px; color: var(--text-dim); }
-        
-        .m-actions { display: flex; align-items: center; gap: 18px; padding-left: 10px; }
-        .btn-fav { font-size: 20px; color: var(--text-dim); transition: 0.2s; cursor: pointer; }
-        .btn-fav.active { color: #1DB954; } /* Verde do Spotify */
-        .fa-ellipsis-v { color: var(--text-dim); font-size: 16px; padding: 5px; }
+        .m-actions { display: flex; align-items: center; gap: 20px; }
+        .btn-heart { font-size: 20px; color: var(--text-dim); transition: 0.2s; cursor: pointer; }
+        .btn-heart.active { color: #1DB954; }
+        .fa-ellipsis-v { color: var(--text-dim); padding: 5px; cursor: pointer; }
 
         /* PLAYER */
         #player { position: fixed; bottom: 12px; left: 10px; right: 10px; background: #282828; padding: 10px; border-radius: 10px; display: none; align-items: center; gap: 12px; z-index: 2000; border: 1px solid #333; }
@@ -69,13 +55,16 @@
 
     <header>
         <div class="logo">ZYVER<span>MUSIC</span></div>
-        <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
+        <div class="header-btns">
+            <a href="favoritos.html" class="btn-fav-top"><i class="fa-solid fa-heart" style="color:#1DB954"></i></a>
+            <a href="clipes.html" class="btn-clipes"><i class="fa fa-play-circle"></i> CLIPES</a>
+        </div>
     </header>
 
     <div class="search-container">
         <div class="search-box">
             <i class="fa fa-search" style="color:#b3b3b3"></i>
-            <input type="text" id="busca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
+            <input type="text" id="busca" placeholder="Pesquisar..." onkeyup="filtrar()">
         </div>
     </div>
 
@@ -89,82 +78,73 @@
         <img id="p-img" class="p-img" src="">
         <div style="flex:1; overflow:hidden;">
             <h5 id="p-name" style="font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
-            <span style="font-size:10px; color:var(--accent); font-weight:bold; text-transform:uppercase;">Tocando agora</span>
+            <span style="font-size:10px; color:var(--accent); font-weight:bold;">REPRODUZINDO</span>
         </div>
-        <div onclick="togglePlay()" style="padding: 10px;"><i class="fa fa-play" id="play-icon" style="font-size:22px;"></i></div>
+        <div onclick="togglePlay()"><i class="fa fa-play" id="play-icon" style="font-size:22px; padding:10px;"></i></div>
         <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let tracks = [];
         const audio = document.getElementById('audio-engine');
 
         async function init() {
-            try {
-                const snap = await getDocs(collection(db, "musics"));
-                tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                // Render Top 10
-                const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
-                document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                    <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                        <div class="rank-n">#${i+1}</div>
-                        <img src="${m.cover}">
-                        <div class="rank-info">
-                            <h3>${m.title}</h3>
-                            <p>${m.plays || 0} EXECUÇÕES</p>
-                        </div>
-                    </div>
-                `).join('');
+            const snap = await getDocs(collection(db, "musics"));
+            tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Renderiza Top 10
+            const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
+            document.getElementById('top-10').innerHTML = top.map((m, i) => `
+                <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                    <div class="rank-n">#${i+1}</div>
+                    <img src="${m.cover}">
+                    <div class="rank-info"><h3>${m.title}</h3><p>${m.plays || 0} EXECUÇÕES</p></div>
+                </div>`).join('');
 
-                renderList(tracks);
-            } catch (e) { console.error(e); }
+            renderList(tracks);
         }
 
         function renderList(data) {
-            const container = document.getElementById('grid-geral');
-            container.innerHTML = data.map(m => `
+            document.getElementById('grid-geral').innerHTML = data.map(m => `
                 <div class="m-card">
                     <img src="${m.cover}" onclick="play('${m.url}','${m.title}','${m.cover}')">
                     <div class="m-info" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                        <h4>${m.title}</h4>
-                        <p>Música • Zyver Music</p>
+                        <h4>${m.title}</h4><p>Música • Zyver Music</p>
                     </div>
                     <div class="m-actions">
-                        <i class="fa-regular fa-heart btn-fav" id="fav-${m.id}" onclick="toggleFav('${m.id}')"></i>
-                        <i class="fa fa-ellipsis-v"></i>
+                        <i class="${m.isFav ? 'fa-solid active' : 'fa-regular'} fa-heart btn-heart" id="h-${m.id}" onclick="toggleFav('${m.id}', ${m.isFav})"></i>
+                        <i class="fa fa-ellipsis-v" onclick="compartilhar('${m.title}', '${m.url}')"></i>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        window.toggleFav = (id) => {
-            const icon = document.getElementById(`fav-${id}`);
-            icon.classList.toggle('fa-regular');
-            icon.classList.toggle('fa-solid');
-            icon.classList.toggle('active');
+        window.toggleFav = async (id, isFav) => {
+            const el = document.getElementById(`h-${id}`);
+            const novoStatus = !isFav;
+            el.className = novoStatus ? 'fa-solid fa-heart btn-heart active' : 'fa-regular fa-heart btn-heart';
+            await updateDoc(doc(db, "musics", id), { isFav: novoStatus });
+            const t = tracks.find(x => x.id === id); if(t) t.isFav = novoStatus;
         }
 
-        window.play = (url, name, img) => {
+        window.compartilhar = (t, u) => {
+            if(navigator.share) navigator.share({title: t, url: u});
+            else alert("Link copiado: " + u);
+        }
+
+        window.play = (url, n, i) => {
             document.getElementById('player').style.display = 'flex';
-            document.getElementById('p-name').innerText = name;
-            document.getElementById('p-img').src = img;
-            audio.src = url;
-            audio.play();
+            document.getElementById('p-name').innerText = n;
+            document.getElementById('p-img').src = i;
+            audio.src = url; audio.play();
             document.getElementById('play-icon').className = 'fa fa-pause';
         }
 
         window.togglePlay = () => {
-            if(audio.paused) { 
-                audio.play(); 
-                document.getElementById('play-icon').className = 'fa fa-pause'; 
-            } else { 
-                audio.pause(); 
-                document.getElementById('play-icon').className = 'fa fa-play'; 
-            }
+            if(audio.paused) { audio.play(); document.getElementById('play-icon').className = 'fa fa-pause'; }
+            else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
         }
 
         window.filtrar = () => {
