@@ -1,9 +1,8 @@
-// Importando os módulos necessários do Firebase
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+// Importa as funções necessárias dos SDKs
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Suas credenciais oficiais
+// Sua configuração do Firebase (Extraída da sua mensagem)
 const firebaseConfig = {
   apiKey: "AIzaSyCu1gxS5km9oaCt0ZXdCOaGLbqjiFQrfc0",
   authDomain: "zyvermusic-54d98.firebaseapp.com",
@@ -13,9 +12,8 @@ const firebaseConfig = {
   appId: "1:793098105991:web:ad6785b29315d436da7422"
 };
 
-// Inicializando o Firebase
+// Inicializa o Firebase
 const app = initializeApp(firebaseConfig);
 
-// Exportando as instâncias para usar nos outros arquivos (app.js e admin.js)
+// Inicializa o Firestore e exporta para usar nos outros arquivos
 export const db = getFirestore(app);
-export const auth = getAuth(app);

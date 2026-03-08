@@ -2,82 +2,110 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZyverMusic | Admin Premium</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>ZyverAdmin - Painel Profissional</title>
     <style>
-        body { background-color: #000; color: #fff; scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 10px; }
-        .glass { background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); }
+        body { background: #0b0b0b; color: white; font-family: sans-serif; padding: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: #181818; padding: 20px; border-radius: 12px; border: 1px solid #333; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: none; }
+        input, select { background: #000; color: white; border: 1px solid #444; }
+        button { background: #8a2be2; color: white; font-weight: bold; cursor: pointer; }
+        button:hover { background: #a04ef6; }
+        .lista { margin-top: 15px; max-height: 200px; overflow-y: auto; font-size: 13px; }
+        .item-lista { display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #222; }
     </style>
 </head>
-<body class="p-4 md:p-8 min-h-screen">
+<body>
+    <h1 style="color: #8a2be2;">ZYVER<span>ADMIN</span></h1>
 
-    <div id="login-form" class="max-w-md mx-auto mt-20 glass p-8 rounded-[2.5rem] border border-zinc-800 shadow-2xl">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-black text-indigo-500 italic">ZYVER<span class="text-white">ADMIN</span></h2>
-            <p class="text-zinc-500 text-xs mt-2 uppercase tracking-[0.2em]">Painel de Controle</p>
+    <div class="grid">
+        <div class="card">
+            <h3>🎵 Nova Música</h3>
+            <input type="text" id="m-titulo" placeholder="Título da Música">
+            <input type="text" id="m-capa" placeholder="URL da Capa">
+            <input type="text" id="m-url" placeholder="URL Dropbox (.mp3)">
+            <button onclick="salvarMusica()">Publicar Música</button>
         </div>
-        <div class="space-y-4">
-            <input type="email" id="email" placeholder="E-mail do administrador" class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-indigo-500 transition">
-            <input type="password" id="pass" placeholder="Sua senha secreta" class="w-full bg-black border border-zinc-800 p-4 rounded-2xl outline-none focus:border-indigo-500 transition">
-            <button id="login-btn" class="w-full bg-indigo-600 py-4 rounded-2xl font-bold hover:bg-indigo-700 active:scale-95 transition shadow-lg shadow-indigo-500/20">Entrar no Sistema</button>
-        </div>
-    </div>
 
-    <div id="admin-panel" class="max-w-7xl mx-auto hidden">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-12 gap-6">
-            <div>
-                <h2 class="text-4xl font-black tracking-tighter">Dashboard</h2>
-                <p class="text-zinc-500">Gestão de catálogo e streaming</p>
-            </div>
-            <button id="logout-btn" class="bg-zinc-900 border border-zinc-800 px-8 py-3 rounded-full text-sm font-bold hover:bg-red-600 transition hover:border-red-600">Sair com Segurança</button>
-        </header>
-
-        <div class="grid lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-5 space-y-6">
-                <div class="glass p-8 rounded-[2rem] border border-zinc-800">
-                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2 text-indigo-400">
-                        <i class="fas fa-plus-circle"></i> Adicionar Única
-                    </h3>
-                    <div class="space-y-3">
-                        <input type="text" id="m-title" placeholder="Título da Música" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-indigo-500">
-                        <input type="text" id="m-cover" placeholder="URL da Capa" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-indigo-500">
-                        <input type="text" id="m-url" placeholder="URL do Dropbox" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-indigo-500">
-                        <select id="m-category" class="w-full bg-black border border-zinc-800 p-3 rounded-xl outline-none focus:border-indigo-500">
-                            <option value="Trap">Trap</option>
-                            <option value="Funk">Funk</option>
-                            <option value="Hip Hop">Hip Hop</option>
-                            <option value="Sertanejo">Sertanejo</option>
-                            <option value="Eletrônica">Eletrônica</option>
-                        </select>
-                        <button id="add-btn" class="w-full bg-indigo-600 py-4 rounded-xl font-bold mt-2 hover:bg-indigo-700 transition">Publicar na Vitrine</button>
-                    </div>
-                </div>
-
-                <div class="glass p-8 rounded-[2rem] border border-zinc-800">
-                    <h3 class="text-lg font-bold mb-2 flex items-center gap-2 text-emerald-400">
-                        <i class="fas fa-bolt"></i> Envio em Massa
-                    </h3>
-                    <p class="text-[10px] text-zinc-500 mb-4 uppercase tracking-widest">Título | Capa | Link | Categoria</p>
-                    <textarea id="mass-upload" rows="5" placeholder="Ex: Dubai | https://capa.jpg | https://dropbox.com... | Trap" class="w-full bg-black border border-zinc-800 p-4 rounded-2xl text-xs font-mono mb-4 outline-none focus:border-emerald-500"></textarea>
-                    <button id="mass-btn" class="w-full bg-emerald-600 py-3 rounded-xl font-bold hover:bg-emerald-700 transition">Processar Lista</button>
-                </div>
-            </div>
-
-            <div class="lg:col-span-7 glass p-8 rounded-[2rem] border border-zinc-800 h-fit">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-bold">Catálogo Ativo</h3>
-                    <span id="music-count" class="bg-indigo-500/10 text-indigo-400 px-4 py-1 rounded-full text-xs font-bold border border-indigo-500/20">0 Músicas</span>
-                </div>
-                <div id="admin-list" class="space-y-4 max-h-[700px] overflow-y-auto pr-2">
-                    </div>
-            </div>
+        <div class="card">
+            <h3>🎥 Novo Clipe (TikTok Style)</h3>
+            <input type="text" id="c-titulo" placeholder="Título do Clipe">
+            <input type="text" id="c-video" placeholder="URL do Vídeo (.mp4)">
+            
+            <label style="font-size: 12px; color: #8a2be2;">Vincular à Música:</label>
+            <select id="c-musica-select">
+                <option value="">Carregando músicas...</option>
+            </select>
+            
+            <button onclick="salvarClipe()" style="background: #4b0082;">Publicar Clipe</button>
         </div>
     </div>
 
-    <script type="module" src="admin.js"></script>
+    <div class="card" style="margin-top: 20px;">
+        <h3>Gerenciar Conteúdo</h3>
+        <div id="gerenciar-lista" class="lista"></div>
+    </div>
+
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, addDoc, getDocs, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Carrega músicas no Select e na Lista de Gerenciamento
+        async function carregarDados() {
+            const mSelect = document.getElementById('c-musica-select');
+            const gLista = document.getElementById('gerenciar-lista');
+            const snap = await getDocs(collection(db, "musics"));
+            
+            mSelect.innerHTML = '<option value="">Selecione a música do clipe</option>';
+            gLista.innerHTML = "";
+
+            snap.forEach(docSnap => {
+                const m = docSnap.data();
+                // Preenche o Select com as músicas que você já tem
+                mSelect.innerHTML += `<option value="${docSnap.id}">${m.title}</option>`;
+                
+                // Lista de exclusão
+                gLista.innerHTML += `
+                    <div class="item-lista">
+                        <span>${m.title}</span>
+                        <span style="color:red; cursor:pointer;" onclick="excluirMusica('${docSnap.id}')">X</span>
+                    </div>`;
+            });
+        }
+
+        window.salvarMusica = async () => {
+            const data = {
+                title: document.getElementById('m-titulo').value,
+                cover: document.getElementById('m-capa').value,
+                url: document.getElementById('m-url').value,
+                createdAt: new Date().toISOString()
+            };
+            await addDoc(collection(db, "musics"), data);
+            alert("Música salva!");
+            carregarDados();
+        };
+
+        window.salvarClipe = async () => {
+            const musicId = document.getElementById('c-musica-select').value;
+            if(!musicId) return alert("Selecione uma música primeiro!");
+
+            const data = {
+                title: document.getElementById('c-titulo').value,
+                url: document.getElementById('c-video').value,
+                musicId: musicId // Usa o ID da música existente
+            };
+            await addDoc(collection(db, "clips"), data);
+            alert("Clipe publicado!");
+        };
+
+        window.excluirMusica = async (id) => {
+            if(confirm("Deseja apagar?")) {
+                await deleteDoc(doc(db, "musics", id));
+                carregarDados();
+            }
+        };
+
+        carregarDados();
+    </script>
 </body>
 </html>

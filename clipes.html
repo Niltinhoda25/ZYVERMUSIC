@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZyverClips | Explore</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: sans-serif; }
+        
+        /* Container de Rolagem TikTok */
+        #feed { 
+            height: 100vh; overflow-y: scroll; 
+            scroll-snap-type: y mandatory; /* Faz o vídeo "grudar" na tela */
+            scrollbar-width: none; 
+        }
+        #feed::-webkit-scrollbar { display: none; }
+
+        .clip-container { 
+            position: relative; width: 100%; height: 100vh; 
+            scroll-snap-align: start; scroll-snap-stop: always;
+            background: #000; display: flex; align-items: center; justify-content: center;
+        }
+
+        video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Interface Sobreposta */
+        .overlay { 
+            position: absolute; bottom: 0; left: 0; width: 100%; 
+            padding: 40px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            pointer-events: none; z-index: 10;
+        }
+        .music-info { display: flex; align-items: center; gap: 12px; margin-top: 10px; }
+        .disco-track { 
+            width: 45px; height: 45px; border-radius: 50%; border: 3px solid #333;
+            animation: girar 4s linear infinite;
+        }
+        @keyframes girar { 100% { transform: rotate(360deg); } }
+
+        /* Botão Voltar */
+        .back { 
+            position: absolute; top: 20px; left: 20px; z-index: 100; color: white; 
+            text-decoration: none; background: rgba(0,0,0,0.4); padding: 10px 15px; border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back">✕</a>
+<div id="feed"></div>
+
+<script type="module">
+    import { db } from "./firebase-config.js";
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    async function carregarClipes() {
+        const feed = document.getElementById('feed');
+        const snap = await getDocs(collection(db, "clips"));
+
+        for (const d of snap.docs) {
+            const clip = d.data();
+            const mSnap = await getDoc(doc(db, "musics", clip.musicId));
+            const music = mSnap.data();
+
+            if (music) {
+                const item = document.createElement('div');
+                item.className = 'clip-container';
+                item.innerHTML = `
+                    <video src="${clip.url}" loop muted playsinline></video>
+                    <div class="overlay">
+                        <h2 style="font-size: 18px; text-shadow: 2px 2px 4px #000;">${clip.title}</h2>
+                        <div class="music-info">
+                            <img src="${music.cover}" class="disco-track">
+                            <div>
+                                <p style="font-weight:bold; font-size:14px;">${music.title}</p>
+                                <p style="font-size:11px; opacity:0.8;">Tocando agora...</p>
+                            </div>
+                        </div>
+                    </div>
+                    <audio src="${music.url}" loop></audio>
+                `;
+                feed.appendChild(item);
+            }
+        }
+
+        // Lógica de Swipe e Som Automático
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target.querySelector('video');
+                const audio = entry.target.querySelector('audio');
+                
+                if (entry.isIntersecting) {
+                    video.play();
+                    audio.play();
+                } else {
+                    video.pause();
+                    audio.pause();
+                    video.currentTime = 0; // Reinicia o vídeo ao sair
+                }
+            });
+        }, { threshold: 0.8 }); // 80% do vídeo precisa estar visível
+
+        document.querySelectorAll('.clip-container').forEach(c => observer.observe(c));
+    }
+
+    carregarClipes();
+</script>
+</body>
+</html>
