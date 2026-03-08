@@ -6,100 +6,167 @@
     <title>ZyverMusic | Clipes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #050505; }
+        :root { --accent: #9d4edd; --bg: #000; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding: 15px; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        .header-clipes { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .btn-back { color: white; text-decoration: none; font-size: 20px; }
-
-        /* GRID OTIMIZADO */
-        .clipes-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-
-        .clip-card { 
-            background: #111; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            border: 1px solid #222;
-            transition: 0.3s;
+        /* Container que segura os vídeos e permite o scroll tipo TikTok */
+        .feed-container {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            scrollbar-width: none;
         }
+        .feed-container::-webkit-scrollbar { display: none; }
 
-        /* CONTAINER DE VÍDEO COM PROPORÇÃO 16:9 */
-        .video-container {
+        .video-snap {
+            height: 100vh;
+            width: 100vw;
+            scroll-snap-align: start;
             position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* Mantém o player no tamanho certo antes de carregar */
             background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .video-container video {
-            position: absolute;
-            top: 0;
-            left: 0;
+        video {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Faz preencher a tela toda */
         }
 
-        .clip-info { padding: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .clip-title { font-size: 14px; font-weight: 800; }
-        
-        /* Efeito de carregamento (Skeleton) */
-        .loading-shimmer {
-            background: linear-gradient(90deg, #111 25%, #222 50%, #111 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
+        /* Botão de Voltar */
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            font-size: 24px;
+            color: white;
+            text-shadow: 0 0 10px rgba(0,0,0,0.5);
         }
-        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Overlay de Informações (Título e Botões) */
+        .video-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .video-info h3 { font-size: 18px; margin-bottom: 5px; font-weight: 800; }
+        .video-info p { font-size: 14px; color: #ccc; }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .action-btn i { font-size: 28px; transition: 0.2s; }
+        .action-btn span { font-size: 12px; font-weight: bold; }
+        .action-btn i.active { color: #ff2d55; transform: scale(1.2); }
+
     </style>
 </head>
 <body>
 
-    <div class="header-clipes">
-        <a href="index.html" class="btn-back"><i class="fa fa-arrow-left"></i></a>
-        <h2 style="font-weight: 900; letter-spacing: -1px;">OS MELHORES <span>CLIPES</span></h2>
-    </div>
+    <a href="index.html" class="back-btn"><i class="fa fa-arrow-left"></i></a>
 
-    <div id="grid-clipes" class="clipes-grid">
+    <div id="feed" class="feed-container">
         </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, onSnapshot, query, orderBy, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        const grid = document.getElementById('grid-clipes');
+        const feed = document.getElementById('feed');
 
-        // Puxa os clipes do Firebase
+        // Monitora os clipes no Firebase
         onSnapshot(query(collection(db, "clips"), orderBy("date", "desc")), (snap) => {
-            grid.innerHTML = snap.docs.map(doc => {
-                const clip = doc.data();
+            feed.innerHTML = snap.docs.map(docSnap => {
+                const clip = docSnap.data();
+                const id = docSnap.id;
                 return `
-                <div class="clip-card">
-                    <div class="video-container loading-shimmer">
-                        <video 
-                            controls 
-                            preload="none" 
-                            poster="https://via.placeholder.com/640x360/111/9d4edd?text=Zyver+Clipes"
-                            playsinline
-                        >
-                            <source src="${clip.url}" type="video/mp4">
-                            Seu navegador não suporta vídeos.
-                        </video>
-                    </div>
-                    <div class="clip-info">
-                        <span class="clip-title">${clip.title}</span>
-                        <div style="display:flex; gap:10px; color:#9d4edd">
-                             <i class="fa fa-share-nodes"></i>
+                <div class="video-snap" id="card-${id}">
+                    <video loop playsinline preload="metadata" onclick="this.paused ? this.play() : this.pause()">
+                        <source src="${clip.url}" type="video/mp4">
+                    </video>
+                    
+                    <div class="video-overlay">
+                        <div class="video-info">
+                            <h3>@zyvermusic</h3>
+                            <p>${clip.title}</p>
+                        </div>
+                        
+                        <div class="actions">
+                            <div class="action-btn" onclick="curtir('${id}')">
+                                <i class="fa-solid fa-heart" id="icon-${id}"></i>
+                                <span id="count-${id}">${clip.likes || 0}</span>
+                            </div>
+                            <div class="action-btn">
+                                <i class="fa-solid fa-comment"></i>
+                                <span>0</span>
+                            </div>
+                            <div class="action-btn">
+                                <i class="fa-solid fa-share"></i>
+                                <span>Share</span>
+                            </div>
                         </div>
                     </div>
                 </div>`;
             }).join('');
-            
-            // Remove o shimmer quando o vídeo puder ser tocado
-            document.querySelectorAll('video').forEach(v => {
-                v.onloadeddata = () => v.parentElement.classList.remove('loading-shimmer');
-            });
+
+            iniciarAutoPlay();
         });
+
+        // --- SISTEMA DE CURTIDA ---
+        window.curtir = async (id) => {
+            const icon = document.getElementById(`icon-${id}`);
+            icon.classList.toggle('active');
+            
+            const ref = doc(db, "clips", id);
+            await updateDoc(ref, {
+                likes: increment(icon.classList.contains('active') ? 1 : -1)
+            });
+        };
+
+        // --- O SEGREDO DA OTIMIZAÇÃO (Intersection Observer) ---
+        function iniciarAutoPlay() {
+            const observerOptions = {
+                threshold: 0.7 // Só ativa quando 70% do vídeo está na tela
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (entry.isIntersecting) {
+                        video.play().catch(() => {}); // Tenta dar play automático
+                    } else {
+                        video.pause(); // Pausa quando sai da tela pra economizar CPU
+                        video.currentTime = 0; // Reinicia pra não travar memória
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.video-snap').forEach(card => observer.observe(card));
+        }
     </script>
 </body>
 </html>
