@@ -2,169 +2,171 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZyverMusic | Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZyverMusic | Mobile</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --purple: #8a2be2; --dark: #0b0b0b; --card-bg: #181818; --orange: #ff7a00; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 110px; overflow-x: hidden; }
-        
+        :root { --purple: #8a2be2; --bg: #000; --card: #121212; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 140px; }
+
         /* Header */
-        header { 
-            display: flex; justify-content: space-between; align-items: center; 
-            padding: 15px 5%; background: rgba(0,0,0,0.95); position: sticky; top: 0; z-index: 1000;
-            border-bottom: 1px solid #222;
-        }
-        .logo { font-weight: 900; font-size: 24px; }
+        header { padding: 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+        .nav-top { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 22px; font-weight: 900; }
         .logo span { color: var(--purple); }
+        .btn-cli { background: var(--purple); padding: 6px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
 
-        .search-box { flex: 1; max-width: 500px; margin: 0 20px; position: relative; }
-        .search-box input { 
-            width: 100%; background: #1a1a1a; border: 1px solid #333; padding: 10px 40px; 
-            border-radius: 25px; color: white; outline: none;
-        }
-        .search-box i { position: absolute; left: 15px; top: 12px; color: #666; }
+        /* Busca */
+        .search-area { position: relative; }
+        .search-area input { width: 100%; background: #181818; border: none; padding: 10px 40px; border-radius: 10px; color: white; }
+        .search-area i { position: absolute; left: 15px; top: 12px; color: #666; }
 
-        /* SEÇÃO TOP 10 (ESTILO RANKING LATERAL) */
-        .ranking-container { 
-            display: flex; overflow-x: auto; gap: 20px; padding: 20px 5%;
-            scrollbar-width: none; /* Esconde scroll no Firefox */
-        }
-        .ranking-container::-webkit-scrollbar { display: none; } /* Esconde scroll no Chrome */
-
-        .ranking-card { 
-            min-width: 300px; background: var(--card-bg); border-radius: 20px; 
-            padding: 20px; display: flex; align-items: center; gap: 20px;
-            border: 1px solid #222; cursor: pointer; transition: 0.3s;
-        }
-        .ranking-card:hover { transform: scale(1.05); border-color: var(--purple); }
-
-        .rank-number { 
-            font-size: 40px; font-weight: 900; font-style: italic;
-            color: transparent; -webkit-text-stroke: 2px rgba(138,43,226,0.5);
-        }
-        .ranking-card img { width: 80px; height: 80px; border-radius: 15px; object-fit: cover; }
-        .ranking-info h3 { font-size: 16px; margin-bottom: 5px; }
-        .ranking-info p { font-size: 12px; color: #888; text-transform: uppercase; }
-
-        /* SEÇÃO EXPLORAR TUDO (BIBLIOTECA) */
-        .container { padding: 0 5%; }
-        .section-title { margin: 30px 0 20px; font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
-        .section-title i { color: var(--orange); }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 10px; transition: 0.3s; border: 1px solid transparent; }
-        .card:hover { border-color: var(--purple); background: #222; }
-        .card img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; cursor: pointer; }
-        .card-info { padding-top: 10px; }
-        .card-info h4 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Ranking Lateral (#1 Estilo Print) */
+        .section-title { padding: 15px; font-size: 16px; color: #ff7a00; font-weight: 800; text-transform: uppercase; }
+        .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .ranking-wrapper::-webkit-scrollbar { display: none; }
         
-        /* Player Fixo */
-        #player { 
-            position: fixed; bottom: 0; left: 0; width: 100%; background: #121212; 
-            padding: 15px 5%; border-top: 2px solid var(--purple); display: none; 
-            align-items: center; justify-content: space-between; z-index: 2000;
+        .rank-card { 
+            min-width: 80%; background: var(--card); border-radius: 20px; padding: 20px; 
+            display: flex; align-items: center; gap: 15px; scroll-snap-align: center; border: 1px solid #222;
         }
+        .rank-n { font-size: 45px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--purple); opacity: 0.8; }
+        .rank-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; }
+        .rank-info h3 { font-size: 16px; margin-bottom: 2px; }
+        .rank-info p { font-size: 11px; color: #666; }
+
+        /* Biblioteca Compacta (Músicas Pequenas) */
+        .grid-compacto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 15px; }
+        .m-card { background: transparent; text-align: left; }
+        .m-card img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; }
+        .m-card h4 { font-size: 11px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #eee; }
+        .m-card p { font-size: 9px; color: #666; }
+
+        /* Player Estilo Print Celular */
+        #player { 
+            position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; 
+            padding: 12px 15px 25px; border-top: 1px solid #222; display: none; flex-direction: column; z-index: 2000;
+        }
+        .p-main { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .p-main img { width: 50px; height: 50px; border-radius: 6px; }
+        .p-info { flex: 1; overflow: hidden; }
+        .p-info h5 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-info span { font-size: 10px; color: var(--purple); font-weight: bold; }
+        .p-btns { display: flex; align-items: center; gap: 15px; }
+        .btn-play { background: white; color: black; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+        .progress-bar { width: 100%; height: 3px; background: #333; border-radius: 2px; position: relative; }
+        #fill { height: 100%; background: var(--purple); width: 0%; }
+        .times { display: flex; justify-content: space-between; font-size: 9px; color: #555; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo">ZYVER<span>MUSIC</span></div>
-    <div class="search-box">
-        <i class="fa fa-search"></i>
-        <input type="text" id="inputBusca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
-    </div>
-    <a href="clipes.html" style="background:var(--purple); color:white; padding:8px 15px; border-radius:20px; text-decoration:none; font-size:12px; font-weight:bold;">🎥 CLIPES</a>
-</header>
-
-<div class="container">
-    <h2 class="section-title"><i class="fa fa-fire"></i> AS MAIS TOCADAS</h2>
-</div>
-
-<div id="top-10" class="ranking-container">
-    </div>
-
-<div class="container">
-    <h2 class="section-title">Explorar Tudo</h2>
-    <div id="grid-geral" class="grid">
+    <header>
+        <div class="nav-top">
+            <div class="logo">ZYVER<span>MUSIC</span></div>
+            <a href="clipes.html" class="btn-cli">🎥 CLIPES</a>
         </div>
-</div>
-
-<div id="player">
-    <div style="display:flex; align-items:center; gap:15px;">
-        <img id="p-capa" src="" style="width:50px; border-radius:5px;">
-        <div>
-            <div id="p-titulo" style="font-weight:bold; font-size:14px;"></div>
-            <div style="font-size:12px; color:var(--purple);">A REPRODUZIR AGORA</div>
+        <div class="search-area">
+            <i class="fa fa-search"></i>
+            <input type="text" id="busca" placeholder="O que você quer ouvir?" onkeyup="filtrar()">
         </div>
-    </div>
-    <audio id="main-audio" controls style="flex:1; max-width:500px; margin: 0 20px;"></audio>
-</div>
+    </header>
 
-<script type="module">
-    import { db } from "./firebase-config.js";
-    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <div class="section-title"><i class="fa fa-fire"></i> As Mais Tocadas</div>
+    <div id="top-10" class="ranking-wrapper"></div>
 
-    let musicas = [];
+    <div class="section-title" style="color:white">Explorar Tudo</div>
+    <div id="grid-geral" class="grid-compacto"></div>
 
-    async function iniciar() {
-        const snap = await getDocs(collection(db, "musics"));
-        musicas = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-        // Ordenar por plays para o Top 10
-        const top10 = [...musicas].sort((a, b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
-        
-        renderRanking(top10);
-        renderBiblioteca(musicas);
-    }
-
-    function renderRanking(lista) {
-        const container = document.getElementById('top-10');
-        container.innerHTML = lista.map((m, index) => `
-            <div class="ranking-card" onclick="tocar('${m.url}', '${m.title}', '${m.cover}')">
-                <div class="rank-number">#${index + 1}</div>
-                <img src="${m.cover}">
-                <div class="ranking-info">
-                    <h3>${m.title}</h3>
-                    <p>${m.plays || 0} EXECUÇÕES</p>
-                </div>
+    <div id="player">
+        <div class="p-main">
+            <img id="p-img" src="">
+            <div class="p-info">
+                <h5 id="p-name"></h5>
+                <span>A REPRODUZIR AGORA</span>
             </div>
-        `).join('');
-    }
+            <div class="p-btns">
+                <i class="fa fa-step-backward"></i>
+                <div class="btn-play" onclick="toggle()"><i class="fa fa-play" id="play-icon"></i></div>
+                <i class="fa fa-step-forward"></i>
+            </div>
+        </div>
+        <div class="progress-bar"><div id="fill"></div></div>
+        <div class="times">
+            <span id="cur">0:00</span>
+            <span id="dur">0:00</span>
+        </div>
+        <audio id="audio"></audio>
+    </div>
 
-    function renderBiblioteca(lista) {
-        const grid = document.getElementById('grid-geral');
-        grid.innerHTML = lista.map(m => `
-            <div class="card">
-                <img src="${m.cover}" onclick="tocar('${m.url}', '${m.title}', '${m.cover}')">
-                <div class="card-info">
-                    <h4>${m.title}</h4>
-                    <div style="display:flex; justify-content:space-between; margin-top:8px;">
-                         <i class="fa fa-heart" style="cursor:pointer; font-size:12px;" onclick="alert('Favoritado!')"></i>
-                         <i class="fa fa-share" style="cursor:pointer; font-size:12px;" onclick="alert('Link copiado!')"></i>
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        let tracks = [];
+        const audio = document.getElementById('audio');
+
+        async function load() {
+            const snap = await getDocs(collection(db, "musics"));
+            tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            // Render Ranking (Mais Tocadas)
+            const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
+            document.getElementById('top-10').innerHTML = top.map((m, i) => `
+                <div class="rank-card" onclick="playTrack('${m.url}','${m.title}','${m.cover}')">
+                    <div class="rank-n">#${i+1}</div>
+                    <img src="${m.cover}">
+                    <div class="rank-info">
+                        <h3>${m.title}</h3>
+                        <p>${m.plays || 0} EXECUÇÕES</p>
                     </div>
                 </div>
-            </div>
-        `).join('');
-    }
+            `).join('');
 
-    window.tocar = (url, title, cover) => {
-        document.getElementById('player').style.display = 'flex';
-        document.getElementById('main-audio').src = url;
-        document.getElementById('main-audio').play();
-        document.getElementById('p-titulo').innerText = title;
-        document.getElementById('p-capa').src = cover;
-    };
+            renderGrid(tracks);
+        }
 
-    window.filtrar = () => {
-        const t = document.getElementById('inputBusca').value.toLowerCase();
-        const f = musicas.filter(m => m.title.toLowerCase().includes(t));
-        renderBiblioteca(f);
-    };
+        function renderGrid(data) {
+            document.getElementById('grid-geral').innerHTML = data.map(m => `
+                <div class="m-card" onclick="playTrack('${m.url}','${m.title}','${m.cover}')">
+                    <img src="${m.cover}">
+                    <h4>${m.title}</h4>
+                    <p>${m.category || 'Música'}</p>
+                </div>
+            `).join('');
+        }
 
-    iniciar();
-</script>
+        window.playTrack = (url, name, img) => {
+            document.getElementById('player').style.display = 'flex';
+            document.getElementById('p-name').innerText = name;
+            document.getElementById('p-img').src = img;
+            audio.src = url;
+            audio.play();
+            document.getElementById('play-icon').className = 'fa fa-pause';
+        }
+
+        window.toggle = () => {
+            if(audio.paused) { audio.play(); document.getElementById('play-icon').className = 'fa fa-pause'; }
+            else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
+        }
+
+        audio.ontimeupdate = () => {
+            const pct = (audio.currentTime / audio.duration) * 100;
+            document.getElementById('fill').style.width = pct + '%';
+            document.getElementById('cur').innerText = format(audio.currentTime);
+            document.getElementById('dur').innerText = format(audio.duration);
+        }
+
+        const format = (s) => isNaN(s) ? "0:00" : Math.floor(s/60) + ":" + String(Math.floor(s%60)).padStart(2,'0');
+
+        window.filtrar = () => {
+            const t = document.getElementById('busca').value.toLowerCase();
+            renderGrid(tracks.filter(m => m.title.toLowerCase().includes(t)));
+        }
+
+        load();
+    </script>
 </body>
 </html>
