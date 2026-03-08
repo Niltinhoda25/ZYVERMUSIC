@@ -3,80 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic</title>
+    <title>ZyverMusic | Oficial</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --purple: #8a2be2; --bg: #000; --card: #121212; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 140px; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow-x: hidden; padding-bottom: 150px; }
 
-        /* Header */
-        header { padding: 15px; background: var(--bg); position: sticky; top: 0; z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
+        /* Header e Busca */
+        header { padding: 15px; position: sticky; top: 0; background: var(--bg); z-index: 1000; display: flex; flex-direction: column; gap: 12px; }
         .nav-top { display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 22px; font-weight: 900; }
         .logo span { color: var(--purple); }
-        .btn-cli { background: var(--purple); padding: 6px 15px; border-radius: 20px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; }
-
-        /* Busca */
+        .btn-cli { background: var(--purple); padding: 8px 15px; border-radius: 25px; text-decoration: none; color: white; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        
         .search-area { position: relative; }
-        .search-area input { width: 100%; background: #181818; border: none; padding: 10px 40px; border-radius: 10px; color: white; }
-        .search-area i { position: absolute; left: 15px; top: 12px; color: #666; }
+        .search-area input { width: 100%; background: #181818; border: none; padding: 12px 40px; border-radius: 12px; color: white; font-size: 14px; }
+        .search-area i { position: absolute; left: 15px; top: 14px; color: #555; }
 
-        /* AJUSTE TOP 10 (Mais Tocadas) */
+        /* Top 10 - Ajustado para o texto não passar */
         .section-title { padding: 15px; font-size: 16px; color: #ff7a00; font-weight: 800; text-transform: uppercase; }
         .ranking-wrapper { display: flex; overflow-x: auto; gap: 15px; padding: 0 15px 20px; scroll-snap-type: x mandatory; scrollbar-width: none; }
         .ranking-wrapper::-webkit-scrollbar { display: none; }
         
         .rank-card { 
-            min-width: 80%; background: var(--card); border-radius: 20px; padding: 15px; 
+            min-width: 82%; background: var(--card); border-radius: 20px; padding: 15px; 
             display: flex; align-items: center; gap: 12px; scroll-snap-align: center; border: 1px solid #222;
-            height: 110px; /* Altura fixa para manter o padrão */
         }
-        .rank-n { font-size: 40px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1px var(--purple); opacity: 0.8; flex-shrink: 0; }
-        .rank-card img { width: 65px; height: 65px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
-        
-        /* CORREÇÃO DO TEXTO PASSANDO */
+        .rank-n { font-size: 42px; font-weight: 900; font-style: italic; color: transparent; -webkit-text-stroke: 1.5px var(--purple); opacity: 0.8; flex-shrink: 0; }
+        .rank-card img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; flex-shrink: 0; }
         .rank-info { flex: 1; overflow: hidden; }
-        .rank-info h3 { 
-            font-size: 14px; 
-            margin-bottom: 2px; 
-            display: -webkit-box;
-            -webkit-line-clamp: 2; /* Máximo de 2 linhas */
-            -webkit-box-orient: vertical;
-            overflow: hidden; 
-            text-overflow: ellipsis;
-            line-height: 1.2;
-        }
-        .rank-info p { font-size: 10px; color: #666; font-weight: bold; }
+        .rank-info h3 { font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .rank-info p { font-size: 11px; color: #666; font-weight: bold; }
 
-        /* AJUSTE EXPLORAR TUDO (Ícones Menores) */
-        .grid-compacto { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); /* 4 colunas para ícones menores */
-            gap: 8px; 
-            padding: 0 15px; 
-        }
-        .m-card { background: transparent; text-align: center; }
-        .m-card img { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; }
-        .m-card h4 { 
-            font-size: 10px; 
-            margin-top: 5px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
-            color: #eee; 
-        }
+        /* Explorar Tudo - Ícones Pequenos */
+        .grid-compacto { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 0 15px; }
+        .m-card { background: transparent; text-align: left; }
+        .m-card img { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.4); }
+        .m-card h4 { font-size: 11px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #eee; }
 
-        /* Player */
-        #player { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; padding: 12px 15px 25px; border-top: 1px solid #222; display: none; flex-direction: column; z-index: 2000; }
-        .p-main { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-        .p-main img { width: 45px; height: 45px; border-radius: 6px; }
+        /* Player Estilo Celular */
+        #player { position: fixed; bottom: 0; left: 0; width: 100%; background: #080808; padding: 12px 20px 30px; border-top: 1px solid #222; display: none; flex-direction: column; z-index: 2000; }
+        .p-main { display: flex; align-items: center; gap: 15px; margin-bottom: 12px; }
+        .p-main img { width: 50px; height: 50px; border-radius: 8px; }
         .p-info { flex: 1; overflow: hidden; }
-        .p-info h5 { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-info span { font-size: 9px; color: var(--purple); font-weight: bold; }
-        .btn-play { background: white; color: black; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-        .progress-bar { width: 100%; height: 3px; background: #333; border-radius: 2px; }
-        #fill { height: 100%; background: var(--purple); width: 0%; }
+        .p-info h5 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-info span { font-size: 10px; color: var(--purple); font-weight: bold; text-transform: uppercase; }
+        .btn-play { background: white; color: black; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        
+        .progress-bar { width: 100%; height: 4px; background: #222; border-radius: 2px; }
+        #fill { height: 100%; background: var(--purple); width: 0%; border-radius: 2px; transition: width 0.1s linear; }
     </style>
 </head>
 <body>
@@ -84,11 +60,11 @@
     <header>
         <div class="nav-top">
             <div class="logo">ZYVER<span>MUSIC</span></div>
-            <a href="clipes.html" class="btn-cli">🎥 CLIPES</a>
+            <a href="clipes.html" class="btn-cli"><i class="fa fa-play-circle"></i> CLIPES</a>
         </div>
         <div class="search-area">
             <i class="fa fa-search"></i>
-            <input type="text" id="busca" placeholder="O que você quer ouvir?" onkeyup="filtrar()">
+            <input type="text" id="busca" placeholder="Pesquisar músicas..." onkeyup="filtrar()">
         </div>
     </header>
 
@@ -102,13 +78,13 @@
         <div class="p-main">
             <img id="p-img" src="">
             <div class="p-info">
-                <h5 id="p-name"></h5>
-                <span>A REPRODUZIR AGORA</span>
+                <h5 id="p-name">Nome da Música</h5>
+                <span>Reproduzindo</span>
             </div>
-            <div class="btn-play" onclick="toggle()"><i class="fa fa-play" id="play-icon"></i></div>
+            <div class="btn-play" onclick="togglePlay()"><i class="fa fa-play" id="play-icon"></i></div>
         </div>
         <div class="progress-bar"><div id="fill"></div></div>
-        <audio id="audio"></audio>
+        <audio id="audio-engine"></audio>
     </div>
 
     <script type="module">
@@ -116,42 +92,40 @@
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         let tracks = [];
-        const audio = document.getElementById('audio');
+        const audio = document.getElementById('audio-engine');
 
-        async function load() {
-            try {
-                const snap = await getDocs(collection(db, "musics"));
-                tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                
-                const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
-                
-                document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                    <div class="rank-card" onclick="playTrack('${m.url}','${m.title}','${m.cover}')">
-                        <div class="rank-n">#${i+1}</div>
-                        <img src="${m.cover}">
-                        <div class="rank-info">
-                            <h3>${m.title}</h3>
-                            <p>${m.plays || 0} EXECUÇÕES</p>
-                        </div>
+        async function init() {
+            const snap = await getDocs(collection(db, "musics"));
+            tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            
+            const top = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0,10);
+            renderRanking(top);
+            renderGrid(tracks);
+        }
+
+        function renderRanking(data) {
+            document.getElementById('top-10').innerHTML = data.map((m, i) => `
+                <div class="rank-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                    <div class="rank-n">#${i+1}</div>
+                    <img src="${m.cover}">
+                    <div class="rank-info">
+                        <h3>${m.title}</h3>
+                        <p>${m.plays || 0} EXECUÇÕES</p>
                     </div>
-                `).join('');
-
-                renderGrid(tracks);
-            } catch (e) {
-                console.error("Erro ao carregar:", e);
-            }
+                </div>
+            `).join('');
         }
 
         function renderGrid(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
-                <div class="m-card" onclick="playTrack('${m.url}','${m.title}','${m.cover}')">
+                <div class="m-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}">
                     <h4>${m.title}</h4>
                 </div>
             `).join('');
         }
 
-        window.playTrack = (url, name, img) => {
+        window.play = (url, name, img) => {
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-name').innerText = name;
             document.getElementById('p-img').src = img;
@@ -160,14 +134,13 @@
             document.getElementById('play-icon').className = 'fa fa-pause';
         }
 
-        window.toggle = () => {
+        window.togglePlay = () => {
             if(audio.paused) { audio.play(); document.getElementById('play-icon').className = 'fa fa-pause'; }
             else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
         }
 
         audio.ontimeupdate = () => {
-            const pct = (audio.currentTime / audio.duration) * 100;
-            document.getElementById('fill').style.width = pct + '%';
+            document.getElementById('fill').style.width = (audio.currentTime / audio.duration) * 100 + '%';
         }
 
         window.filtrar = () => {
@@ -175,7 +148,7 @@
             renderGrid(tracks.filter(m => m.title.toLowerCase().includes(t)));
         }
 
-        load();
+        init();
     </script>
 </body>
 </html>

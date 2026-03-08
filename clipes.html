@@ -3,238 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic - Clipes Sincronizados</title>
+    <title>ZyverClips | Feed</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Reset de Estilo para Tela Cheia */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: #000; color: #fff; font-family: 'Segoe UI', Roboto, sans-serif; overflow: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; overflow: hidden; font-family: sans-serif; }
+        #feed { height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; }
+        #feed::-webkit-scrollbar { display: none; }
 
-        /* Container de Rolagem Estilo TikTok */
-        #feed-container {
-            height: 100vh;
-            overflow-y: scroll;
-            scroll-snap-type: y mandatory; /* Faz o vídeo 'grudar' na tela */
-            scrollbar-width: none;
-        }
-        #feed-container::-webkit-scrollbar { display: none; } /* Esconde barra de rolagem */
+        .clip-item { position: relative; width: 100%; height: 100vh; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; }
+        
+        /* Loader */
+        .loader { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 3px solid #333; border-top-color: #8a2be2; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s infinite linear; }
+        @keyframes spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
 
-        .clip-section {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            scroll-snap-align: start; /* Onde o snap acontece */
-            scroll-snap-stop: always;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #000;
-        }
-
-        /* O vídeo fica mudo e preload auto para agilizar */
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            background: #000;
-        }
-
-        /* Overlay inferior com as informações (Mais Visível) */
-        .overlay-info {
-            position: absolute;
-            bottom: 30px;
-            left: 15px;
-            z-index: 10;
-            max-width: 80%;
-            pointer-events: none; /* Deixa cliques passarem para o vídeo */
-        }
-
-        /* Título do Clipe com Sombra para Máxima Visibilidade */
-        .clip-title {
-            font-size: 20px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            color: #fff;
-            /* O segredo da visibilidade: sombra projetada forte */
-            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.9), 0px 0px 5px rgba(0,0,0,0.5);
-            letter-spacing: -0.5px;
-        }
-
-        /* Barra da Música (Estilo seu print) */
-        .music-bar-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px 18px 8px 10px;
-            border-radius: 40px;
-            width: fit-content;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .disco-capa {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 2px solid #fff;
-            object-fit: cover;
-            animation: girarDisco 4s linear infinite;
-        }
-
-        @keyframes girarDisco { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-        /* Ações Laterais (Botão Compartilhar) */
-        .side-actions {
-            position: absolute;
-            right: 15px;
-            bottom: 40px;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 26px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        .action-btn:active { transform: scale(0.9); opacity: 0.8; }
-        .action-label { font-size: 11px; font-weight: bold; margin-top: 4px; text-shadow: 1px 1px 3px #000; }
-
-        /* Botão flutuante para voltar */
-        .btn-voltar {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 100;
-            color: white;
-            text-decoration: none;
-            background: rgba(0,0,0,0.4);
-            width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%;
-            font-size: 20px;
-        }
+        /* Overlay Visível */
+        .overlay { position: absolute; bottom: 0; left: 0; width: 100%; padding: 40px 20px; background: linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events: none; }
+        .clip-info h2 { font-size: 18px; color: white; text-shadow: 2px 2px 5px #000; margin-bottom: 10px; }
+        
+        .share-btn { position: absolute; right: 20px; bottom: 100px; color: white; font-size: 24px; pointer-events: auto; background: none; border: none; }
+        .back { position: absolute; top: 20px; left: 20px; z-index: 100; color: white; background: rgba(0,0,0,0.5); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <a href="index.html" class="btn-voltar">✕</a>
+<a href="index.html" class="back">✕</a>
+<div id="feed"></div>
 
-    <div id="feed-container">
-        </div>
+<script type="module">
+    import { db } from "./firebase-config.js";
+    import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <script type="module">
-        // IMPORTANTE: Mantenha seu arquivo firebase-config.js na mesma pasta
-        import { db } from "./firebase-config.js"; 
-        import { collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    async function loadFeed() {
+        const feed = document.getElementById('feed');
+        const snap = await getDocs(collection(db, "clips"));
 
-        async function carregarFeedOtimizado() {
-            const feed = document.getElementById('feed-container');
-            
-            // 1. Busca todos os clipes
-            const snapClipes = await getDocs(collection(db, "clips"));
+        for (const d of snap.docs) {
+            const clip = d.data();
+            const mSnap = await getDoc(doc(db, "musics", clip.musicId));
+            const music = mSnap.data();
 
-            for (const docClip of snapClipes.docs) {
-                const dadosClip = docClip.data();
-
-                // 2. Busca os dados da música vinculada
-                const musicaRef = doc(db, "musics", dadosClip.musicId);
-                const musicaSnap = await getDoc(musicaRef);
-                const dadosMusica = musicaSnap.data();
-
-                if (dadosMusica) {
-                    const item = document.createElement('div');
-                    item.className = 'clip-section';
-                    
-                    // Monta a estrutura HTML de cada vídeo
-                    item.innerHTML = `
-                        <video src="${dadosClip.url}" loop muted playsinline preload="auto"></video>
-                        
-                        <div class="overlay-info">
-                            <div class="clip-title">${dadosClip.title}</div>
-                            
-                            <div class="music-bar-container">
-                                <img src="${dadosMusica.cover}" class="disco-capa">
-                                <div>
-                                    <p style="font-size: 14px; font-weight: bold; color: #fff;">${dadosMusica.title}</p>
-                                    <p style="font-size: 11px; color: #aaa;">Tocando agora...</p>
-                                </div>
-                            </div>
+            if (music) {
+                const item = document.createElement('div');
+                item.className = 'clip-item';
+                item.innerHTML = `
+                    <div class="loader"></div>
+                    <video src="${clip.url}" loop muted playsinline preload="auto"></video>
+                    <audio src="${music.url}" loop preload="auto"></audio>
+                    <div class="overlay">
+                        <div class="clip-info">
+                            <h2>${clip.title}</h2>
                         </div>
-
-                        <div class="side-actions">
-                            <button class="action-btn" onclick="compartilharMusica('${dadosMusica.title}', '${dadosMusica.url}')">
-                                <i class="fa fa-share-alt"></i>
-                                <div class="action-label">Enviar</div>
-                            </button>
-                        </div>
-
-                        <audio class="track-audio" src="${dadosMusica.url}" loop preload="auto"></audio>
-                    `;
-                    feed.appendChild(item);
-                }
+                    </div>
+                    <button class="share-btn" onclick="share('${clip.title}')"><i class="fa fa-share"></i></button>
+                `;
+                feed.appendChild(item);
             }
-
-            // 3. LÓGICA DE SINCRONIZAÇÃO E PLAY/PAUSE (Intersection Observer)
-            const config = { threshold: 0.8 }; // Ativa quando 80% do vídeo estiver na tela
-            const observador = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    const audio = entry.target.querySelector('audio');
-                    
-                    if (entry.isIntersecting) {
-                        // Sincronização: Toca o som e o vídeo juntos
-                        // Usamos playsinline e muted no HTML para garantir o autoplay
-                        video.play().then(() => {
-                            // O vídeo começou, agora forçamos o áudio a alinhar
-                            audio.currentTime = video.currentTime;
-                            audio.play();
-                        }).catch(error => {
-                            console.log("Autoplay bloqueado pelo navegador. Precisa de interação.", error);
-                        });
-                    } else {
-                        // Pausa tudo quando sair da tela
-                        video.pause();
-                        audio.pause();
-                        // Reset para começar do início na próxima vez
-                        video.currentTime = 0; 
-                        audio.currentTime = 0;
-                    }
-                });
-            }, config);
-
-            // Inicia a observação em cada seção de clipe criada
-            document.querySelectorAll('.clip-section').forEach(sec => observador.observe(sec));
         }
 
-        // Função de Compartilhar (Usa a API nativa do celular/navegador)
-        window.compartilharMusica = (titulo, url) => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'ZyverMusic - Ouça essa faixa!',
-                    text: `Curte só essa música que vi no ZyverMusic: ${titulo}`,
-                    url: url,
-                })
-                .then(() => console.log('Compartilhado com sucesso'))
-                .catch((error) => console.log('Erro ao compartilhar', error));
-            } else {
-                // Fallback para navegadores que não suportam a API de share
-                alert(`Compartilhar música: ${titulo}\nLink: ${url}\n(Navegador não suporta compartilhamento direto. Copie o link)`);
-            }
-        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const v = entry.target.querySelector('video');
+                const a = entry.target.querySelector('audio');
+                const loader = entry.target.querySelector('.loader');
 
-        // Inicia o carregamento
-        carregarFeedOtimizado();
-    </script>
+                if (entry.isIntersecting) {
+                    // TRAVA DE SINCRONIZAÇÃO: Só toca se AMBOS estiverem carregados
+                    const check = setInterval(() => {
+                        if (v.readyState >= 3 && a.readyState >= 3) {
+                            clearInterval(check);
+                            v.style.opacity = 1;
+                            loader.style.display = 'none';
+                            v.play();
+                            a.play();
+                            a.currentTime = v.currentTime;
+                        }
+                    }, 200);
+                } else {
+                    v.pause(); a.pause();
+                    v.style.opacity = 0;
+                    loader.style.display = 'block';
+                }
+            });
+        }, { threshold: 0.8 });
+
+        document.querySelectorAll('.clip-item').forEach(c => observer.observe(c));
+    }
+
+    window.share = (title) => {
+        if(navigator.share) navigator.share({ title: 'ZyverMusic', text: 'Olha esse clipe: ' + title, url: window.location.href });
+    };
+
+    loadFeed();
+</script>
 </body>
 </html>
