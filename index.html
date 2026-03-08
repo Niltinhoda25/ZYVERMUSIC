@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Full Experience</title>
+    <title>ZyverMusic | Premium</title>
 
     <script src="https://quge5.com/88/tag.min.js" data-zone="217542" async data-cfasync="false"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --danger: #ff4444; }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 140px; overflow-x: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; padding-bottom: 140px; overflow: hidden; }
 
-        header { padding: 25px 15px; background: linear-gradient(to bottom, #151515, var(--bg)); }
-        .logo { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; }
+        header { padding: 25px 15px; background: linear-gradient(to bottom, #151515, var(--bg)); display: flex; align-items: center; justify-content: space-between; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1.5px; }
         .logo span { color: var(--accent); }
 
-        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 18px; padding: 25px; display: none; position: relative; }
+        /* ÁREA DE CONTEÚDO PRINCIPAL (COM SCROLL) */
+        #main-content { height: 100vh; overflow-y: auto; padding-bottom: 150px; }
 
-        /* BOTÕES DE CATEGORIA (RESTAURADOS) */
-        .categories-scroll { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
-        .cat-btn { background: #1a1a1a; color: white; padding: 10px 20px; border-radius: 20px; border: 1px solid #333; font-weight: 800; font-size: 13px; white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .cat-btn i { margin-right: 5px; color: var(--accent); }
-        .cat-btn.active { background: var(--accent); border-color: var(--accent); }
+        .top-buttons { display: flex; gap: 10px; padding: 0 15px 15px; }
+        .btn-header { flex: 1; padding: 15px; border-radius: 20px; border: 1px solid #333; font-weight: 800; font-size: 13px; text-transform: uppercase; cursor: pointer; text-align: center; }
+        .btn-header i { margin-right: 8px; }
+
+        .launch-banner { margin: 15px; background: linear-gradient(45deg, #2d00f7, #9d4edd); border-radius: 18px; padding: 25px; display: none; position: relative; }
 
         .search-box { background: #1a1a1a; display: flex; align-items: center; padding: 14px 20px; border-radius: 30px; margin: 0 15px 15px; border: 1px solid #252525; }
         .search-box input { background: transparent; border: none; color: white; margin-left: 10px; width: 100%; outline: none; }
@@ -39,49 +40,73 @@
         .item-card { display: flex; align-items: center; padding: 12px; border-radius: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
         .item-card img { width: 55px; height: 55px; border-radius: 10px; margin-right: 15px; object-fit: cover; }
         
-        .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 900; margin-left: 8px; }
-        .tag-clip { background: #ff0055; color: white; }
-        .tag-playlist { background: #00d4ff; color: #000; }
-
+        /* PLAYER FLUTUANTE (MÚSICA) */
         #player { position: fixed; bottom: 15px; left: 12px; right: 12px; background: rgba(20,20,20,0.95); backdrop-filter: blur(20px); padding: 15px; border-radius: 25px; display: none; align-items: center; gap: 15px; z-index: 3000; border: 1px solid #333; }
         .p-img { width: 55px; height: 55px; border-radius: 50%; object-fit: cover; border: 2px solid #444; }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .playing { animation: rotate 6s linear infinite; }
         .paused { animation-play-state: paused; }
+
+        /* --- TELA DE CLIPES MODO TIKTOK (RESTAURADA) --- */
+        #tiktok-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; }
+        .clip-video { width: 100%; height: 100%; object-fit: cover; }
+        .clip-overlay { position: absolute; bottom: 100px; left: 20px; right: 80px; }
+        .clip-actions { position: absolute; bottom: 120px; right: 15px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .action-btn { background: rgba(255,255,255,0.1); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; cursor: pointer; backdrop-filter: blur(5px); }
+        .action-btn.liked { color: var(--danger); animation: heartBeat 0.3s ease; }
+        @keyframes heartBeat { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+        .close-clip { position: absolute; top: 30px; left: 20px; font-size: 22px; cursor: pointer; text-shadow: 0 0 5px rgba(0,0,0,0.8); }
+
     </style>
 </head>
 <body>
 
-    <header><div class="logo">ZYVER<span>MUSIC</span></div></header>
+    <div id="tiktok-screen">
+        <i class="fa fa-arrow-left close-clip" onclick="fecharClipes()"></i>
+        <video id="clip-player" class="clip-video" loop playsinline></video>
+        
+        <div class="clip-overlay">
+            <h3 id="clip-title" style="font-weight:900;">Nome do Vídeo</h3>
+            <p style="opacity:0.8; font-size:13px; margin-top:5px;">@zyvermusic • Oficial</p>
+        </div>
 
-    <div id="launch-area" class="launch-banner">
-        <h3 id="l-title">Lançamento</h3>
-        <button onclick="triggerLaunch()" style="background: white; color: black; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 900; margin-top:15px;">OUVIR AGORA</button>
+        <div class="clip-actions">
+            <div class="action-btn" onclick="curtirClipe(this)"><i class="fa fa-heart"></i></div>
+            <div class="action-btn" onclick="alert('Comentários em breve!')"><i class="fa fa-comment"></i></div>
+            <div class="action-btn"><i class="fa fa-share"></i></div>
+        </div>
     </div>
 
-    <div class="categories-scroll">
-        <div class="cat-btn active" onclick="filtrarTipo('all', this)"><i class="fa fa-music"></i> Tudo</div>
-        <div class="cat-btn" onclick="filtrarTipo('music', this)"><i class="fa fa-microphone"></i> Músicas</div>
-        <div class="cat-btn" onclick="filtrarTipo('clip', this)"><i class="fa fa-video"></i> Clipes</div>
-        <div class="cat-btn" onclick="filtrarTipo('playlist', this)"><i class="fa fa-list-ul"></i> Playlists</div>
-    </div>
+    <div id="main-content">
+        <header><div class="logo">ZYVER<span>MUSIC</span></div></header>
 
-    <div class="search-box">
-        <i class="fa fa-search" style="color:#555"></i>
-        <input type="text" id="busca" placeholder="O que você quer ouvir?" onkeyup="filtrarBusca()">
-    </div>
+        <div class="top-buttons">
+            <div class="btn-header" style="background:#222;"><i class="fa fa-list"></i> Playlists</div>
+            <div class="btn-header" style="background:var(--accent); border:none;" onclick="abrirClipes()"><i class="fa fa-video"></i> Clipes</div>
+        </div>
 
-    <div class="section-title">🔥 Mais Tocadas</div>
-    <div id="top-10" class="ranking-wrapper"></div>
-    
-    <div class="section-title" id="lib-title" style="color:white">Biblioteca</div>
-    <div id="grid-geral" class="lista-geral"></div>
+        <div id="launch-area" class="launch-banner">
+            <h3 id="l-title">Lançamento</h3>
+            <button onclick="triggerLaunch()" style="background: white; color: black; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 900; margin-top:15px;">OUVIR AGORA</button>
+        </div>
+
+        <div class="search-box">
+            <i class="fa fa-search" style="color:#555"></i>
+            <input type="text" id="busca" placeholder="O que você quer ouvir hoje?" onkeyup="filtrarBusca()">
+        </div>
+
+        <div class="section-title">🔥 Mais Tocadas</div>
+        <div id="top-10" class="ranking-wrapper"></div>
+        
+        <div class="section-title" style="color:white">Biblioteca</div>
+        <div id="grid-geral" class="lista-geral"></div>
+    </div>
 
     <div id="player">
         <img id="p-img" class="p-img" src="">
         <div style="flex:1; overflow:hidden;">
             <h5 id="p-name" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">Música</h5>
-            <small style="color:var(--accent); font-weight:bold; font-size:10px;">ZYVER MUSIC</small>
+            <small style="color:var(--accent); font-weight:bold; font-size:10px;">REPRODUZINDO</small>
         </div>
         <div onclick="togglePlay()" style="cursor:pointer; padding: 10px;">
             <i class="fa fa-pause" id="play-icon" style="font-size:28px;"></i>
@@ -93,41 +118,50 @@
         import { db } from "./firebase-config.js";
         import { collection, getDocs, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
         
-        let allItems = [];
+        let allMusics = [];
+        let allClips = [];
         const audio = document.getElementById('audio-engine');
         const pImg = document.getElementById('p-img');
+        const clipPlayer = document.getElementById('clip-player');
 
         async function init() {
             try {
-                const [musicsSnap, clipsSnap, playlistsSnap] = await Promise.all([
+                // Puxa as duas coleções
+                const [musicsSnap, clipsSnap] = await Promise.all([
                     getDocs(collection(db, "musics")),
-                    getDocs(collection(db, "clips")),
-                    getDocs(collection(db, "playlists"))
+                    getDocs(collection(db, "clips"))
                 ]);
 
-                const m = musicsSnap.docs.map(d => ({id: d.id, type: 'music', ...d.data()}));
-                const c = clipsSnap.docs.map(d => ({id: d.id, type: 'clip', ...d.data()}));
-                const p = playlistsSnap.docs.map(d => ({id: d.id, type: 'playlist', ...d.data()}));
+                // Filtra as músicas: só entram as que têm imagem (cover)
+                allMusics = musicsSnap.docs
+                    .map(d => ({id: d.id, ...d.data()}))
+                    .filter(m => m.cover && m.cover !== ''); // Segurança contra "sem imagem"
+                
+                // Organiza músicas por data
+                allMusics.sort((a, b) => (b.date || 0) - (a.date || 0));
 
-                allItems = [...m, ...c, ...p].sort((a, b) => (b.date || 0) - (a.date || 0));
+                allClips = clipsSnap.docs.map(d => ({id: d.id, ...d.data()}));
 
-                const launch = allItems.find(x => x.isLaunch);
+                // Configura Lançamento
+                const launch = allMusics.find(x => x.isLaunch);
                 if(launch) {
                     document.getElementById('launch-area').style.display = 'block';
                     document.getElementById('l-title').innerText = launch.title;
                     window.currentLaunch = launch;
                 }
 
-                renderTop(allItems);
-                renderList(allItems);
+                renderTop(allMusics);
+                renderList(allMusics);
             } catch (e) { console.error(e); }
         }
 
-        window.play = async (id, url, n, i, type) => {
-            if(type === 'clip' || type === 'playlist') { window.location.href = url; return; }
+        // --- LÓGICA DE MÚSICA ---
+        window.play = async (id, url, n, i) => {
+            if(window.clipAtivo) fecharClipes(); // Fecha clipe se estiver aberto
+
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-name').innerText = n;
-            pImg.src = i || 'https://via.placeholder.com/150';
+            pImg.src = i;
             audio.src = url;
             audio.play();
             pImg.classList.add('playing');
@@ -141,25 +175,44 @@
             else { audio.pause(); pImg.classList.add('paused'); document.getElementById('play-icon').className = 'fa fa-play'; }
         };
 
-        window.filtrarTipo = (tipo, btn) => {
-            // Estilo do botão
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+        // --- LÓGICA MODO TIKTOK CLIPES (RESTAURADA) ---
+        window.abrirClipes = () => {
+            if(allClips.length === 0) return alert("Nenhum clipe cadastrado!");
+            
+            // Pausa música se estiver tocando
+            if(!audio.paused) audio.pause();
 
-            const filtrados = tipo === 'all' ? allItems : allItems.filter(x => x.type === tipo);
-            renderList(filtrados);
-            document.getElementById('lib-title').innerText = tipo === 'all' ? 'Biblioteca' : tipo.toUpperCase() + 'S';
+            window.clipAtivo = true;
+            document.getElementById('tiktok-screen').style.display = 'block';
+            
+            // Carrega o primeiro clipe
+            const clip = allClips[0];
+            clipPlayer.src = clip.url;
+            document.getElementById('clip-title').innerText = clip.title;
+            clipPlayer.play();
         };
 
+        window.fecharClipes = () => {
+            window.clipAtivo = false;
+            clipPlayer.pause();
+            document.getElementById('tiktok-screen').style.display = 'none';
+        };
+
+        window.curtirClipe = (btn) => {
+            btn.classList.toggle('liked');
+            btn.innerHTML = btn.classList.contains('liked') ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+        };
+
+        // --- RENDERIZAÇÃO ---
         window.filtrarBusca = () => {
             const t = document.getElementById('busca').value.toLowerCase();
-            renderList(allItems.filter(m => m.title.toLowerCase().includes(t)));
+            renderList(allMusics.filter(m => m.title.toLowerCase().includes(t)));
         };
 
         function renderTop(data) {
-            const top = data.filter(x => x.type === 'music').sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
+            const top = [...data].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
             document.getElementById('top-10').innerHTML = top.map((m, i) => `
-                <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}','${m.type}')">
+                <div class="rank-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="rank-n">#${i+1}</div>
                     <img src="${m.cover}">
                     <div style="overflow:hidden">
@@ -171,17 +224,13 @@
 
         function renderList(data) {
             document.getElementById('grid-geral').innerHTML = data.map(m => `
-                <div class="item-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}','${m.type}')">
+                <div class="item-card" onclick="play('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}">
                     <div style="flex:1; overflow:hidden">
-                        <h4 style="font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                            ${m.title} 
-                            ${m.type === 'clip' ? '<span class="tag tag-clip">CLIPE</span>' : ''}
-                            ${m.type === 'playlist' ? '<span class="tag tag-playlist">PLAYLIST</span>' : ''}
-                        </h4>
-                        <p style="font-size:12px;opacity:0.5;">Zyver Music</p>
+                        <h4 style="font-size:15px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${m.title}</h4>
+                        <p style="font-size:12px;opacity:0.5;">Zyver Premium</p>
                     </div>
-                    <i class="fa ${m.type === 'clip' ? 'fa-video' : (m.type === 'playlist' ? 'fa-list-ul' : 'fa-play-circle')}" style="color:var(--accent); font-size:22px;"></i>
+                    <i class="fa fa-play-circle" style="color:var(--accent); font-size:24px;"></i>
                 </div>`).join('');
         }
 
