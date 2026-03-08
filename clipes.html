@@ -2,145 +2,153 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minha Galeria de Clipes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zyver Clips</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* Estilização Geral */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
+        :root { --accent: #ff7a00; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { background: #000; color: white; font-family: sans-serif; overflow: hidden; }
 
-        h1 {
-            color: #1db954; /* Verde estilo Spotify */
-            margin-bottom: 20px;
-        }
+        .clips-container { height: 100vh; overflow-y: scroll; snap-type: y mandatory; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
+        .clip-card { height: 100vh; width: 100vw; snap-align: start; position: relative; background: #000; }
+        video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Container do Player Principal */
-        .main-player {
-            width: 100%;
-            max-width: 800px;
-            background: #1e1e1e;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
+        /* AÇÕES LATERAIS */
+        .side-actions { position: absolute; right: 15px; bottom: 120px; display: flex; flex-direction: column; gap: 20px; z-index: 20; align-items: center; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
+        .action-btn i { font-size: 35px; text-shadow: 0 0 10px rgba(0,0,0,0.8); transition: 0.2s; }
+        .action-btn span { font-size: 13px; font-weight: 900; }
+        .fa-heart.active { color: #ff2d55; transform: scale(1.2); }
 
-        video {
-            width: 100%;
-            border-radius: 5px;
-            background-color: #000;
-        }
+        .clip-info { position: absolute; bottom: 40px; left: 15px; z-index: 20; max-width: 75%; }
+        .clip-info h2 { font-size: 17px; font-weight: 800; margin-bottom: 5px; }
+        .clip-info p { color: var(--accent); font-weight: 700; font-size: 14px; }
 
-        .video-info {
-            margin-top: 15px;
-            padding: 10px;
-            border-left: 4px solid #1db954;
-        }
+        /* MODAL DE COMENTÁRIOS */
+        #modal-coment { position: fixed; bottom: -100%; left: 0; width: 100%; height: 60%; background: #121212; z-index: 1000; border-radius: 20px 20px 0 0; transition: 0.4s; padding: 20px; display: flex; flex-direction: column; }
+        #modal-coment.open { bottom: 0; }
+        .coment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        #lista-coments { flex: 1; overflow-y: auto; font-size: 14px; margin-bottom: 10px; }
+        .input-coment { display: flex; gap: 10px; }
+        .input-coment input { flex: 1; background: #222; border: 1px solid #444; color: white; padding: 12px; border-radius: 10px; outline: none; }
+        .btn-enviar { background: var(--accent); border: none; padding: 10px 15px; border-radius: 10px; color: white; font-weight: bold; }
 
-        /* Lista de Clipes (Playlist) */
-        .playlist {
-            margin-top: 30px;
-            width: 100%;
-            max-width: 800px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .clip-card {
-            background: #282828;
-            border-radius: 8px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: transform 0.3s, background 0.3s;
-        }
-
-        .clip-card:hover {
-            transform: scale(1.05);
-            background: #383838;
-        }
-
-        .clip-card img {
-            width: 100%;
-            height: 120px;
-            object-fit: cover;
-        }
-
-        .clip-card p {
-            padding: 10px;
-            margin: 0;
-            font-size: 0.9em;
-            text-align: center;
-        }
-
-        .active-clip {
-            border: 2px solid #1db954;
-        }
+        .btn-back { position: absolute; top: 40px; left: 20px; z-index: 100; color: white; font-size: 24px; }
     </style>
 </head>
 <body>
 
-    <h1>🎬 Meus Clipes Favoritos</h1>
+    <a href="index.html" class="btn-back"><i class="fa fa-chevron-left"></i></a>
 
-    <div class="main-player">
-        <video id="video-display" controls autoplay>
-            <source src="video1.mp4" type="video/mp4">
-            Seu navegador não suporta vídeos em HTML5.
-        </video>
-        <div class="video-info">
-            <h2 id="video-title">Título do Clipe 1</h2>
-            <p id="video-desc">Descrição curta sobre este clipe de vídeo.</p>
+    <div id="clips-feed" class="clips-container"></div>
+
+    <div id="modal-coment">
+        <div class="coment-header">
+            <h3>Comentários</h3>
+            <i class="fa fa-times" onclick="fecharComents()" style="font-size: 20px;"></i>
+        </div>
+        <div id="lista-coments">Nenhum comentário ainda.</div>
+        <div class="input-coment">
+            <input type="text" id="coment-input" placeholder="Adicione um comentário...">
+            <button class="btn-enviar" id="send-btn">Postar</button>
         </div>
     </div>
 
-    <div class="playlist">
-        <div class="clip-card" onclick="changeVideo('video1.mp4', 'Título do Clipe 1', 'Descrição detalhada do primeiro vídeo.')">
-            <img src="https://via.placeholder.com/200x120/1db954/ffffff?text=Video+1" alt="Thumbnail 1">
-            <p>Clipe 1</p>
-        </div>
+    <script type="module">
+        import { db } from "./firebase-config.js";
+        import { collection, getDocs, updateDoc, doc, increment, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        <div class="clip-card" onclick="changeVideo('video2.mp4', 'Título do Clipe 2', 'Descrição detalhada do segundo vídeo.')">
-            <img src="https://via.placeholder.com/200x120/1db954/ffffff?text=Video+2" alt="Thumbnail 2">
-            <p>Clipe 2</p>
-        </div>
+        let currentClipId = "";
 
-        <div class="clip-card" onclick="changeVideo('video3.mp4', 'Título do Clipe 3', 'Descrição detalhada do terceiro vídeo.')">
-            <img src="https://via.placeholder.com/200x120/1db954/ffffff?text=Video+3" alt="Thumbnail 3">
-            <p>Clipe 3</p>
-        </div>
-    </div>
-
-    <script>
-        /**
-         * Função para trocar o vídeo e as informações na tela
-         * @param {string} src - O caminho do arquivo de vídeo
-         * @param {string} title - O título que aparecerá abaixo do vídeo
-         * @param {string} desc - A descrição do vídeo
-         */
-        function changeVideo(src, title, desc) {
-            const videoPlayer = document.getElementById('video-display');
-            const videoTitle = document.getElementById('video-title');
-            const videoDesc = document.getElementById('video-desc');
-
-            // Altera a fonte do vídeo
-            videoPlayer.src = src;
+        async function init() {
+            const snap = await getDocs(collection(db, "clips"));
+            const feed = document.getElementById('clips-feed');
             
-            // Altera o texto informativo
-            videoTitle.innerText = title;
-            videoDesc.innerText = desc;
+            feed.innerHTML = snap.docs.map(d => {
+                const c = d.data();
+                return `
+                    <div class="clip-card">
+                        <video src="${c.url}" loop playsinline webkit-playsinline onclick="this.paused ? this.play() : this.pause()"></video>
+                        <div class="side-actions">
+                            <div class="action-btn" onclick="curtir('${d.id}')">
+                                <i class="fa fa-heart" id="heart-${d.id}"></i>
+                                <span id="likes-${d.id}">${c.likes || 0}</span>
+                            </div>
+                            <div class="action-btn" onclick="abrirComents('${d.id}')">
+                                <i class="fa fa-comment-dots"></i>
+                                <span>${c.comments ? c.comments.length : 0}</span>
+                            </div>
+                        </div>
+                        <div class="clip-info">
+                            <p>@ZyverMusic</p>
+                            <h2>${c.title}</h2>
+                        </div>
+                    </div>`;
+            }).join('');
 
-            // Recarrega e dá play
-            videoPlayer.load();
-            videoPlayer.play();
+            configurarVideos();
         }
-    </script>
 
+        // CURTIR DE VERDADE NO FIREBASE
+        window.curtir = async (id) => {
+            const heart = document.getElementById(`heart-${id}`);
+            const likesTxt = document.getElementById(`likes-${id}`);
+            
+            if(!heart.classList.contains('active')) {
+                heart.classList.add('active');
+                await updateDoc(doc(db, "clips", id), { likes: increment(1) });
+                likesTxt.innerText = parseInt(likesTxt.innerText) + 1;
+            }
+        };
+
+        // COMENTÁRIOS REAIS
+        window.abrirComents = (id) => {
+            currentClipId = id;
+            document.getElementById('modal-coment').classList.add('open');
+            
+            // Escuta os comentários em tempo real
+            onSnapshot(doc(db, "clips", id), (doc) => {
+                const data = doc.data();
+                const lista = document.getElementById('lista-coments');
+                if(data.comments && data.comments.length > 0) {
+                    lista.innerHTML = data.comments.map(c => `<p style="margin-bottom:10px;"><b>Anônimo:</b> ${c}</p>`).join('');
+                } else {
+                    lista.innerHTML = "Seja o primeiro a comentar!";
+                }
+            });
+        };
+
+        window.fecharComents = () => {
+            document.getElementById('modal-coment').classList.remove('open');
+        };
+
+        document.getElementById('send-btn').onclick = async () => {
+            const input = document.getElementById('coment-input');
+            if(!input.value || !currentClipId) return;
+
+            await updateDoc(doc(db, "clips", currentClipId), {
+                comments: arrayUnion(input.value)
+            });
+            input.value = "";
+        };
+
+        function configurarVideos() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const v = entry.target.querySelector('video');
+                    if (entry.isIntersecting) {
+                        v.play().catch(() => {
+                            document.addEventListener('click', () => v.play(), {once: true});
+                        });
+                    } else { v.pause(); }
+                });
+            }, { threshold: 0.8 });
+
+            document.querySelectorAll('.clip-card').forEach(c => observer.observe(c));
+        }
+
+        init();
+    </script>
 </body>
 </html>
