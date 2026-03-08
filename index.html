@@ -3,12 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | v8.1 Gold Elite</title>
+    <title>ZyverMusic | v8.2 Diamond Edition</title>
     
     <meta name="theme-color" content="#0a0118">
     <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0a0118%22,%22theme_color%22:%22#bc47fb%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3844/3844724.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
-    <script src="https://alwingulla.com/88/prm/atama.js" async></script>
+    <script>
+        (function(s){
+            s.dataset.zone='10697810';
+            s.src='https://nap5k.com/tag.min.js';
+        })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')));
+    </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 
@@ -19,7 +25,6 @@
             --glass: rgba(255, 255, 255, 0.06);
             --glass-border: rgba(255, 255, 255, 0.1);
             --success: #00f2fe;
-            --danger: #ff4b5c;
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -35,6 +40,7 @@
         .logo { font-size: 32px; font-weight: 900; letter-spacing: 3px; text-shadow: 0 0 25px var(--accent); }
         .logo span { color: var(--accent); }
 
+        /* BUSCA */
         .search-box { margin: 0 20px 30px; position: relative; }
         .search-box input { 
             width: 100%; background: var(--glass); border: 1px solid var(--glass-border); 
@@ -44,14 +50,14 @@
 
         .section-title { padding: 10px 25px; font-size: 12px; font-weight: 900; text-transform: uppercase; color: rgba(255,255,255,0.5); display: flex; align-items: center; gap: 10px; }
 
-        /* GRID FIXO (8001% ANTI-BUG) */
+        /* CARDS MAIS TOCADAS (8002% FIX IMAGEM) */
         #top-list { display: flex; overflow-x: auto; padding: 15px 20px; gap: 20px; scrollbar-width: none; }
         .top-card { min-width: 150px; cursor: pointer; transition: 0.3s; }
-        .top-card:active { transform: scale(0.9); }
         .top-img-box { width: 150px; height: 150px; border-radius: 28px; overflow: hidden; border: 1px solid var(--glass-border); background: #111; }
         .top-img-box img { width: 100%; height: 100%; object-fit: cover; }
         .top-card b { display: block; margin-top: 12px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
+        /* LISTA GERAL */
         .track-card { 
             display: flex; align-items: center; padding: 15px; margin: 10px 20px; 
             background: var(--glass); border-radius: 22px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px); 
@@ -60,7 +66,7 @@
         .track-img img { width: 100%; height: 100%; object-fit: cover; }
         .track-info { flex: 1; overflow: hidden; }
         .track-info b { font-size: 15px; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .btn-add { font-size: 24px; color: var(--accent); margin-left: 10px; padding: 5px; }
+        .btn-add { font-size: 24px; color: var(--accent); margin-left: 10px; }
 
         /* PLAYER */
         #player { 
@@ -82,6 +88,7 @@
         .nav-item.active { color: var(--accent); }
         .nav-item span { font-size: 10px; font-weight: 900; }
 
+        /* MODAIS */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999; display: none; flex-direction: column; padding: 30px 20px; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .btn-create { background: var(--accent); color: white; width: 100%; padding: 20px; border: none; border-radius: 20px; font-weight: 900; margin-top: auto; }
@@ -89,19 +96,14 @@
 </head>
 <body>
 
-    <div id="add-modal" class="modal">
-        <div class="modal-header"><h2>Salvar em...</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('add-modal')"></i></div>
-        <div id="pl-choices" style="overflow-y:auto; flex:1;"></div>
-    </div>
-
     <div id="lib-modal" class="modal">
-        <div class="modal-header"><h2>Biblioteca</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('lib-modal')"></i></div>
+        <div class="modal-header"><h2>Minhas Playlists</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('lib-modal')"></i></div>
         <div id="lib-list" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="create-modal" class="modal">
         <div class="modal-header"><h2>Nova Playlist</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('create-modal')"></i></div>
-        <input type="text" id="pl-name-input" placeholder="Nome da Playlist..." style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:20px; border-radius:20px; color:white; outline:none; margin-bottom:20px;">
+        <input type="text" id="pl-name-input" placeholder="Nome da pasta..." style="width:100%; background:var(--glass); border:1px solid var(--accent); padding:20px; border-radius:20px; color:white; outline:none; margin-bottom:20px;">
         <div id="selection-list" style="flex:1; overflow-y:auto;"></div>
         <button class="btn-create" onclick="confirmarCriacao()">CRIAR AGORA</button>
     </div>
@@ -111,13 +113,13 @@
 
         <div class="search-box">
             <i class="fa fa-search"></i>
-            <input type="text" id="search-input" placeholder="Pesquisar..." oninput="filtrar()">
+            <input type="text" id="search-input" placeholder="O que vamos ouvir?" oninput="filtrar()">
         </div>
 
-        <div class="section-title"><i class="fa fa-bolt"></i> Mais Tocadas</div>
+        <div class="section-title"><i class="fa fa-bolt"></i> Mais Tocadas (Rádio)</div>
         <div id="top-list"></div>
 
-        <div class="section-title"><i class="fa fa-compact-disc"></i> Biblioteca</div>
+        <div class="section-title"><i class="fa fa-compact-disc"></i> Biblioteca Geral</div>
         <div id="full-list"></div>
     </div>
 
@@ -125,7 +127,7 @@
         <div class="p-img-box"><img id="p-img" src=""></div>
         <div class="track-info">
             <b id="p-title">...</b>
-            <span style="color:var(--accent); font-size:10px; font-weight:900;">AD-SUPPORTED v8.1</span>
+            <span style="color:var(--accent); font-size:10px; font-weight:900;">RADIO ON</span>
         </div>
         <div style="display:flex; align-items:center; gap:20px;">
             <i class="fa fa-forward-step" onclick="proximaMusica()" style="color:#666;"></i>
@@ -135,9 +137,9 @@
     </div>
 
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload(); dispararAnuncio();"><i class="fa fa-house"></i><span>Home</span></div>
-        <div class="nav-item" onclick="abrirModal('create-modal'); dispararAnuncio();"><i class="fa fa-plus-circle" style="font-size:35px; color:var(--accent);"></i><span>Criar</span></div>
-        <div class="nav-item" onclick="abrirLibrary(); dispararAnuncio();"><i class="fa fa-layer-group"></i><span>Playlists</span></div>
+        <div class="nav-item active" onclick="location.reload();"><i class="fa fa-house"></i><span>Home</span></div>
+        <div class="nav-item" onclick="abrirModal('create-modal');"><i class="fa fa-plus-circle" style="font-size:35px; color:var(--accent);"></i><span>Criar</span></div>
+        <div class="nav-item" onclick="abrirLibrary();"><i class="fa fa-layer-group"></i><span>Library</span></div>
     </div>
 
     <script type="module">
@@ -151,11 +153,8 @@
         const audio = document.getElementById('audio-engine');
         const pImg = document.getElementById('p-img');
 
-        // GATILHO MONETAG
-        window.dispararAnuncio = () => {
-            console.log("Chamando Anúncio...");
-            // In-Page Push da Monetag costuma ser automático, mas forçamos o refresh de tags se necessário
-        };
+        // SERVICE WORKER PWA
+        if ('serviceWorker' in navigator) { navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", (e) => {});'); }
 
         async function init() {
             const snap = await getDocs(collection(db, "musics"));
@@ -171,7 +170,6 @@
                     <div class="track-info" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')">
                         <b>${m.title}</b><span>Zyver Music</span>
                     </div>
-                    <i class="fa fa-plus-circle btn-add" onclick="prepararAdd('${m.id}')"></i>
                 </div>
             `).join('');
         }
@@ -195,7 +193,6 @@
             audio.src = url;
             audio.play();
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
-            dispararAnuncio(); // Monetização no Play
         };
 
         audio.onended = () => proximaMusica();
@@ -228,7 +225,7 @@
 
         window.confirmarCriacao = () => {
             const nome = document.getElementById('pl-name-input').value;
-            if(!nome || selectedForPL.length === 0) return alert("Erro!");
+            if(!nome || selectedForPL.length === 0) return alert("Preencha tudo!");
             const tracks = allTracks.filter(m => selectedForPL.includes(m.id));
             myPlaylists.push({ id: Date.now(), nome, musicas: tracks });
             localStorage.setItem('zyver_v8_db', JSON.stringify(myPlaylists));
@@ -241,7 +238,7 @@
             const area = document.getElementById('lib-list');
             area.innerHTML = myPlaylists.map(p => `
                 <div style="background:var(--glass); border-radius:25px; padding:20px; margin-bottom:15px; border:1px solid var(--glass-border);">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>${p.nome}</b> <i class="fa fa-trash" style="color:var(--danger);" onclick="removerPL('${p.id}')"></i></div>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;"><b>${p.nome}</b> <i class="fa fa-trash" style="color:red;" onclick="removerPL('${p.id}')"></i></div>
                     <div style="display:flex; gap:10px; overflow-x:auto;">
                         ${p.musicas.map(m => `<img src="${m.cover}" onclick="tocar('${m.id}','${m.url}','${m.title}','${m.cover}')" style="width:70px; height:70px; border-radius:12px; object-fit:cover;">`).join('')}
                     </div>
