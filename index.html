@@ -3,257 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | Premium</title>
+    <title>ZyverMusic | Pro</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --accent: #9d4edd;
-            --bg-deep: #0a0a0a;
-            --surface: #1a1a1a;
-            --text-main: #ffffff;
-            --text-dim: #a0a0a0;
-        }
+        :root { --accent: #9d4edd; --bg: #050505; --surface: #121212; --text: #ffffff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 110px; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, sans-serif; }
-        
-        body { 
-            background: var(--bg-deep); 
-            color: var(--text-main); 
-            line-height: 1.5;
-            padding-bottom: 110px; /* Espaço para o player */
+        /* HEADER & MENU */
+        header { 
+            padding: 15px; display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; background: rgba(5,5,5,0.9); backdrop-filter: blur(10px); z-index: 100;
         }
-
-        /* Header Minimalista */
-        header {
-            padding: 20px 15px;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(20px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo { font-size: 20px; font-weight: 800; letter-spacing: -1px; }
+        .menu-icon { font-size: 24px; cursor: pointer; padding: 5px; }
+        .logo { font-size: 20px; font-weight: 900; letter-spacing: -1px; }
         .logo span { color: var(--accent); }
 
-        .btn-clipes {
-            background: var(--accent);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 15px rgba(157, 78, 221, 0.3);
+        /* SIDEBAR (MENU LATERAL) */
+        .sidebar {
+            position: fixed; top: 0; left: -100%; width: 80%; height: 100%;
+            background: var(--surface); z-index: 1000; transition: 0.4s;
+            padding: 30px 20px; box-shadow: 10px 0 30px rgba(0,0,0,0.8);
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; margin-bottom: 40px; }
+        .nav-item { 
+            display: flex; align-items: center; gap: 15px; font-size: 18px; 
+            font-weight: 600; padding: 15px 0; border-bottom: 1px solid #222; cursor: pointer;
+        }
+        .overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.7); display: none; z-index: 999; 
         }
 
-        /* Busca Moderna */
-        .search-container { padding: 0 15px 20px; }
-        .search-box {
-            background: var(--surface);
-            display: flex;
-            align-items: center;
-            padding: 12px 18px;
-            border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .search-box input {
-            background: transparent;
-            border: none;
-            color: white;
-            margin-left: 10px;
-            width: 100%;
-            outline: none;
-            font-size: 14px;
-        }
+        /* CONTEÚDO DA HOME (SÓ TOPS) */
+        .container { padding: 15px; }
+        .section-title { font-size: 18px; font-weight: 800; margin: 20px 0 15px; display: flex; align-items: center; gap: 8px; }
+        .section-title i { color: #ff7a00; }
 
-        /* Seções */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
+        /* TOP 10 RANKING (Cards Maiores) */
+        .top-list { display: flex; flex-direction: column; gap: 12px; }
+        .rank-item {
+            background: var(--surface); padding: 12px; border-radius: 15px;
+            display: flex; align-items: center; gap: 15px; border: 1px solid #222;
         }
-        .section-header h2 { font-size: 18px; font-weight: 800; }
+        .rank-number { font-size: 24px; font-weight: 900; color: var(--accent); min-width: 30px; }
+        .rank-item img { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; }
+        .rank-info h4 { font-size: 14px; margin-bottom: 2px; }
+        .rank-info p { font-size: 11px; color: #777; }
 
-        /* Ranking Horizontal (Destaques) */
-        .trending-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 15px;
-            padding: 10px 15px 25px;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
+        /* MODAL DA BIBLIOTECA (ABRE QUANDO CLICA NO MENU) */
+        #library-view {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 2000; display: none; overflow-y: auto; padding: 20px;
         }
-        .trending-scroll::-webkit-scrollbar { display: none; }
+        .grid-lib { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
+        .lib-card { background: var(--surface); padding: 10px; border-radius: 12px; text-align: center; }
+        .lib-card img { width: 100%; aspect-ratio: 1/1; border-radius: 10px; object-fit: cover; margin-bottom: 8px; }
+        .lib-card h5 { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        .trending-card {
-            min-width: 280px;
-            background: linear-gradient(135deg, #2a2a2a 0%, #151515 100%);
-            padding: 15px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            scroll-snap-align: center;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .trend-rank { font-size: 32px; font-weight: 900; color: rgba(255,255,255,0.1); }
-        .trending-card img { width: 80px; height: 80px; border-radius: 12px; object-fit: cover; }
-        .trend-info h3 { font-size: 15px; margin-bottom: 4px; }
-        .trend-info p { font-size: 12px; color: var(--text-dim); }
-
-        /* Grid de Exploração (2 Colunas para ser Legível) */
-        .explore-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .music-item {
-            background: var(--surface);
-            padding: 10px;
-            border-radius: 16px;
-            transition: transform 0.2s;
-        }
-        .music-item:active { transform: scale(0.95); }
-
-        .music-item img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            border-radius: 12px;
-            object-fit: cover;
-            margin-bottom: 10px;
-        }
-
-        .music-item h4 {
-            font-size: 13px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .music-item p { font-size: 11px; color: var(--text-dim); }
-
-        /* Player Flutuante Moderno */
+        /* PLAYER FLUTUANTE */
         #player {
-            position: fixed;
-            bottom: 20px;
-            left: 15px;
-            right: 15px;
-            background: rgba(30, 30, 30, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 12px;
-            border-radius: 20px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
+            position: fixed; bottom: 20px; left: 10px; right: 10px;
+            background: rgba(25,25,25,0.95); backdrop-filter: blur(15px);
+            padding: 12px; border-radius: 18px; display: none; align-items: center;
+            gap: 12px; border: 1px solid #333; z-index: 3000;
         }
-
-        .p-thumb { width: 45px; height: 45px; border-radius: 10px; object-fit: cover; }
-        .p-meta { flex: 1; overflow: hidden; }
-        .p-meta h5 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-meta p { font-size: 11px; color: var(--accent); font-weight: 600; }
-
-        .p-controls { display: flex; align-items: center; gap: 15px; }
-        .btn-play-sm { 
-            width: 38px; height: 38px; background: white; color: black; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-        }
+        .p-img { width: 45px; height: 45px; border-radius: 10px; }
+        .p-txt { flex: 1; overflow: hidden; }
+        .p-txt h6 { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .btn-play { width: 40px; height: 40px; background: white; color: black; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <header>
+        <div class="menu-icon" onclick="toggleMenu()"><i class="fa fa-bars"></i></div>
         <div class="logo">ZYVER<span>MUSIC</span></div>
-        <a href="clipes.html" class="btn-clipes"><i class="fa-solid fa-bolt"></i> CLIPES</a>
-    </header>
+        <div style="width: 30px;"></div> </header>
 
-    <div class="search-container">
-        <div class="search-box">
-            <i class="fa fa-search" style="color: #666;"></i>
-            <input type="text" id="main-search" placeholder="O que você quer ouvir?" onkeyup="search()">
+    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="logo">MENU</h2>
+            <i class="fa fa-times" onclick="toggleMenu()"></i>
         </div>
+        <div class="nav-item" onclick="toggleMenu()">
+            <i class="fa fa-home"></i> Início
+        </div>
+        <div class="nav-item" onclick="openLibrary()">
+            <i class="fa fa-music"></i> Minha Biblioteca
+        </div>
+        <div class="nav-item" onclick="window.location.href='clipes.html'">
+            <i class="fa fa-play-circle"></i> Clipes
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="section-title"><i class="fa fa-fire"></i> TOP 10 SEMANAL</div>
+        <div id="top-list" class="top-list">
+            </div>
     </div>
 
-    <div class="section-header">
-        <h2>Em Alta</h2>
-    </div>
-    <div id="top-ranking" class="trending-scroll">
+    <div id="library-view">
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <i class="fa fa-arrow-left" onclick="closeLibrary()" style="font-size: 20px;"></i>
+            <h2>Todas as Músicas</h2>
         </div>
-
-    <div class="section-header">
-        <h2>Sua Biblioteca</h2>
+        <div id="lib-grid" class="grid-lib"></div>
     </div>
-    <div id="main-grid" class="explore-grid">
-        </div>
 
     <div id="player">
-        <img id="p-img" class="p-thumb" src="">
-        <div class="p-meta">
-            <h5 id="p-title">Música</h5>
-            <p>Tocando agora</p>
-        </div>
-        <div class="p-controls">
-            <div class="btn-play-sm" onclick="togglePlay()">
-                <i id="play-icon" class="fa fa-play"></i>
-            </div>
-        </div>
-        <audio id="audio-core"></audio>
+        <img id="p-img" class="p-img" src="">
+        <div class="p-txt"><h6 id="p-title">Música</h6><span style="font-size: 10px; color: var(--accent);">Tocando agora</span></div>
+        <div class="btn-play" onclick="togglePlay()"><i id="play-icon" class="fa fa-play"></i></div>
+        <audio id="main-audio"></audio>
     </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
         import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        let allMusic = [];
-        const audio = document.getElementById('audio-core');
+        let tracks = [];
+        const audio = document.getElementById('main-audio');
 
-        async function loadApp() {
+        async function init() {
             const snap = await getDocs(collection(db, "musics"));
-            allMusic = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            tracks = snap.docs.map(d => ({id: d.id, ...d.data()}));
 
-            // Ranking
-            const top = [...allMusic].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 5);
-            renderTrending(top);
-            
-            // Grid
-            renderGrid(allMusic);
-        }
-
-        function renderTrending(data) {
-            document.getElementById('top-ranking').innerHTML = data.map((m, i) => `
-                <div class="trending-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
-                    <span class="trend-rank">${i+1}</span>
+            // Injeta o Top 10 na Home
+            const top10 = [...tracks].sort((a,b) => (b.plays || 0) - (a.plays || 0)).slice(0, 10);
+            document.getElementById('top-list').innerHTML = top10.map((m, i) => `
+                <div class="rank-item" onclick="play('${m.url}','${m.title}','${m.cover}')">
+                    <div class="rank-number">${i+1}</div>
                     <img src="${m.cover}">
-                    <div class="trend-info">
-                        <h3>${m.title}</h3>
-                        <p>${m.plays || 0} reproduções</p>
+                    <div class="rank-info">
+                        <h4>${m.title}</h4>
+                        <p>${m.plays || 0} execuções</p>
                     </div>
                 </div>
             `).join('');
-        }
 
-        function renderGrid(data) {
-            document.getElementById('main-grid').innerHTML = data.map(m => `
-                <div class="music-item" onclick="play('${m.url}','${m.title}','${m.cover}')">
+            // Prepara a biblioteca (mas deixa escondida)
+            document.getElementById('lib-grid').innerHTML = tracks.map(m => `
+                <div class="lib-card" onclick="play('${m.url}','${m.title}','${m.cover}')">
                     <img src="${m.cover}">
-                    <h4>${m.title}</h4>
-                    <p>Música Oficial</p>
+                    <h5>${m.title}</h5>
                 </div>
             `).join('');
+        }
+
+        // Funções de Interface
+        window.toggleMenu = () => {
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('overlay');
+            sb.classList.toggle('active');
+            ov.style.display = sb.classList.contains('active') ? 'block' : 'none';
+        }
+
+        window.openLibrary = () => {
+            toggleMenu();
+            document.getElementById('library-view').style.display = 'block';
+        }
+
+        window.closeLibrary = () => {
+            document.getElementById('library-view').style.display = 'none';
         }
 
         window.play = (url, title, img) => {
@@ -263,6 +178,7 @@
             audio.src = url;
             audio.play();
             document.getElementById('play-icon').className = 'fa fa-pause';
+            closeLibrary(); // Fecha a biblioteca ao dar play pra ver o top 10
         }
 
         window.togglePlay = () => {
@@ -270,12 +186,7 @@
             else { audio.pause(); document.getElementById('play-icon').className = 'fa fa-play'; }
         }
 
-        window.search = () => {
-            const val = document.getElementById('main-search').value.toLowerCase();
-            renderGrid(allMusic.filter(m => m.title.toLowerCase().includes(val)));
-        }
-
-        loadApp();
+        init();
     </script>
 </body>
 </html>
