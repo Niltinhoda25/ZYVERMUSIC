@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverMusic | v8.4 Titan Edition</title>
+    <title>ZyverMusic | v8.5 Emerald Edition</title>
     
-    <meta name="theme-color" content="#0a0118">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#0a0118%22,%22theme_color%22:%22#bc47fb%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3844/3844724.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22ZyverMusic%22,%22short_name%22:%22Zyver%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#000000%22,%22theme_color%22:%22#00ff88%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/3844/3844724.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
     <script>
         (function(s){
@@ -20,22 +20,21 @@
 
     <style>
         :root { 
-            --accent: #bc47fb; 
-            --bg: #0a0118; 
-            --glass: rgba(255, 255, 255, 0.06);
-            --glass-border: rgba(255, 255, 255, 0.1);
-            --success: #00f2fe;
-            --danger: #ff4b5c;
+            --accent: #00ff88; /* Verde Esmeralda Neon */
+            --bg: #000000; 
+            --glass: rgba(0, 255, 136, 0.03);
+            --glass-border: rgba(0, 255, 136, 0.15);
+            --card-bg: rgba(10, 10, 10, 0.8);
+            --text-dim: rgba(255, 255, 255, 0.5);
         }
         
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
         body { 
-            background: radial-gradient(circle at top right, #1a083d, #0a0118);
+            background: radial-gradient(circle at bottom left, #002b16, #000000);
             color: white; font-family: 'Inter', sans-serif; height: 100vh; overflow: hidden;
         }
 
-        /* Scroll Personalizado */
         #main-content::-webkit-scrollbar { width: 0px; }
         #main-content { 
             height: 100vh; overflow-y: auto; padding-bottom: 250px; 
@@ -43,155 +42,142 @@
         }
 
         header { padding: 45px 20px 25px; text-align: center; }
-        .logo { font-size: 34px; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 30px var(--accent); }
+        .logo { font-size: 34px; font-weight: 900; letter-spacing: 4px; text-shadow: 0 0 20px var(--accent); color: white; }
         .logo span { color: var(--accent); }
 
-        /* Barra de Busca Profissional */
+        /* Barra de Busca Verde */
         .search-area { margin: 0 20px 35px; position: relative; }
         .search-area input { 
-            width: 100%; background: var(--glass); border: 1.5px solid var(--glass-border); 
-            padding: 20px 55px; border-radius: 30px; color: white; backdrop-filter: blur(25px); 
-            font-size: 16px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            width: 100%; background: var(--card-bg); border: 1px solid var(--glass-border); 
+            padding: 20px 55px; border-radius: 20px; color: white; backdrop-filter: blur(25px); 
+            font-size: 16px; transition: 0.3s ease;
         }
-        .search-area input:focus { border-color: var(--accent); box-shadow: 0 0 25px rgba(188, 71, 251, 0.4); transform: scale(1.02); }
+        .search-area input:focus { border-color: var(--accent); box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
         .search-area i { position: absolute; left: 22px; top: 50%; transform: translateY(-50%); color: var(--accent); font-size: 20px; }
 
         .section-title { 
-            padding: 15px 25px; font-size: 13px; font-weight: 900; 
-            text-transform: uppercase; color: rgba(255,255,255,0.4); 
-            display: flex; align-items: center; gap: 12px; letter-spacing: 2px;
+            padding: 15px 25px; font-size: 12px; font-weight: 900; 
+            text-transform: uppercase; color: var(--accent); 
+            display: flex; align-items: center; gap: 12px; letter-spacing: 3px; opacity: 0.8;
         }
 
-        /* Banner de Playlist Ativa */
         #shared-banner {
-            display: none; background: linear-gradient(90deg, var(--accent), #6a11cb);
-            margin: 0 20px 20px; padding: 18px; border-radius: 20px;
-            font-weight: 900; text-align: center; font-size: 14px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3); animation: slideIn 0.5s ease;
+            display: none; background: var(--accent); color: black;
+            margin: 0 20px 20px; padding: 15px; border-radius: 12px;
+            font-weight: 900; text-align: center; font-size: 13px;
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
         }
 
-        /* Grid Mais Tocadas */
-        #top-list { display: flex; overflow-x: auto; padding: 15px 20px; gap: 22px; scrollbar-width: none; }
-        .top-item { min-width: 160px; cursor: pointer; position: relative; }
+        /* Grid Emerald */
+        #top-list { display: flex; overflow-x: auto; padding: 15px 20px; gap: 20px; scrollbar-width: none; }
+        .top-item { min-width: 150px; cursor: pointer; }
         .top-thumb { 
-            width: 160px; height: 160px; border-radius: 32px; overflow: hidden; 
-            border: 1px solid var(--glass-border); box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            width: 150px; height: 150px; border-radius: 25px; overflow: hidden; 
+            border: 1px solid var(--glass-border); transition: 0.4s;
+        }
+        .top-item:active .top-thumb { transform: scale(0.95) rotate(-2deg); }
+        .top-thumb img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(20%) brightness(0.9); }
+        .top-item b { display: block; margin-top: 12px; font-size: 13px; color: white; text-align: center; }
+
+        /* Cards Estilo List */
+        .song-card { 
+            display: flex; align-items: center; padding: 18px; margin: 10px 20px;
+            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--glass-border);
             transition: 0.3s;
         }
-        .top-item:active .top-thumb { transform: scale(0.92); }
-        .top-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .top-item b { display: block; margin-top: 14px; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 5px; }
-
-        /* Lista de Músicas Estilo Card */
-        .song-card { 
-            display: flex; align-items: center; padding: 18px; margin: 12px 20px;
-            background: var(--glass); border-radius: 25px; border: 1px solid var(--glass-border);
-            backdrop-filter: blur(15px); transition: 0.3s;
-        }
-        .song-card:active { background: rgba(255,255,255,0.1); transform: scale(0.98); }
-        .song-img { width: 65px; height: 65px; border-radius: 18px; overflow: hidden; margin-right: 18px; flex-shrink: 0; }
+        .song-card:active { border-color: var(--accent); background: rgba(0, 255, 136, 0.05); }
+        .song-img { width: 60px; height: 60px; border-radius: 15px; overflow: hidden; margin-right: 18px; flex-shrink: 0; }
         .song-img img { width: 100%; height: 100%; object-fit: cover; }
         .song-meta { flex: 1; overflow: hidden; }
-        .song-meta b { font-size: 16px; display: block; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .song-meta span { font-size: 12px; color: #888; font-weight: 600; text-transform: uppercase; }
-        .btn-plus { font-size: 26px; color: var(--accent); margin-left: 10px; opacity: 0.8; }
+        .song-meta b { font-size: 15px; display: block; color: #fff; }
+        .song-meta span { font-size: 11px; color: var(--accent); font-weight: 700; opacity: 0.7; }
 
-        /* Player Flutuante Moderno */
+        /* Player Emerald */
         #player { 
             position: fixed; bottom: 110px; left: 15px; right: 15px; 
-            background: rgba(10, 1, 24, 0.9); border: 1.5px solid var(--accent);
-            padding: 18px; border-radius: 35px; display: none; align-items: center; 
+            background: rgba(5, 5, 5, 0.98); border: 2px solid var(--accent);
+            padding: 15px; border-radius: 25px; display: none; align-items: center; 
             gap: 15px; z-index: 5000; backdrop-filter: blur(30px);
-            box-shadow: 0 -15px 40px rgba(0,0,0,0.6); animation: playerUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.15);
         }
-        .player-img { width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--accent); overflow: hidden; flex-shrink: 0; box-shadow: 0 0 15px var(--accent); }
+        .player-img { width: 55px; height: 55px; border-radius: 50%; border: 2px solid var(--accent); overflow: hidden; }
         .player-img img { width: 100%; height: 100%; object-fit: cover; }
-        .spinning { animation: rotate 8s linear infinite; }
+        .spinning { animation: rotate 10s linear infinite; }
 
-        /* Animações */
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes playerUp { from { transform: translateY(100px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* Navegação Inferior */
+        /* Navegação Matrix */
         .bottom-bar { 
-            position: fixed; bottom: 0; width: 100%; background: rgba(5, 0, 15, 0.95);
-            backdrop-filter: blur(40px); display: flex; justify-content: space-around;
+            position: fixed; bottom: 0; width: 100%; background: #000;
+            display: flex; justify-content: space-around;
             padding: 15px 0 40px; border-top: 1px solid var(--glass-border); z-index: 4000;
         }
-        .nav-btn { color: #555; font-size: 26px; display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; transition: 0.3s; }
-        .nav-btn.active { color: var(--accent); text-shadow: 0 0 15px var(--accent); }
-        .nav-btn span { font-size: 11px; font-weight: 900; text-transform: uppercase; }
+        .nav-btn { color: #333; font-size: 24px; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+        .nav-btn.active { color: var(--accent); }
+        .nav-btn span { font-size: 10px; font-weight: 900; letter-spacing: 1px; }
 
-        /* Modais Fullscreen */
+        /* Modais */
         .modal-view { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #05000f; z-index: 9999; display: none; 
+            background: #000; z-index: 9999; display: none; 
             flex-direction: column; padding: 40px 25px;
         }
-        .modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px; }
-        .modal-head h2 { font-size: 24px; font-weight: 900; }
+        .modal-head h2 { font-size: 22px; color: var(--accent); letter-spacing: 2px; }
         .btn-confirm { 
-            background: var(--accent); color: white; width: 100%; padding: 22px; 
-            border: none; border-radius: 25px; font-weight: 900; font-size: 16px; 
-            margin-top: auto; box-shadow: 0 10px 30px rgba(188, 71, 251, 0.4);
+            background: var(--accent); color: black; width: 100%; padding: 20px; 
+            border: none; border-radius: 15px; font-weight: 900; margin-top: auto;
         }
-
-        .pl-card {
-            background: var(--glass); border: 1px solid var(--glass-border);
-            padding: 20px; border-radius: 25px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .pl-card { background: #0a0a0a; border: 1px solid var(--glass-border); padding: 20px; border-radius: 15px; margin-bottom: 12px; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
     <div id="modal-lib" class="modal-view">
-        <div class="modal-head"><h2>Playlists Nuvem</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('modal-lib')"></i></div>
+        <div class="modal-head" style="display:flex; justify-content:space-between; margin-bottom:30px;"><h2>CLOUDBANK</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('modal-lib')" style="color:var(--accent)"></i></div>
         <div id="cloud-playlists-area" style="overflow-y:auto; flex:1;"></div>
     </div>
 
     <div id="modal-create" class="modal-view">
-        <div class="modal-head"><h2>Nova Playlist</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('modal-create')"></i></div>
-        <input type="text" id="pl-name" placeholder="Dê um nome top..." style="width:100%; background:var(--glass); border:2.5px solid var(--accent); padding:22px; border-radius:25px; color:white; font-size:18px; margin-bottom:25px;">
-        <div id="selection-grid" style="flex:1; overflow-y:auto; padding-right:5px;"></div>
-        <button class="btn-confirm" onclick="salvarPlaylistNuvem()">SUBIR PARA NUVEM</button>
+        <div class="modal-head" style="display:flex; justify-content:space-between; margin-bottom:30px;"><h2>NEW_STREAM</h2> <i class="fa fa-times-circle fa-2x" onclick="fecharModal('modal-create')" style="color:var(--accent)"></i></div>
+        <input type="text" id="pl-name" placeholder="NOME_DA_LISTA..." style="width:100%; background:#0a0a0a; border:1px solid var(--accent); padding:20px; border-radius:15px; color:white; margin-bottom:20px;">
+        <div id="selection-grid" style="flex:1; overflow-y:auto;"></div>
+        <button class="btn-confirm" onclick="salvarPlaylistNuvem()">SYNC TO CLOUD</button>
     </div>
 
     <div id="main-content">
-        <header><div class="logo">ZYVER<span>MUSIC</span></div></header>
+        <header><div class="logo">ZYVER<span>EMERALD</span></div></header>
 
-        <div id="shared-banner">Ouvindo Playlist via Link 🔗</div>
+        <div id="shared-banner">LINK_SYNC_ACTIVE_8005%</div>
 
         <div class="search-area">
             <i class="fa fa-search"></i>
-            <input type="text" id="search-bar" placeholder="Músicas, artistas..." oninput="filtrarApp()">
+            <input type="text" id="search-bar" placeholder="Localizar áudio..." oninput="filtrarApp()">
         </div>
 
-        <div class="section-title"><i class="fa fa-fire" style="color:#ffae00;"></i> Em Alta Agora</div>
+        <div class="section-title"><i class="fa fa-chart-line"></i> TOP_CHARTS</div>
         <div id="top-list"></div>
 
-        <div class="section-title"><i class="fa fa-music"></i> Biblioteca Geral</div>
+        <div class="section-title"><i class="fa fa-database"></i> MAIN_DATABASE</div>
         <div id="full-list"></div>
     </div>
 
     <div id="player">
         <div class="player-img"><img id="p-cover" src=""></div>
         <div class="song-meta">
-            <b id="p-title">Sintonizando...</b>
-            <span id="p-sub">Zyver Stream v8.4</span>
+            <b id="p-title">STANDBY...</b>
+            <span id="p-sub">BITRATE_HIGH // 8005%</span>
         </div>
-        <div style="display:flex; align-items:center; gap:22px;">
-            <i class="fa fa-forward-step" onclick="autoProxima()" style="font-size:22px; color:#666;"></i>
-            <i class="fa fa-pause" id="play-btn" onclick="controlePlayer()" style="font-size:36px; color:white;"></i>
+        <div style="display:flex; align-items:center; gap:20px;">
+            <i class="fa fa-forward-step" onclick="autoProxima()" style="color:#444;"></i>
+            <i class="fa fa-pause" id="play-btn" onclick="controlePlayer()" style="font-size:32px; color:var(--accent);"></i>
         </div>
         <audio id="audio-core"></audio>
     </div>
 
     <div class="bottom-bar">
-        <div class="nav-btn active" onclick="location.href='index.html'"><i class="fa fa-house"></i><span>Home</span></div>
-        <div class="nav-btn" onclick="abrirModal('modal-create')"><i class="fa fa-circle-plus" style="font-size:38px; color:var(--accent);"></i><span>Criar</span></div>
-        <div class="nav-btn" onclick="abrirCloudLib()"><i class="fa fa-cloud"></i><span>Cloud</span></div>
+        <div class="nav-btn active" onclick="location.href='index.html'"><i class="fa fa-terminal"></i><span>ROOT</span></div>
+        <div class="nav-btn" onclick="abrirModal('modal-create')"><i class="fa fa-plus" style="font-size:35px; color:var(--accent);"></i><span>ADD</span></div>
+        <div class="nav-btn" onclick="abrirCloudLib()"><i class="fa fa-network-wired"></i><span>SYNC</span></div>
     </div>
 
     <script type="module">
@@ -206,28 +192,20 @@
             try {
                 const snap = await getDocs(collection(db, "musics"));
                 todasMusicas = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(m => m.cover);
-                
-                // Checar Link Compartilhado
                 const plId = new URLSearchParams(window.location.search).get('pl');
                 if(plId) {
                     const plSnap = await getDoc(doc(db, "playlists", plId));
-                    if(plSnap.exists()) {
-                        document.getElementById('shared-banner').style.display = 'block';
-                        renderizarLista(plSnap.data().musicas);
-                    }
-                } else {
-                    renderizarLista(todasMusicas);
-                }
+                    if(plSnap.exists()) { document.getElementById('shared-banner').style.display = 'block'; renderizarLista(plSnap.data().musicas); }
+                } else { renderizarLista(todasMusicas); }
                 renderizarTop();
-            } catch(e) { console.error("Erro Firebase:", e); }
+            } catch(e) { console.error(e); }
         }
 
         function renderizarLista(lista) {
             document.getElementById('full-list').innerHTML = lista.map(m => `
                 <div class="song-card" onclick="playMusic('${m.id}','${m.url}','${m.title}','${m.cover}')">
                     <div class="song-img"><img src="${m.cover}"></div>
-                    <div class="song-meta"><b>${m.title}</b><span>Zyver Music</span></div>
-                    <i class="fa fa-play-circle btn-plus"></i>
+                    <div class="song-meta"><b>${m.title}</b><span>ENCRYPTED_STREAM</span></div>
                 </div>
             `).join('');
         }
@@ -245,10 +223,8 @@
         window.playMusic = (id, url, title, img) => {
             document.getElementById('player').style.display = 'flex';
             document.getElementById('p-title').innerText = title;
-            pCapa.src = img;
-            pCapa.parentElement.classList.add('spinning');
-            som.src = url;
-            som.play();
+            pCapa.src = img; pCapa.parentElement.classList.add('spinning');
+            som.src = url; som.play();
             updateDoc(doc(db, "musics", id), { plays: increment(1) });
         };
 
@@ -265,11 +241,10 @@
 
         window.salvarPlaylistNuvem = async () => {
             const nome = document.getElementById('pl-name').value;
-            if(!nome || selecionadas.length === 0) return alert("Playlist vazia!");
+            if(!nome || selecionadas.length === 0) return alert("ERRO_VAL_NULL");
             const tracks = todasMusicas.filter(m => selecionadas.includes(m.id));
             const docRef = await addDoc(collection(db, "playlists"), { nome, musicas: tracks });
-            const link = window.location.origin + window.location.pathname + "?pl=" + docRef.id;
-            prompt("Link da sua playlist (8004% Cloud):", link);
+            prompt("LINK_GENERATED:", window.location.origin + window.location.pathname + "?pl=" + docRef.id);
             fecharModal('modal-create');
         };
 
@@ -278,21 +253,21 @@
             const snap = await getDocs(collection(db, "playlists"));
             document.getElementById('cloud-playlists-area').innerHTML = snap.docs.map(d => `
                 <div class="pl-card">
-                    <div><b>${d.data().nome}</b><br><small>${d.data().musicas.length} Músicas</small></div>
-                    <i class="fa fa-share-nodes fa-lg" onclick="copyLink('${d.id}')" style="color:var(--accent);"></i>
+                    <div><b>${d.data().nome}</b></div>
+                    <i class="fa fa-share-alt" onclick="copyLink('${d.id}')" style="color:var(--accent);"></i>
                 </div>
             `).join('');
         };
 
         window.copyLink = (id) => {
-            const link = window.location.origin + window.location.pathname + "?pl=" + id;
-            navigator.clipboard.writeText(link); alert("Link Copiado!");
+            navigator.clipboard.writeText(window.location.origin + window.location.pathname + "?pl=" + id);
+            alert("LINK_COPIED");
         };
 
         window.toggleSelect = (id) => {
             const el = document.getElementById(`sel-${id}`);
-            if(selecionadas.includes(id)) { selecionadas = selecionadas.filter(x => x !== id); el.style.border = "none"; }
-            else { selecionadas.push(id); el.style.border = "3.5px solid var(--accent)"; }
+            if(selecionadas.includes(id)) { selecionadas = selecionadas.filter(x => x !== id); el.style.border = "1px solid var(--glass-border)"; }
+            else { selecionadas.push(id); el.style.border = "2px solid var(--accent)"; }
         };
 
         window.abrirModal = (id) => { 
@@ -300,15 +275,13 @@
             if(id === 'modal-create') {
                 document.getElementById('selection-grid').innerHTML = todasMusicas.map(m => `
                     <div class="song-card" id="sel-${m.id}" onclick="toggleSelect('${m.id}')">
-                        <div class="song-img"><img src="${m.cover}"></div>
-                        <b>${m.title}</b>
+                        <div class="song-img"><img src="${m.cover}"></div><b>${m.title}</b>
                     </div>
                 `).join('');
             }
         };
 
         window.fecharModal = (id) => document.getElementById(id).style.display = 'none';
-        
         window.filtrarApp = () => {
             const v = document.getElementById('search-bar').value.toLowerCase();
             renderizarLista(todasMusicas.filter(m => m.title.toLowerCase().includes(v)));
