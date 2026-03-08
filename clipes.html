@@ -3,128 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZyverClips | Reels</title>
+    <title>ZyverMusic | Clipes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * { margin:0; padding:0; box-sizing:border-box; }
-        body { background:#000; color:#fff; font-family:sans-serif; overflow:hidden; }
-        .clips-container { height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; }
-        .clips-container::-webkit-scrollbar { display:none; }
-        .clip-section { height:100vh; width:100vw; scroll-snap-align:start; position:relative; }
-        video { width:100%; height:100%; object-fit:cover; }
+        :root { --accent: #ff7a00; --bg: #000; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: white; font-family: sans-serif; overflow: hidden; }
 
-        /* ÍCONES LATERAIS */
-        .side-actions { position:absolute; right:15px; bottom:120px; display:flex; flex-direction:column; gap:25px; align-items:center; z-index:20; }
-        .action-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
-        .action-item i { font-size:32px; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .like-btn.active { color: #ff0050; }
-
-        /* CORREÇÃO DO NOME DA MÚSICA NOS CLIPES */
-        .overlay { 
-            position:absolute; bottom:0; left:0; width:100%; 
-            padding:30px 90px 100px 20px; /* Padding direito de 90px para não bater nos ícones */
-            background:linear-gradient(transparent, rgba(0,0,0,0.8)); 
-            pointer-events:none; 
+        /* Container de Rolagem Estilo TikTok */
+        .clips-container {
+            height: 100vh;
+            overflow-y: scroll;
+            snap-type: y mandatory;
+            scroll-behavior: smooth;
         }
-        .overlay h2 { 
-            font-size:18px; white-space:nowrap; 
-            overflow:hidden; text-overflow:ellipsis; 
-            text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
-        }
-        .overlay p { font-size:14px; opacity:0.8; }
 
-        /* MODAL COMENTÁRIOS */
-        #comment-modal { position:fixed; bottom:-100%; left:0; width:100%; height:60%; background:#1a1a1a; border-radius:20px 20px 0 0; z-index:1000; transition:0.3s; padding:20px; display:flex; flex-direction:column; }
-        #comment-modal.open { bottom:0; }
-        .comment-list { flex:1; overflow-y:auto; margin:15px 0; font-size:14px; }
-        .comment-input { display:flex; gap:10px; padding-bottom:10px; }
-        .comment-input input { flex:1; background:#333; border:none; border-radius:20px; padding:12px; color:white; outline:none; }
-        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:22px; }
+        .clip-card {
+            height: 100vh;
+            width: 100vw;
+            snap-align: start;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* VÍDEO AJUSTADO PARA IPHONE */
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Faz o vídeo ocupar a tela toda */
+        }
+
+        .clip-info {
+            position: absolute;
+            bottom: 40px;
+            left: 20px;
+            z-index: 10;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+        }
+        .clip-info h2 { font-size: 18px; font-weight: 900; margin-bottom: 5px; }
+        .clip-info p { font-size: 14px; color: var(--accent); font-weight: bold; }
+
+        .btn-voltar {
+            position: absolute;
+            top: 25px;
+            left: 20px;
+            z-index: 100;
+            color: white;
+            font-size: 22px;
+            text-decoration: none;
+            background: rgba(0,0,0,0.5);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        /* Overlay para o iPhone carregar o som no clique */
+        .play-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.1);
+            z-index: 5;
+        }
+        .play-overlay i { font-size: 60px; opacity: 0.5; display: none; }
     </style>
 </head>
 <body>
 
     <a href="index.html" class="btn-voltar"><i class="fa fa-arrow-left"></i></a>
-    <div id="clips-feed" class="clips-container"></div>
 
-    <div id="comment-modal">
-        <div style="display:flex; justify-content:space-between"><strong>Comentários</strong><i class="fa fa-times" onclick="closeComments()"></i></div>
-        <div class="comment-list" id="modal-list"></div>
-        <div class="comment-input">
-            <input type="text" id="user-comment" placeholder="Escreva um comentário...">
-            <button id="send-btn" style="background:none; border:none; color:#9d4edd; font-size:20px;"><i class="fa fa-paper-plane"></i></button>
+    <div id="clips-feed" class="clips-container">
         </div>
-    </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, getDocs, doc, updateDoc, increment, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        let currentClipId = "";
-
-        async function loadClips() {
+        async function carregarClipes() {
             const snap = await getDocs(collection(db, "clips"));
-            document.getElementById('clips-feed').innerHTML = snap.docs.map(doc => {
-                const data = doc.data();
+            const feed = document.getElementById('clips-feed');
+            
+            if (snap.empty) {
+                feed.innerHTML = "<div class='clip-card'><h2>Nenhum clipe postado.</h2></div>";
+                return;
+            }
+
+            feed.innerHTML = snap.docs.map(d => {
+                const clipe = d.data();
                 return `
-                <div class="clip-section" data-id="${doc.id}">
-                    <video src="${data.url}" loop playsinline onclick="this.paused ? this.play() : this.pause()"></video>
-                    <div class="side-actions">
-                        <div class="action-item" onclick="likeClip('${doc.id}', this)">
-                            <i class="fa-solid fa-heart like-btn"></i>
-                            <span class="like-count">${data.likes || 0}</span>
+                    <div class="clip-card" onclick="togglePlay(this)">
+                        <video 
+                            src="${clipe.url}" 
+                            loop 
+                            playsinline 
+                            webkit-playsinline
+                            preload="auto">
+                        </video>
+                        <div class="clip-info">
+                            <p>@ZyverMusic</p>
+                            <h2>${clipe.title}</h2>
                         </div>
-                        <div class="action-item" onclick="openComments('${doc.id}')">
-                            <i class="fa-solid fa-comment-dots"></i>
-                            <span>Comentar</span>
-                        </div>
+                        <div class="play-overlay"><i class="fa fa-play"></i></div>
                     </div>
-                    <div class="overlay"><h2>${data.title}</h2><p>@zyvermusic • Som Original</p></div>
-                </div>`;
+                `;
             }).join('');
-            setupAutoPlay();
-        }
 
-        window.likeClip = async (id, el) => {
-            const icon = el.querySelector('i');
-            const span = el.querySelector('.like-count');
-            if(!icon.classList.contains('active')) {
-                icon.classList.add('active');
-                span.innerText = parseInt(span.innerText) + 1;
-                await updateDoc(doc(db, "clips", id), { likes: increment(1) });
-            }
-        };
-
-        window.openComments = (id) => {
-            currentClipId = id;
-            document.getElementById('comment-modal').classList.add('open');
-            const q = query(collection(db, "clips", id, "comments"), orderBy("createdAt", "asc"));
-            onSnapshot(q, (snap) => {
-                document.getElementById('modal-list').innerHTML = snap.docs.map(d => `<div style="margin-bottom:10px;">${d.data().text}</div>`).join('');
-            });
-        };
-
-        document.getElementById('send-btn').onclick = async () => {
-            const input = document.getElementById('user-comment');
-            if(input.value.trim()) {
-                await addDoc(collection(db, "clips", currentClipId, "comments"), { text: input.value, createdAt: new Date() });
-                input.value = "";
-            }
-        };
-
-        window.closeComments = () => document.getElementById('comment-modal').classList.remove('open');
-
-        function setupAutoPlay() {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(e => {
-                    const v = e.target.querySelector('video');
-                    if (e.isIntersecting) v.play(); else v.pause();
+            // Tenta dar play no primeiro vídeo automaticamente
+            const primeiroVideo = document.querySelector('video');
+            if(primeiroVideo) {
+                primeiroVideo.play().catch(() => {
+                    console.log("iPhone bloqueou o autoplay. O usuário precisa clicar.");
                 });
-            }, { threshold: 0.8 });
-            document.querySelectorAll('.clip-section').forEach(s => observer.observe(s));
+            }
         }
 
-        loadClips();
+        // Função para Play/Pause ao clicar (Necessário no iPhone)
+        window.togglePlay = (card) => {
+            const v = card.querySelector('video');
+            const icon = card.querySelector('.play-overlay i');
+            
+            if (v.paused) {
+                v.play();
+                icon.style.display = 'none';
+            } else {
+                v.pause();
+                icon.style.display = 'block';
+            }
+        };
+
+        // Pausar vídeos que saem da tela e tocar o que entra
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const v = entry.target.querySelector('video');
+                if (entry.isIntersecting) {
+                    v.play().catch(() => {});
+                } else {
+                    v.pause();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Aplica o observer em cada card
+        setTimeout(() => {
+            document.querySelectorAll('.clip-card').forEach(card => observer.observe(card));
+        }, 1000);
+
+        carregarClipes();
     </script>
 </body>
 </html>
