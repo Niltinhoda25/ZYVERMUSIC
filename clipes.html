@@ -6,99 +6,73 @@
     <title>ZyverMusic | Clipes</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --accent: #9d4edd; --bg: #000; }
+        :root { --accent: #9d4edd; --bg: #000; --surface: #1a1a1a; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; overflow: hidden; }
 
-        /* Container que segura os vídeos e permite o scroll tipo TikTok */
-        .feed-container {
-            height: 100vh;
-            width: 100vw;
-            scroll-snap-type: y mandatory;
-            overflow-y: scroll;
-            scrollbar-width: none;
-        }
+        .feed-container { height: 100vh; width: 100vw; scroll-snap-type: y mandatory; overflow-y: scroll; scrollbar-width: none; }
         .feed-container::-webkit-scrollbar { display: none; }
 
-        .video-snap {
-            height: 100vh;
-            width: 100vw;
-            scroll-snap-align: start;
-            position: relative;
-            background: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+        .video-snap { height: 100vh; width: 100vw; scroll-snap-align: start; position: relative; background: #000; display: flex; align-items: center; justify-content: center; }
+        video { width: 100%; height: 100%; object-fit: cover; }
 
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Faz preencher a tela toda */
-        }
+        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10; font-size: 24px; color: white; }
 
-        /* Botão de Voltar */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            z-index: 10;
-            font-size: 24px;
-            color: white;
-            text-shadow: 0 0 10px rgba(0,0,0,0.5);
-        }
-
-        /* Overlay de Informações (Título e Botões) */
-        .video-overlay {
-            position: absolute;
-            bottom: 30px;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
+        /* OVERLAY E BOTÕES */
+        .video-overlay { position: absolute; bottom: 30px; left: 0; right: 0; padding: 20px; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); display: flex; justify-content: space-between; align-items: flex-end; z-index: 5; }
         .video-info h3 { font-size: 18px; margin-bottom: 5px; font-weight: 800; }
-        .video-info p { font-size: 14px; color: #ccc; }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
+        .actions { display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer; }
         .action-btn i { font-size: 28px; transition: 0.2s; }
-        .action-btn span { font-size: 12px; font-weight: bold; }
-        .action-btn i.active { color: #ff2d55; transform: scale(1.2); }
+        .action-btn span { font-size: 11px; font-weight: bold; }
+        .active-heart { color: #ff2d55; transform: scale(1.2); }
 
+        /* --- PAINEL DE COMENTÁRIOS (ESTILO TIKTOK) --- */
+        #comment-sheet {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 70%;
+            background: var(--surface); border-radius: 20px 20px 0 0; z-index: 100;
+            transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            display: flex; flex-direction: column;
+        }
+        #comment-sheet.open { bottom: 0; }
+        .sheet-header { padding: 15px; border-bottom: 1px solid #333; text-align: center; position: relative; }
+        .close-sheet { position: absolute; right: 15px; top: 15px; font-size: 20px; color: #777; }
+        
+        .comments-list { flex: 1; overflow-y: auto; padding: 15px; }
+        .comment-item { margin-bottom: 15px; font-size: 14px; line-height: 1.4; }
+        .comment-item b { color: var(--accent); display: block; font-size: 12px; }
+
+        .comment-input-area { padding: 15px; background: #111; display: flex; gap: 10px; border-top: 1px solid #333; }
+        .comment-input-area input { flex: 1; background: #222; border: none; padding: 12px; border-radius: 25px; color: white; outline: none; }
+        .btn-send-comment { background: var(--accent); border: none; width: 40px; height: 40px; border-radius: 50%; color: white; }
     </style>
 </head>
 <body>
 
     <a href="index.html" class="back-btn"><i class="fa fa-arrow-left"></i></a>
 
-    <div id="feed" class="feed-container">
+    <div id="feed" class="feed-container"></div>
+
+    <div id="comment-sheet">
+        <div class="sheet-header">
+            <span style="font-weight: 800; font-size: 14px;">Comentários</span>
+            <i class="fa fa-times close-sheet" onclick="fecharComentarios()"></i>
         </div>
+        <div id="lista-comentarios" class="comments-list"></div>
+        <div class="comment-input-area">
+            <input type="text" id="input-txt" placeholder="Adicione um comentário...">
+            <button class="btn-send-comment" onclick="enviarComentario()"><i class="fa fa-paper-plane"></i></button>
+        </div>
+    </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
-        import { collection, onSnapshot, query, orderBy, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { collection, onSnapshot, query, orderBy, doc, updateDoc, increment, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        let clipeAtivoId = null;
         const feed = document.getElementById('feed');
 
-        // Monitora os clipes no Firebase
+        // MONITORAR CLIPES
         onSnapshot(query(collection(db, "clips"), orderBy("date", "desc")), (snap) => {
             feed.innerHTML = snap.docs.map(docSnap => {
                 const clip = docSnap.data();
@@ -108,64 +82,70 @@
                     <video loop playsinline preload="metadata" onclick="this.paused ? this.play() : this.pause()">
                         <source src="${clip.url}" type="video/mp4">
                     </video>
-                    
                     <div class="video-overlay">
-                        <div class="video-info">
-                            <h3>@zyvermusic</h3>
-                            <p>${clip.title}</p>
-                        </div>
-                        
+                        <div class="video-info"><h3>@zyvermusic</h3><p>${clip.title}</p></div>
                         <div class="actions">
                             <div class="action-btn" onclick="curtir('${id}')">
-                                <i class="fa-solid fa-heart" id="icon-${id}"></i>
+                                <i class="fa-solid fa-heart ${localStorage.getItem('liked_'+id) ? 'active-heart' : ''}" id="icon-${id}"></i>
                                 <span id="count-${id}">${clip.likes || 0}</span>
                             </div>
-                            <div class="action-btn">
+                            <div class="action-btn" onclick="abrirComentarios('${id}')">
                                 <i class="fa-solid fa-comment"></i>
-                                <span>0</span>
-                            </div>
-                            <div class="action-btn">
-                                <i class="fa-solid fa-share"></i>
-                                <span>Share</span>
+                                <span>Contar</span>
                             </div>
                         </div>
                     </div>
                 </div>`;
             }).join('');
-
             iniciarAutoPlay();
         });
 
-        // --- SISTEMA DE CURTIDA ---
+        // CURTIR
         window.curtir = async (id) => {
             const icon = document.getElementById(`icon-${id}`);
-            icon.classList.toggle('active');
+            const isLiked = icon.classList.toggle('active-heart');
+            localStorage.setItem('liked_'+id, isLiked ? 'true' : '');
+            await updateDoc(doc(db, "clips", id), { likes: increment(isLiked ? 1 : -1) });
+        };
+
+        // --- LÓGICA DE COMENTÁRIOS ---
+        window.abrirComentarios = (id) => {
+            clipeAtivoId = id;
+            document.getElementById('comment-sheet').classList.add('open');
             
-            const ref = doc(db, "clips", id);
-            await updateDoc(ref, {
-                likes: increment(icon.classList.contains('active') ? 1 : -1)
+            // Escuta os comentários desse clipe específico
+            onSnapshot(query(collection(db, `clips/${id}/comments`), orderBy("date", "asc")), (snap) => {
+                document.getElementById('lista-comentarios').innerHTML = snap.docs.map(d => `
+                    <div class="comment-item"><b>Fã da Zyver</b>${d.data().text}</div>
+                `).join('');
             });
         };
 
-        // --- O SEGREDO DA OTIMIZAÇÃO (Intersection Observer) ---
+        window.fecharComentarios = () => {
+            document.getElementById('comment-sheet').classList.remove('open');
+        };
+
+        window.enviarComentario = async () => {
+            const txt = document.getElementById('input-txt').value;
+            if(!txt || !clipeAtivoId) return;
+
+            await addDoc(collection(db, `clips/${clipeAtivoId}/comments`), {
+                text: txt,
+                date: Date.now()
+            });
+            document.getElementById('input-txt').value = "";
+        };
+
+        // AUTOPLAY OTIMIZADO
         function iniciarAutoPlay() {
-            const observerOptions = {
-                threshold: 0.7 // Só ativa quando 70% do vídeo está na tela
-            };
-
-            const observer = new IntersectionObserver((entries) => {
+            const obs = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (entry.isIntersecting) {
-                        video.play().catch(() => {}); // Tenta dar play automático
-                    } else {
-                        video.pause(); // Pausa quando sai da tela pra economizar CPU
-                        video.currentTime = 0; // Reinicia pra não travar memória
-                    }
+                    const v = entry.target.querySelector('video');
+                    if (entry.isIntersecting) v.play().catch(() => {});
+                    else { v.pause(); v.currentTime = 0; }
                 });
-            }, observerOptions);
-
-            document.querySelectorAll('.video-snap').forEach(card => observer.observe(card));
+            }, { threshold: 0.8 });
+            document.querySelectorAll('.video-snap').forEach(c => obs.observe(c));
         }
     </script>
 </body>
