@@ -8,25 +8,56 @@
     <style>
         * { margin:0; padding:0; box-sizing:border-box; }
         body { background:#000; color:#fff; font-family:sans-serif; overflow:hidden; }
+        
+        /* Container de Scroll Vertical Infinito */
         .clips-container { height:100vh; overflow-y:scroll; scroll-snap-type:y mandatory; scrollbar-width:none; }
         .clips-container::-webkit-scrollbar { display:none; }
 
-        .clip-section { height:100vh; width:100vw; scroll-snap-align:start; position:relative; }
+        .clip-section { height:100vh; width:100vw; scroll-snap-align:start; position:relative; background:#000; }
         video { width:100%; height:100%; object-fit:cover; }
 
-        /* BOTÕES LATERAIS (INTERAÇÃO) */
-        .side-actions { position:absolute; right:15px; bottom:120px; display:flex; flex-direction:column; gap:22px; align-items:center; z-index:20; }
-        .action-item { display:flex; flex-direction:column; align-items:center; gap:5px; }
-        .action-item i { font-size:28px; text-shadow: 0 0 10px rgba(0,0,0,0.8); }
+        /* Botões Laterais (TikTok Style) */
+        .side-actions { position:absolute; right:15px; bottom:100px; display:flex; flex-direction:column; gap:20px; align-items:center; z-index:20; }
+        .action-item { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
+        .action-item i { font-size:30px; text-shadow: 0 0 10px rgba(0,0,0,0.5); transition: 0.2s; }
         .action-item span { font-size:12px; font-weight:bold; }
+        .like-btn.active { color: #ff0050; transform: scale(1.2); }
 
-        .overlay { position:absolute; bottom:0; left:0; width:100%; padding:40px 20px; background:linear-gradient(transparent, rgba(0,0,0,0.9)); pointer-events:none; }
-        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:20px; }
+        /* Overlay de Texto */
+        .overlay { position:absolute; bottom:0; left:0; width:100%; padding:30px 20px 100px; background:linear-gradient(transparent, rgba(0,0,0,0.8)); pointer-events:none; }
+        .overlay h2 { font-size:16px; margin-bottom:5px; }
+        .overlay p { font-size:14px; opacity:0.8; }
+
+        /* Modal de Comentários */
+        #comment-modal { position:fixed; bottom:-100%; left:0; width:100%; height:60%; background:#1a1a1a; border-radius:20px 20px 0 0; z-index:1000; transition: 0.3s; padding:20px; display:flex; flex-direction:column; }
+        #comment-modal.open { bottom:0; }
+        .modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid #333; padding-bottom:10px; }
+        .comment-list { flex:1; overflow-y:auto; font-size:14px; color:#ccc; }
+        .comment-input { display:flex; gap:10px; padding-top:15px; }
+        .comment-input input { flex:1; background:#333; border:none; border-radius:20px; padding:10px 15px; color:white; outline:none; }
+
+        .btn-voltar { position:absolute; top:20px; left:20px; z-index:100; color:white; font-size:20px; text-shadow:0 0 5px #000; }
     </style>
 </head>
 <body>
+
     <a href="index.html" class="btn-voltar"><i class="fa fa-arrow-left"></i></a>
+    
     <div id="clips-feed" class="clips-container"></div>
+
+    <div id="comment-modal">
+        <div class="modal-header">
+            <span>Comentários</span>
+            <i class="fa fa-times" onclick="closeComments()"></i>
+        </div>
+        <div class="comment-list" id="modal-list">
+            <p style="text-align:center; padding-top:20px;">Seja o primeiro a comentar...</p>
+        </div>
+        <div class="comment-input">
+            <input type="text" id="user-comment" placeholder="Adicione um comentário...">
+            <i class="fa fa-paper-plane" onclick="sendComment()" style="color:#9d4edd; padding:10px;"></i>
+        </div>
+    </div>
 
     <script type="module">
         import { db } from "./firebase-config.js";
@@ -34,31 +65,76 @@
 
         async function loadClips() {
             const snap = await getDocs(collection(db, "clips"));
-            document.getElementById('clips-feed').innerHTML = snap.docs.map(doc => {
+            const feed = document.getElementById('clips-feed');
+            
+            feed.innerHTML = snap.docs.map(doc => {
                 const data = doc.data();
                 return `
                 <div class="clip-section">
                     <video src="${data.url}" loop playsinline preload="metadata" onclick="this.paused ? this.play() : this.pause()"></video>
+                    
                     <div class="side-actions">
-                        <div class="action-item" onclick="this.style.color='#ff0050'"><i class="fa-solid fa-heart"></i><span>${data.likes || 'Curtir'}</span></div>
-                        <div class="action-item"><i class="fa-solid fa-comment-dots"></i><span>72</span></div>
-                        <div class="action-item" onclick="navigator.share({url:window.location.href})"><i class="fa-solid fa-share"></i><span>Enviar</span></div>
+                        <div class="action-item" onclick="toggleLikeClip(this)">
+                            <i class="fa-solid fa-heart like-btn"></i>
+                            <span>${data.likes || '0'}</span>
+                        </div>
+                        <div class="action-item" onclick="openComments()">
+                            <i class="fa-solid fa-comment-dots"></i>
+                            <span>Comentar</span>
+                        </div>
+                        <div class="action-item" onclick="navigator.share({url:window.location.href})">
+                            <i class="fa-solid fa-share"></i>
+                            <span>Enviar</span>
+                        </div>
                     </div>
-                    <div class="overlay"><h2>${data.title}</h2><p>@zyvermusic • Som Original</p></div>
+
+                    <div class="overlay">
+                        <h2>${data.title || 'Zyver Clip'}</h2>
+                        <p>@zyvermusic • Som Original</p>
+                    </div>
                 </div>`;
             }).join('');
+            
             setupAutoPlay();
         }
 
+        // Curtida Visual (Só muda a cor)
+        window.toggleLikeClip = (el) => {
+            const icon = el.querySelector('i');
+            icon.classList.toggle('active');
+        };
+
+        // Funções do Modal de Comentários
+        window.openComments = () => document.getElementById('comment-modal').classList.add('open');
+        window.closeComments = () => document.getElementById('comment-modal').classList.remove('open');
+        
+        window.sendComment = () => {
+            const input = document.getElementById('user-comment');
+            if(input.value.trim() !== "") {
+                const list = document.getElementById('modal-list');
+                if(list.querySelector('p')) list.innerHTML = ''; // Limpa o "Seja o primeiro"
+                list.innerHTML += `<div style="margin-bottom:12px;"><strong>Usuário:</strong> ${input.value}</div>`;
+                input.value = "";
+                list.scrollTop = list.scrollHeight;
+            }
+        };
+
+        // Auto-play ao scrollar (TikTok Style)
         function setupAutoPlay() {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(e => {
                     const v = e.target.querySelector('video');
-                    if (e.isIntersecting) v.play(); else v.pause();
+                    if (e.isIntersecting) {
+                        v.play();
+                    } else {
+                        v.pause();
+                        v.currentTime = 0;
+                    }
                 });
-            }, { threshold: 0.7 });
+            }, { threshold: 0.8 });
             document.querySelectorAll('.clip-section').forEach(s => observer.observe(s));
         }
+
         loadClips();
     </script>
 </body>
